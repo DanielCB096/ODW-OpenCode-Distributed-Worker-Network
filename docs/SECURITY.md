@@ -114,6 +114,9 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
   No se documenta como control algo que no se probó.
 - El proceso `opencode serve` escucha **solo** en `127.0.0.1`; se verifica con
   `Get-NetTCPConnection -OwningProcess <pid>` tras el arranque (falla la tarea si no es loopback).
+- **API de pares:** HTTP sobre Tailscale (cifrado por WireGuard) por defecto; HTTPS opt-in con
+  `peer_api.tls` (PFX con clave privada). Si TLS está activo, el listener de pares solo acepta
+  `https://`.
 
 ---
 

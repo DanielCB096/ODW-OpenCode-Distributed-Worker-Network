@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
+using System.Net.Sockets;
 using Odw.Mcp;
 using Odw.Mcp.Abstractions;
 using Odw.Mcp.Tools;
@@ -166,7 +168,7 @@ public sealed class NodeHost : IAsyncDisposable
             };
 
             mcp = BuildMcp(runtime);
-            peer = BuildPeer(runtime);
+            peer = BuildPeer(runtime, out var peerAddress);
 
             await mcp.StartAsync(cancellationToken).ConfigureAwait(false);
             await peer.StartAsync(cancellationToken).ConfigureAwait(false);
@@ -203,7 +205,7 @@ public sealed class NodeHost : IAsyncDisposable
                 mcp,
                 peer,
                 AddressOf(mcp),
-                AddressOf(peer),
+                peerAddress ?? AddressOf(peer),
                 scheduler,
                 poller,
                 proposals,
@@ -277,17 +279,28 @@ public sealed class NodeHost : IAsyncDisposable
         return app;
     }
 
-    private static WebApplication BuildPeer(NodeRuntime runtime)
+    private static WebApplication BuildPeer(NodeRuntime runtime, out Uri? knownAddress)
     {
         var builder = WebApplication.CreateSlimBuilder();
         var certificate = runtime.Options.PeerCertificate;
-        var scheme = certificate is null ? "http" : "https";
-        builder.WebHost.UseUrls(Url(runtime.Options.PeerBind, runtime.Options.PeerPort, scheme));
+        knownAddress = null;
 
-        if (certificate is not null)
+        if (certificate is null)
         {
+            builder.WebHost.UseUrls(Url(runtime.Options.PeerBind, runtime.Options.PeerPort, "http"));
+        }
+        else
+        {
+            var address = ResolveBindAddress(runtime.Options.PeerBind);
+            var port = runtime.Options.PeerPort == 0 ? FindFreePort(address) : runtime.Options.PeerPort;
+
             builder.WebHost.ConfigureKestrel(options =>
-                options.ConfigureHttpsDefaults(https => https.ServerCertificate = certificate));
+                options.Listen(address, port, listen => listen.UseHttps(certificate)));
+
+            var host = address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6
+                ? $"[{address}]"
+                : address.ToString();
+            knownAddress = new Uri($"https://{host}:{port.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
         }
 
         var app = builder.Build();
@@ -346,6 +359,33 @@ public sealed class NodeHost : IAsyncDisposable
             : bind;
 
         return $"{scheme}://{host}:{port.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+    }
+
+    private static IPAddress ResolveBindAddress(string bind)
+    {
+        if (IPAddress.TryParse(bind, out var address))
+        {
+            return address;
+        }
+
+        var addresses = Dns.GetHostAddresses(bind);
+        return addresses.FirstOrDefault(candidate => candidate.AddressFamily == AddressFamily.InterNetwork)
+               ?? addresses.First();
+    }
+
+    private static int FindFreePort(IPAddress address)
+    {
+        var listener = new TcpListener(address, 0);
+        listener.Start();
+
+        try
+        {
+            return ((IPEndPoint)listener.LocalEndpoint).Port;
+        }
+        finally
+        {
+            listener.Stop();
+        }
     }
 
     private static async Task SafeStopAsync(WebApplication app)

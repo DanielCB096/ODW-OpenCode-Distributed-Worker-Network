@@ -6,7 +6,12 @@
   "peer_api": {
     "bind": "tailscale",
     "port": 7421,
-    "allow_loopback": false
+    "allow_loopback": false,
+    "tls": {
+      "enabled": false,
+      "certificate_path": null,
+      "password_ref": null
+    }
   },
 
   "mcp": {

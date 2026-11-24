@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 — Nodo mínimo y delegación | 🟡 | Funcional de punta a punta con `odw serve` (279 pruebas); falta instalarlo como servicio Windows y probarlo en dos PCs reales |
+| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (280 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
 | H2 — Aprobación desde el celular | 🟡 | Named pipe + CLI hechos; falta Telegram y firma HMAC |
 | H3 — Aislamiento y políticas | ⬜ | Depende de H1; red pendiente de verificación |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -102,8 +102,9 @@ OpenCode completados (2026-11-24). Resto pendiente.
   con expiración y un solo uso.
 - ✅ `node.json` + `peers_file` + `policy.json`, secretos por `env:`/`file:` y `odw serve` en
   primer plano.
-- ⬜ Instalación como servicio Windows y prueba en dos PCs reales.
-- ✅ 279 pruebas verdes, build sin advertencias.
+- ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
+- ⬜ Cuenta dedicada y prueba en dos PCs reales.
+- ✅ 280 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor, herramientas MCP de escritura, scheduler y sandbox.
 
 **Entregables**

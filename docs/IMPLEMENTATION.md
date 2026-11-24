@@ -13,7 +13,7 @@
 ```
 src/
   Odw.Core/                  ← contrato, hash y estados (96 pruebas)
-  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (99 pruebas)
+  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (100 pruebas)
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
@@ -24,7 +24,7 @@ src/
   Odw.PeerApi/               ← esqueleto
 tests/
   Odw.Core.Tests/            ← 96 pruebas
-  Odw.Node.Tests/            ← 99 pruebas
+  Odw.Node.Tests/            ← 100 pruebas
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
@@ -279,7 +279,8 @@ Pendiente de H2: bot de Telegram, firma HMAC de la aprobación y notificación p
 | `Configuration/NodeConfig.cs` | Modelo de `node.json` (listeners, peers, políticas, scheduler, poller, aprobaciones) |
 | `Configuration/NodeConfigLoader.cs` | Carga, expande rutas, resuelve secretos y valida |
 | `Hosting/NodeBootstrap.cs` | Compone `NodeHostOptions` desde la configuración |
-| `Odw.Cli serve` | Arranca el nodo en primer plano hasta Ctrl+C |
+| `Odw.Cli/ServeHost.cs` | `IHostedService` del nodo (consola y servicio Windows) |
+| `Odw.Cli serve` | Arranca el nodo hasta Ctrl+C o parada del servicio |
 
 Reglas de configuración:
 
@@ -290,6 +291,11 @@ Reglas de configuración:
 - `policy` es una ruta a `policy.json`; si se omite, se aplica `ASK` por defecto.
 - `scheduler.enabled` exige `opencode.executable` y al menos un repo registrado.
 - `approvals.pipe_name` debe coincidir con el `--pipe` del CLI.
+- `peer_api.tls.enabled` exige `certificate_path` (PFX con clave privada) y permite
+  `password_ref`; con TLS el listener de pares usa **HTTPS**.
+- `odw serve` usa el *host* de .NET: Ctrl+C en consola y parada del servicio Windows.
+- `odw service install` crea el servicio con `sc.exe` (requiere consola elevada y un
+  `odw.exe` publicado con `dotnet publish`).
 
 Ejemplo completo en `config/node.example.json` (`config/peers.example.json` como `peers_file`).
 
@@ -299,8 +305,8 @@ $env:ODW_PEER_TOKEN_LAPTOP = '<token-compartido>'
 odw serve --config config\node.example.json
 ```
 
-Límites: `odw serve` es un proceso en primer plano; instalar como **servicio Windows** y TLS en
-la API de pares quedan pendientes. El modo desarrollo puede usar loopback con
+Límites: el servicio se instala con `sc.exe` pero aún no se configura la cuenta `odw-svc` ni se
+prueba en dos PCs reales. El modo desarrollo puede usar loopback con
 `peer_api.allow_loopback: true`.
 
 ---
@@ -313,6 +319,8 @@ dotnet test Odw.slnx
 dotnet run --project src/Odw.Cli -- init --db .\odw.db
 dotnet run --project src/Odw.Cli -- doctor --db .\odw.db --mcp-token <base64-32B> --json
 dotnet run --project src/Odw.Cli -- serve --config config\node.example.json
+# instalación como servicio (consola elevada, odw.exe publicado)
+odw service install --config C:\ODW\node.json --exe C:\ODW\odw.exe
 
 # integración real con OpenCode (opt-in). Modelo gratuito por defecto;
 # si no está disponible, fija ODW_TEST_MODEL (fallback acordado).
@@ -325,7 +333,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **279/279 pruebas** (96 Core + 99 Node + 26 MCP + 23 OpenCode + 28 Policy + 7 Sandbox).
+Estado actual: build 0 warnings, **280/280 pruebas** (96 Core + 100 Node + 26 MCP + 23 OpenCode + 28 Policy + 7 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---
@@ -361,7 +369,7 @@ La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no 
 
 ## 14. Siguiente
 
-1. Instalar `odw serve` como servicio Windows (`sc.exe`/`UseWindowsService`) y TLS en pares.
+1. Cuenta dedicada `odw-svc` para el servicio y prueba en dos PCs reales.
 2. Bot de Telegram + firma HMAC de aprobaciones (resto de H2).
 3. `Odw.Sandbox` H3: usuario `odw-agent`, ACLs y red restringida.
 4. Protocolo restante: SSE de eventos, mensajes, cancelación y artefactos.
