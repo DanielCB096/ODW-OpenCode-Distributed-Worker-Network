@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Odw.Core\Odw.Core.csproj" />
+    <ProjectReference Include="..\Odw.Policy\Odw.Policy.csproj" />
+    <ProjectReference Include="..\Odw.Trust\Odw.Trust.csproj" />
+    <ProjectReference Include="..\Odw.Sandbox\Odw.Sandbox.csproj" />
+    <ProjectReference Include="..\Odw.Executors.OpenCode\Odw.Executors.OpenCode.csproj" />
+    <ProjectReference Include="..\Odw.PeerApi\Odw.PeerApi.csproj" />
+    <ProjectReference Include="..\Odw.Mcp\Odw.Mcp.csproj" />
+    <ProjectReference Include="..\Odw.Approvals\Odw.Approvals.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Persistence\Migrations\*.sql" />
+  </ItemGroup>
+</Project>

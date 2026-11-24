@@ -1,0 +1,60 @@
+{
+  "node_id": "PC-MAIN",
+
+  "data_dir": "%PROGRAMDATA%\\ODW",
+
+  "peer_api": {
+    "bind": "tailscale",
+    "port": 7421,
+    "allow_loopback": false
+  },
+
+  "mcp": {
+    "bind": "127.0.0.1",
+    "port": 7422,
+    "token_ref": "env:ODW_MCP_TOKEN"
+  },
+
+  "opencode": {
+    "executable": "C:\\ruta\\a\\opencode.cmd",
+    "pinned_version": "2.3.2",
+    "use_job_object": true
+  },
+
+  "workspaces": {
+    "root": "%PROGRAMDATA%\\ODW\\workspaces",
+    "keep": false
+  },
+
+  "repos": [
+    {
+      "name": "SistemaMaestro",
+      "path": "D:\\proyectos\\SistemaMaestro",
+      "base_ref": "main"
+    }
+  ],
+
+  "peers_file": "peers.example.json",
+
+  "policy": "policy.example.json",
+
+  "capabilities": ["git", "dotnet", "opencode"],
+  "accepts": ["analysis", "test_run"],
+
+  "scheduler": {
+    "enabled": true,
+    "max_concurrent": 1,
+    "poll_seconds": 2
+  },
+
+  "poller": {
+    "enabled": true,
+    "interval_seconds": 5
+  },
+
+  "approvals": {
+    "enabled": true,
+    "pipe_name": "odw-approvals",
+    "ttl_minutes": 15
+  }
+}

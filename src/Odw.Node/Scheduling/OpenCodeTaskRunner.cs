@@ -1,0 +1,200 @@
+using Odw.Core.Contracts;
+using Odw.Core.Model;
+using Odw.Executors.OpenCode;
+using Odw.Node.Persistence;
+using Odw.Sandbox.Windows;
+
+namespace Odw.Node.Scheduling;
+
+public sealed record OpenCodeTaskRunnerOptions
+{
+    public required string Executable { get; init; }
+
+    public string? PinnedVersion { get; init; } = "2.3.2";
+
+    public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
+
+    public TimeSpan StartupTimeout { get; init; } = TimeSpan.FromSeconds(30);
+
+    public TimeSpan ExecutionTimeout { get; init; } = TimeSpan.FromMinutes(45);
+
+    public ToolPermissionHandler? PermissionHandler { get; init; }
+
+    /// <summary>Permite construir un handler por tarea (política + contexto del contrato).</summary>
+    public Func<ExecutionRequest, ToolPermissionHandler?>? PermissionHandlerFactory { get; init; }
+
+    /// <summary>En Windows, asigna el servidor de OpenCode a un Job Object con los límites de la tarea.</summary>
+    public bool UseJobObject { get; init; } = true;
+
+    /// <summary>Espera para que el stream SSE quede suscrito antes de enviar el prompt.</summary>
+    public TimeSpan SubscribeDelay { get; init; } = TimeSpan.FromMilliseconds(300);
+}
+
+/// <summary>
+/// Runner real: workspace preparado → OpenCode bajo Job Object → sesión, stream y prompt →
+/// resultado. Sin usuario restringido ni ACL todavía (H3); el límite de recursos sí se aplica.
+/// </summary>
+public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
+{
+    private readonly OpenCodeTaskRunnerOptions _options;
+
+    public OpenCodeTaskRunner(OpenCodeTaskRunnerOptions options)
+    {
+        _options = options ?? throw new ArgumentNullException(nameof(options));
+        ArgumentException.ThrowIfNullOrWhiteSpace(options.Executable);
+    }
+
+    public async Task<ExecutionResult> RunAsync(
+        ExecutionRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        JobObject? job = null;
+        if (_options.UseJobObject && OperatingSystem.IsWindows())
+        {
+            job = JobObject.Create(
+                JobLimits.FromTask(
+                    request.Contract.Limits.MaxMemoryGb,
+                    request.Contract.Limits.MaxProcesses,
+                    request.Contract.Limits.MaxMinutes),
+                $"odw-{request.Snapshot.TaskId}");
+        }
+
+        try
+        {
+            await using var server = await OpenCodeServer.StartAsync(new OpenCodeServerOptions
+            {
+                Executable = _options.Executable,
+                WorkingDirectory = request.WorkspacePath,
+                PinnedVersion = _options.PinnedVersion,
+                StartupTimeout = _options.StartupTimeout,
+                AttachProcess = job is null
+                    ? null
+                    : process =>
+                    {
+                        job!.Assign(process);
+                        return job;
+                    },
+            }, cancellationToken).ConfigureAwait(false);
+
+            using var client = new OpenCodeClient(server.Connection);
+            var handler = _options.PermissionHandlerFactory?.Invoke(request) ?? _options.PermissionHandler;
+            var executor = new OpenCodeExecutor(client, handler, _options.TimeProvider);
+
+            var session = await executor.StartAsync(new ExecutorStartRequest(
+                request.Snapshot.TaskId,
+                request.WorkspacePath,
+                request.Contract.Instructions,
+                request.Contract.Executor.ModelHint,
+                new ExecutorLimits(
+                    request.Contract.Limits.MaxMinutes,
+                    request.Contract.Limits.MaxMemoryGb,
+                    request.Contract.Limits.MaxProcesses,
+                    request.Contract.Limits.Network == NetworkAccess.Allow,
+                    request.Contract.Limits.MaxCostUsd),
+                ToolPolicy.AskAll,
+                new Dictionary<string, string>()), cancellationToken).ConfigureAwait(false);
+
+            using var execution = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            execution.CancelAfter(_options.ExecutionTimeout);
+
+            var events = new List<ExecutorEvent>();
+            var pump = Task.Run(async () =>
+            {
+                await foreach (var item in executor.StreamAsync(session.SessionId, execution.Token)
+                                   .ConfigureAwait(false))
+                {
+                    events.Add(item);
+                }
+            }, execution.Token);
+
+            if (_options.SubscribeDelay > TimeSpan.Zero)
+            {
+                await Task.Delay(_options.SubscribeDelay, execution.Token).ConfigureAwait(false);
+            }
+
+            await executor.SendAsync(
+                session.SessionId,
+                request.Contract.Instructions,
+                MessageDelivery.Queue,
+                execution.Token).ConfigureAwait(false);
+
+            try
+            {
+                await pump.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                return new ExecutionResult(
+                    ExecutorOutcomeKind.Failed,
+                    ResultJson("failed", "TIMEOUT: la ejecución excedió el tiempo.", request.WorkspaceBranch, review: false));
+            }
+
+            var terminal = events.LastOrDefault(item => item.Kind is
+                ExecutorEventKind.Completed or ExecutorEventKind.Failed or ExecutorEventKind.Interrupted);
+
+            var failedTools = events.Any(item => item.Kind == ExecutorEventKind.ToolFailed);
+            var summary = await SummaryAsync(client, session.SessionId, cancellationToken).ConfigureAwait(false);
+
+            return terminal?.Kind switch
+            {
+                ExecutorEventKind.Completed => new ExecutionResult(
+                    ExecutorOutcomeKind.Succeeded,
+                    ResultJson(
+                        failedTools ? "review_required" : "succeeded",
+                        summary,
+                        request.WorkspaceBranch,
+                        failedTools),
+                    failedTools),
+                ExecutorEventKind.Interrupted => new ExecutionResult(
+                    ExecutorOutcomeKind.Interrupted,
+                    ResultJson("cancelled", summary, request.WorkspaceBranch, review: false)),
+                _ => new ExecutionResult(
+                    ExecutorOutcomeKind.Failed,
+                    ResultJson("failed", terminal?.Detail ?? summary, request.WorkspaceBranch, review: false)),
+            };
+        }
+        finally
+        {
+            job?.Dispose();
+        }
+    }
+
+    private static async Task<string> SummaryAsync(
+        OpenCodeClient client,
+        string sessionId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var messages = await client.GetMessagesAsync(sessionId, cancellationToken).ConfigureAwait(false);
+            var text = messages
+                .Where(message => message.Type == "assistant")
+                .SelectMany(message => message.TextParts)
+                .LastOrDefault();
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return string.Empty;
+            }
+
+            return text.Length <= 8192 ? text : text[..8192];
+        }
+        catch (OpenCodeApiException)
+        {
+            return string.Empty;
+        }
+    }
+
+    private static string ResultJson(string outcome, string summary, string branch, bool review)
+        => PersistenceJson.Serialize(new
+        {
+            outcome,
+            summary_md = summary,
+            changed_paths = Array.Empty<string>(),
+            branch = string.IsNullOrWhiteSpace(branch) ? null : branch,
+            commit = (string?)null,
+            requires_review = review,
+        });
+}

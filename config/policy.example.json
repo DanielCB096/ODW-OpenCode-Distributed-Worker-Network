@@ -1,0 +1,56 @@
+{
+  "$schema": "../docs/schemas/policy.schema.json",
+  "version": 1,
+  "default": "ASK",
+  "rules": [
+    {
+      "id": "deny-unknown-peer",
+      "priority": 5,
+      "effect": "DENY",
+      "when": { "peer_trust": ["blocked", "unknown"] },
+      "reason": "Par no autorizado"
+    },
+    {
+      "id": "deny-dangerous-actions",
+      "priority": 10,
+      "effect": "DENY",
+      "when": { "any_action": ["publish", "deploy", "merge_main", "read_credentials"] },
+      "reason": "Publicar, desplegar, fusionar a main o leer credenciales está prohibido"
+    },
+    {
+      "id": "ask-code-change",
+      "priority": 20,
+      "effect": "ASK",
+      "when": { "direction": "in", "kind": "code_change" },
+      "reason": "Cambios de código requieren aprobación local (MVP)"
+    },
+    {
+      "id": "ask-network",
+      "priority": 25,
+      "effect": "ASK",
+      "when": { "limits": { "network": "allow" } },
+      "reason": "El acceso a red requiere aprobación explícita"
+    },
+    {
+      "id": "auto-analysis-trusted",
+      "priority": 30,
+      "effect": "AUTO",
+      "when": {
+        "direction": "in",
+        "kind": ["analysis", "test_run"],
+        "mode": "read_only",
+        "peer_trust": "trusted",
+        "limits": { "max_minutes": { "lte": 60 }, "network": "none" },
+        "capabilities_all": ["git"]
+      },
+      "reason": "Análisis de solo lectura desde par de confianza, sin red"
+    },
+    {
+      "id": "ask-own-delegation",
+      "priority": 40,
+      "effect": "ASK",
+      "when": { "direction": "out" },
+      "reason": "Toda delegación saliente requiere aprobación humana en el MVP"
+    }
+  ]
+}

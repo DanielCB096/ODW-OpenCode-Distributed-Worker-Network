@@ -1,0 +1,29 @@
+## Build
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+.vs/
+
+## Test
+TestResults/
+*.trx
+*.coverage
+
+## ODW local data (never commit)
+.odw/
+odw.db
+odw.db-wal
+odw.db-shm
+*.log
+
+## Secrets (references only, never values)
+.env
+*.secret
+*secrets*.json
+!config/*.example.json
+
+## OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,19 @@
+{
+  "$comment": "Pares conocidos. Los secretos NO se guardan aquí: solo referencias env:NAME o file:ruta.",
+  "peers": [
+    {
+      "node_id": "PC-LAPTOP",
+      "address": "pc-laptop.tailnet-xxxx.ts.net:7421",
+      "token_ref": "env:ODW_PEER_TOKEN_LAPTOP",
+      "trust": "trusted",
+      "capabilities": ["git", "dotnet", "gpu"]
+    },
+    {
+      "node_id": "PC-OFFICE",
+      "address": "100.101.102.103:7421",
+      "token_ref": "file:%PROGRAMDATA%\\ODW\\secrets\\peer-office.token",
+      "trust": "limited",
+      "capabilities": ["git"]
+    }
+  ]
+}

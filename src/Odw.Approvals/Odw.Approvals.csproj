@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Odw.Core\Odw.Core.csproj" />
+    <ProjectReference Include="..\Odw.Trust\Odw.Trust.csproj" />
+  </ItemGroup>
+</Project>

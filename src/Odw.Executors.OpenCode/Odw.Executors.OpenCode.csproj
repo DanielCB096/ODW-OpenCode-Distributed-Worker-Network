@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Odw.Core\Odw.Core.csproj" />
+  </ItemGroup>
+</Project>

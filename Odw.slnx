@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Odw.Approvals/Odw.Approvals.csproj" />
+    <Project Path="src/Odw.Cli/Odw.Cli.csproj" />
+    <Project Path="src/Odw.Core/Odw.Core.csproj" />
+    <Project Path="src/Odw.Executors.OpenCode/Odw.Executors.OpenCode.csproj" />
+    <Project Path="src/Odw.Mcp/Odw.Mcp.csproj" />
+    <Project Path="src/Odw.Node/Odw.Node.csproj" />
+    <Project Path="src/Odw.PeerApi/Odw.PeerApi.csproj" />
+    <Project Path="src/Odw.Policy/Odw.Policy.csproj" />
+    <Project Path="src/Odw.Sandbox/Odw.Sandbox.csproj" />
+    <Project Path="src/Odw.Trust/Odw.Trust.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Odw.Core.Tests/Odw.Core.Tests.csproj" />
+    <Project Path="tests/Odw.Executors.OpenCode.Tests/Odw.Executors.OpenCode.Tests.csproj" />
+    <Project Path="tests/Odw.Mcp.Tests/Odw.Mcp.Tests.csproj" />
+    <Project Path="tests/Odw.Node.Tests/Odw.Node.Tests.csproj" />
+    <Project Path="tests/Odw.Policy.Tests/Odw.Policy.Tests.csproj" />
+    <Project Path="tests/Odw.Sandbox.Tests/Odw.Sandbox.Tests.csproj" />
+  </Folder>
+</Solution>

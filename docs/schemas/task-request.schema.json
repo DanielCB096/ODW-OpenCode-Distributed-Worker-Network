@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://odw.local/schemas/task-request.schema.json",
+  "title": "ODW TaskRequest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version", "task_id", "origin_node", "target_node", "lineage",
+    "kind", "instructions", "workspace", "limits", "executor", "created_at", "expires_at"
+  ],
+  "properties": {
+    "protocol_version": { "const": 1 },
+    "task_id": { "$ref": "#/$defs/ulid" },
+    "origin_node": { "$ref": "#/$defs/nodeId" },
+    "target_node": { "$ref": "#/$defs/nodeId" },
+    "parent_task_id": { "anyOf": [{ "$ref": "#/$defs/ulid" }, { "type": "null" }] },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hops", "max_depth"],
+      "properties": {
+        "hops": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/nodeId" }
+        },
+        "max_depth": { "type": "integer", "minimum": 0, "maximum": 3 }
+      }
+    },
+    "kind": { "enum": ["analysis", "test_run", "code_change"] },
+    "instructions": { "type": "string", "minLength": 1, "maxLength": 65536 },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "base_ref", "mode", "allowed_paths"],
+      "properties": {
+        "repo": { "$ref": "#/$defs/repoName" },
+        "base_ref": { "$ref": "#/$defs/gitRef" },
+        "mode": { "enum": ["read_only", "read_write_worktree"] },
+        "strategy": { "enum": ["snapshot", "clone", "worktree"], "default": "clone" },
+        "allowed_paths": {
+          "type": "array", "minItems": 1, "maxItems": 64,
+          "items": { "$ref": "#/$defs/relativePath" }
+        },
+        "denied_paths": {
+          "type": "array", "maxItems": 64,
+          "items": { "$ref": "#/$defs/relativePath" },
+          "default": []
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_minutes", "max_memory_gb", "max_processes", "network"],
+      "properties": {
+        "max_minutes": { "type": "integer", "minimum": 1, "maximum": 240 },
+        "max_memory_gb": { "type": "integer", "minimum": 1, "maximum": 1024 },
+        "max_processes": { "type": "integer", "minimum": 1, "maximum": 512 },
+        "network": { "enum": ["none", "allow"] },
+        "max_cost_usd": { "type": "number", "minimum": 0, "maximum": 100, "default": 5 }
+      }
+    },
+    "executor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "opencode" },
+        "model_hint": { "anyOf": [{ "type": "string", "maxLength": 128 }, { "type": "null" }] }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "approval": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["approval_id", "task_hash", "approved_by", "approved_at", "nonce", "signature"],
+          "properties": {
+            "approval_id": { "$ref": "#/$defs/ulid" },
+            "task_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+            "approved_by": { "type": "string", "pattern": "^(human:(telegram|cli):.+)$" },
+            "approved_at": { "type": "string", "format": "date-time" },
+            "nonce": { "type": "string", "minLength": 16, "maxLength": 128 },
+            "signature": { "type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$" }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "code_change" } }, "required": ["kind"] },
+      "then": { "properties": { "workspace": { "properties": { "mode": { "const": "read_write_worktree" } } } } }
+    }
+  ],
+  "$defs": {
+    "ulid": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
+    "nodeId": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9-]{1,31}$" },
+    "repoName": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$" },
+    "gitRef": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[^\\s~^:?*\\[\\\\]+$" },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!/)(?!^\\.\\.(?:/|$))(?!.*\\/\\.\\.(?:/|$))(?!.*:)(?!.*\\\\)(?!.*//)(?!.*[ .]$)[A-Za-z0-9._\\- /]+$"
+    }
+  }
+}

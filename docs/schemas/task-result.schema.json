@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://odw.local/schemas/task-result.schema.json",
+  "title": "ODW TaskResult v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "task_id", "state", "outcome", "summary_md", "started_at", "finished_at"],
+  "properties": {
+    "protocol_version": { "const": 1 },
+    "task_id": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
+    "state": { "enum": ["COMPLETED", "FAILED", "REVIEW_REQUIRED", "CANCELLED"] },
+    "outcome": { "enum": ["succeeded", "failed", "review_required", "cancelled"] },
+    "summary_md": { "type": "string", "maxLength": 8192 },
+    "changed_paths": {
+      "type": "array", "maxItems": 2048,
+      "items": { "type": "string", "maxLength": 512 }
+    },
+    "branch": { "anyOf": [{ "type": "string", "maxLength": 256 }, { "type": "null" }] },
+    "commit": { "anyOf": [{ "type": "string", "pattern": "^[0-9a-f]{7,40}$" }, { "type": "null" }] },
+    "diff_sha256": { "anyOf": [{ "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }, { "type": "null" }] },
+    "tests": {
+      "type": "array", "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status"],
+        "properties": {
+          "name": { "type": "string", "maxLength": 256 },
+          "status": { "enum": ["passed", "failed", "skipped"] },
+          "duration_ms": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array", "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "bytes", "sha256", "content_type"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,64}$" },
+          "bytes": { "type": "integer", "minimum": 0, "maximum": 2097152 },
+          "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "content_type": { "type": "string", "maxLength": 128 }
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tokens_in": { "type": "integer", "minimum": 0 },
+        "tokens_out": { "type": "integer", "minimum": 0 },
+        "cost_usd": { "type": "number", "minimum": 0 }
+      }
+    },
+    "model_used": { "anyOf": [{ "type": "string", "maxLength": 128 }, { "type": "null" }] },
+    "error": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string", "maxLength": 64 },
+            "message": { "type": "string", "maxLength": 2048 },
+            "retryable": { "type": "boolean", "default": false }
+          }
+        }
+      ]
+    },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" }
+  }
+}
