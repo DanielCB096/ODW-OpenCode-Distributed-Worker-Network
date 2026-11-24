@@ -62,6 +62,10 @@ public sealed record NodeHostOptions
 
     public ApprovalOptions? ApprovalOptions { get; init; }
 
+    public ApprovalSigner? ApprovalSigner { get; init; }
+
+    public TelegramApprovalOptions? TelegramApprovals { get; init; }
+
     public string? OpenCodeVersion { get; init; } = "2.3.2";
 
     public bool Pooling { get; init; } = true;

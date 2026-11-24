@@ -1,4 +1,4 @@
-?# ODW — Estado de implementación
+# ODW — Estado de implementación
 
 > Última actualización: 2026-11-24. Refleja lo que **existe y compila**, no lo planeado.
 
@@ -13,7 +13,7 @@
 ```
 src/
   Odw.Core/                  ← contrato, hash y estados (96 pruebas)
-  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (100 pruebas)
+  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (104 pruebas)
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
@@ -24,7 +24,7 @@ src/
   Odw.PeerApi/               ← esqueleto
 tests/
   Odw.Core.Tests/            ← 96 pruebas
-  Odw.Node.Tests/            ← 100 pruebas
+  Odw.Node.Tests/            ← 104 pruebas
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
@@ -256,6 +256,9 @@ y con un token **compartido por par** (bidireccional) en vez de tokens direccion
 | `Node/Approvals/ApprovalService.cs` | Crear/listar/decidir/expirar/consumir + auditoría |
 | `Node/Approvals/ApprovalCoordinator.cs` | Aplica la decisión, transiciona y envía si se aprobó |
 | `Node/Approvals/ApprovalPipeServer.cs` | Named pipe con comandos `list/approve/deny/expire` |
+| `Node/Approvals/ApprovalSigner.cs` | HMAC-SHA-256 sobre la decisión (hash, nonce, approver, fecha) |
+| `Node/Approvals/TelegramApprovalService.cs` | Notificaciones y callbacks con allowlist |
+| `Approvals/TelegramClient.cs` | `getUpdates`, `sendMessage` con teclado inline, `answerCallbackQuery` |
 | `Approvals/ApprovalPipeClient.cs` | Cliente del pipe para el CLI |
 | `Cli` | `odw approvals list|approve|deny|expire` |
 
@@ -266,9 +269,14 @@ Garantías:
 - Expira (15 min por defecto) y es de **un solo uso** (`used_at`).
 - Aprobar transiciona `WAITING_APPROVAL → APPROVED` y envía; denegar → `REJECTED`.
 - Cada solicitud y decisión queda en la auditoría encadenada.
+- La decisión se firma con **HMAC-SHA-256**; `ApprovalService.Verify` detecta manipulación o clave
+  distinta. La clave se toma de `approvals.hmac_key_ref` (`env:`/`file:`) o se genera en
+  `<data_dir>/approvals.key` la primera vez.
 - La DACL del pipe por defecto es administradores + SYSTEM; en pruebas se usa la ACL del proceso.
+- **Telegram** (opt-in): long polling saliente, allowlist de `user_id` y `chat_id`, botones
+  Aprobar/Denegar y respuesta al callback. No abre puertos.
 
-Pendiente de H2: bot de Telegram, firma HMAC de la aprobación y notificación proactiva.
+Pendiente: probar con un bot real (no hay token en el repositorio).
 
 ---
 
@@ -291,6 +299,8 @@ Reglas de configuración:
 - `policy` es una ruta a `policy.json`; si se omite, se aplica `ASK` por defecto.
 - `scheduler.enabled` exige `opencode.executable` y al menos un repo registrado.
 - `approvals.pipe_name` debe coincidir con el `--pipe` del CLI.
+- `approvals.telegram.enabled` exige `bot_token_ref`, `allowed_user_ids` y `allowed_chat_ids`.
+- `approvals.hmac_key_ref` es opcional; si falta, se genera `<data_dir>/approvals.key`.
 - `peer_api.tls.enabled` exige `certificate_path` (PFX con clave privada) y permite
   `password_ref`; con TLS el listener de pares usa **HTTPS**.
 - `odw serve` usa el *host* de .NET: Ctrl+C en consola y parada del servicio Windows.
@@ -333,7 +343,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **280/280 pruebas** (96 Core + 100 Node + 26 MCP + 23 OpenCode + 28 Policy + 7 Sandbox).
+Estado actual: build 0 warnings, **284/284 pruebas** (96 Core + 104 Node + 26 MCP + 23 OpenCode + 28 Policy + 7 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---

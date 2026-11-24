@@ -14,7 +14,7 @@ public sealed record MigrationOutcome(int FromVersion, int ToVersion, int Applie
 /// </summary>
 public static class DatabaseMigrator
 {
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
 
     public static IReadOnlyList<Migration> LoadEmbedded(Assembly assembly)
     {

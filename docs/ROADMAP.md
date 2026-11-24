@@ -1,4 +1,4 @@
-?# ODW — Roadmap
+# ODW — Roadmap
 
 > Cada hito cierra con criterios **ejecutables**. No se avanza con criterios abiertos.
 > Estados: ✅ hecho · 🟡 parcial · ⬜ pendiente · ⛔ bloqueado.
@@ -7,8 +7,8 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (280 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
-| H2 — Aprobación desde el celular | 🟡 | Named pipe + CLI hechos; falta Telegram y firma HMAC |
+| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (284 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
+| H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ⬜ | Depende de H1; red pendiente de verificación |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
 | H5 — Colaboración y aceleración | ⬜ | Depende de H4 |
@@ -104,7 +104,7 @@ OpenCode completados (2026-11-24). Resto pendiente.
   primer plano.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
 - ⬜ Cuenta dedicada y prueba en dos PCs reales.
-- ✅ 280 pruebas verdes, build sin advertencias.
+- ✅ 284 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor, herramientas MCP de escritura, scheduler y sandbox.
 
 **Entregables**
@@ -140,9 +140,10 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ Named pipe `odw-approvals` con DACL admin+SYSTEM y comandos `list/approve/deny/expire`.
 - ✅ CLI `odw approvals ...`.
 - ✅ Vinculación `(task_id, task_hash, nonce)`, TTL 15 min y un solo uso (probado).
+- ✅ Firma HMAC-SHA-256 de la decisión y verificación.
+- ✅ Bot de Telegram: long polling, allowlist, botones y callbacks.
 - ✅ Auditoría de solicitud y decisión.
-- ⬜ Bot de Telegram con allowlist y notificaciones.
-- ⬜ Firma HMAC de la aprobación.
+- ⬜ Prueba con un bot real (falta token).
 
 **Entregables**
 

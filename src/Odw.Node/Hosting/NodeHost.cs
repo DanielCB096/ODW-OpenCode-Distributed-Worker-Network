@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using Odw.Mcp;
 using Odw.Mcp.Abstractions;
 using Odw.Mcp.Tools;
+using Odw.Approvals;
 using Odw.Node.Approvals;
 using Odw.Node.Origins;
 using Odw.Node.PeerApi;
@@ -36,6 +37,7 @@ public sealed class NodeHost : IAsyncDisposable
     private readonly ExecutionScheduler? _scheduler;
     private readonly OriginPoller? _poller;
     private readonly ApprovalPipeServer? _pipe;
+    private readonly TelegramApprovalService? _telegram;
     private bool _disposed;
 
     private NodeHost(
@@ -53,7 +55,8 @@ public sealed class NodeHost : IAsyncDisposable
         ITaskProposalService proposalService,
         ApprovalService approvals,
         ApprovalCoordinator approvalCoordinator,
-        ApprovalPipeServer? pipe)
+        ApprovalPipeServer? pipe,
+        TelegramApprovalService? telegram)
     {
         Options = options;
         _database = database;
@@ -70,6 +73,7 @@ public sealed class NodeHost : IAsyncDisposable
         Approvals = approvals;
         ApprovalCoordinator = approvalCoordinator;
         _pipe = pipe;
+        _telegram = telegram;
     }
 
     public NodeHostOptions Options { get; }
@@ -110,6 +114,7 @@ public sealed class NodeHost : IAsyncDisposable
         WebApplication? mcp = null;
         WebApplication? peer = null;
         ApprovalPipeServer? pipe = null;
+        TelegramApprovalService? telegram = null;
 
         try
         {
@@ -125,7 +130,7 @@ public sealed class NodeHost : IAsyncDisposable
             await peerStore.SyncAsync(options.Peers, cancellationToken).ConfigureAwait(false);
 
             var clients = new PeerApiClientFactory(options.NodeId);
-            var approvals = new ApprovalService(database, options.TimeProvider);
+            var approvals = new ApprovalService(database, options.TimeProvider, options.ApprovalSigner);
             var proposals = new OriginProposalService(
                 options, tasks, coordinator, registry, policy, clients, options.TimeProvider,
                 approvals, options.ApprovalOptions);
@@ -142,6 +147,17 @@ public sealed class NodeHost : IAsyncDisposable
                         Name = options.ApprovalPipeName,
                         SecurityDescriptor = options.ApprovalPipeSecurityDescriptor,
                     });
+            }
+
+            TelegramApprovalService? telegramService = null;
+            if (options.TelegramApprovals is { } telegramOptions)
+            {
+                telegramService = new TelegramApprovalService(
+                    approvals,
+                    approvalCoordinator,
+                    new TelegramClient(telegramOptions.BotToken),
+                    telegramOptions);
+                telegram = telegramService;
             }
 
             var poller = new OriginPoller(
@@ -183,6 +199,11 @@ public sealed class NodeHost : IAsyncDisposable
                 pipe!.Start();
             }
 
+            if (options.TelegramApprovals is not null)
+            {
+                telegram?.Start();
+            }
+
             ExecutionScheduler? scheduler = null;
             if (options.EnableScheduler)
             {
@@ -211,13 +232,19 @@ public sealed class NodeHost : IAsyncDisposable
                 proposals,
                 approvals,
                 approvalCoordinator,
-                options.EnableApprovals ? pipe : null);
+                options.EnableApprovals ? pipe : null,
+                telegram);
         }
         catch
         {
             if (pipe is not null)
             {
                 await pipe.DisposeAsync().ConfigureAwait(false);
+            }
+
+            if (telegram is not null)
+            {
+                await telegram.DisposeAsync().ConfigureAwait(false);
             }
 
             if (peer is not null)
@@ -247,6 +274,11 @@ public sealed class NodeHost : IAsyncDisposable
         if (_pipe is not null)
         {
             await _pipe.DisposeAsync().ConfigureAwait(false);
+        }
+
+        if (_telegram is not null)
+        {
+            await _telegram.DisposeAsync().ConfigureAwait(false);
         }
 
         if (_poller is not null)

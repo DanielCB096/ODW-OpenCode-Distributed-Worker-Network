@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using Odw.Core.Primitives;
 using Odw.Node.Hosting;
@@ -19,7 +21,15 @@ public sealed record NodeSettings(
     string? PolicyPath,
     string WorkspaceRoot,
     string? TlsCertificatePath,
-    string? TlsCertificatePassword);
+    string? TlsCertificatePassword,
+    byte[]? ApprovalHmacKey,
+    TelegramSettings? Telegram);
+
+public sealed record TelegramSettings(
+    string Token,
+    IReadOnlyList<long> AllowedUserIds,
+    IReadOnlyList<long> AllowedChatIds,
+    int PollSeconds);
 
 /// <summary>
 /// Carga `node.json`, resuelve rutas y secretos por referencia (`env:`/`file:`) y valida lo
@@ -112,6 +122,32 @@ public static class NodeConfigLoader
         }
 
         var peerBind = ResolvePeerBind(config.PeerApi, directory);
+        var approvalHmacKey = config.Approvals.Enabled
+            ? LoadApprovalKey(config.Approvals, dataDirectory, directory)
+            : null;
+
+        TelegramSettings? telegram = null;
+        if (config.Approvals.Enabled && config.Approvals.Telegram.Enabled)
+        {
+            var settings = config.Approvals.Telegram;
+
+            if (settings.BotTokenRef is null)
+            {
+                throw new NodeConfigurationException("approvals.telegram requiere bot_token_ref.");
+            }
+
+            if (settings.AllowedUserIds.Count == 0 || settings.AllowedChatIds.Count == 0)
+            {
+                throw new NodeConfigurationException(
+                    "approvals.telegram requiere allowed_user_ids y allowed_chat_ids.");
+            }
+
+            telegram = new TelegramSettings(
+                ResolveSecret(settings.BotTokenRef, directory, "approvals.telegram.bot_token_ref"),
+                settings.AllowedUserIds,
+                settings.AllowedChatIds,
+                Math.Clamp(settings.PollSeconds, 1, 50));
+        }
 
         string? tlsCertificate = null;
         string? tlsPassword = null;
@@ -146,7 +182,9 @@ public static class NodeConfigLoader
             policyPath,
             workspaceRoot,
             tlsCertificate,
-            tlsPassword);
+            tlsPassword,
+            approvalHmacKey,
+            telegram);
     }
 
     private static IReadOnlyList<PeerRegistration> LoadPeers(NodeConfig config, string directory)
@@ -292,6 +330,54 @@ public static class NodeConfigLoader
         }
 
         return null;
+    }
+
+    private static byte[] LoadApprovalKey(
+        ApprovalsConfig approvals,
+        string dataDirectory,
+        string configDirectory)
+    {
+        if (approvals.HmacKeyRef is not null)
+        {
+            return ParseKey(
+                ResolveSecret(approvals.HmacKeyRef, configDirectory, "approvals.hmac_key_ref"),
+                "approvals.hmac_key_ref");
+        }
+
+        Directory.CreateDirectory(dataDirectory);
+        var path = Path.Combine(dataDirectory, "approvals.key");
+
+        if (File.Exists(path))
+        {
+            return ParseKey(File.ReadAllText(path).Trim(), path);
+        }
+
+        var key = RandomNumberGenerator.GetBytes(32);
+        File.WriteAllText(path, Convert.ToBase64String(key));
+        return key;
+    }
+
+    private static byte[] ParseKey(string value, string what)
+    {
+        try
+        {
+            var bytes = Convert.FromBase64String(value);
+            if (bytes.Length >= 32)
+            {
+                return bytes;
+            }
+        }
+        catch (FormatException)
+        {
+        }
+
+        var text = Encoding.UTF8.GetBytes(value);
+        if (text.Length >= 32)
+        {
+            return text;
+        }
+
+        throw new NodeConfigurationException($"{what}: la clave debe tener al menos 32 bytes.");
     }
 
     private static string ResolveSecret(string reference, string directory, string what)

@@ -11,9 +11,9 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
 - Diseño cerrado y verificado contra **OpenCode 2.3.2**.
 - Delegación **A→B→resultado** funcionando: propuesta, política, envío, scheduler, workspace Git,
   Job Object, ejecutor OpenCode y poller de resultado.
-- Aprobaciones humanas por **named pipe + CLI** (Telegram y HMAC pendientes).
+- Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **280 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- **284 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
 - TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
 
 Detalle: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) · Hoja de ruta:

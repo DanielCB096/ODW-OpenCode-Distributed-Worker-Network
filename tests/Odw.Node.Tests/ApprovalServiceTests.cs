@@ -102,4 +102,26 @@ public class ApprovalServiceTests
 
         Assert.Equal(ApprovalDecisionStatus.NotFound, result.Status);
     }
+
+    [Fact]
+    public async Task Decisions_are_signed_and_tamper_evident()
+    {
+        await using var fixture = TestDatabase.Create();
+        var signer = new ApprovalSigner(new byte[32]);
+        var service = new ApprovalService(fixture.Database, fixture.Time, signer);
+        var record = await CreateRequest(service);
+
+        var approved = await service.DecideAsync(
+            record.ApprovalId, true, "human:cli:test", null, record.TaskHash);
+
+        Assert.Equal(ApprovalDecisionStatus.Approved, approved.Status);
+        Assert.StartsWith("hmac-sha256:", approved.Record!.Signature);
+        Assert.True(service.Verify(approved.Record));
+
+        var tampered = approved.Record with { Status = ApprovalStatus.Denied };
+        Assert.False(service.Verify(tampered));
+
+        var other = new ApprovalSigner(Enumerable.Repeat((byte)7, 32).ToArray());
+        Assert.False(other.Verify(approved.Record));
+    }
 }

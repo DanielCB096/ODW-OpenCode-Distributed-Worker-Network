@@ -56,6 +56,11 @@ public sealed class ApprovalCoordinator
             return result;
         }
 
+        if (result.Record is null || !_approvals.Verify(result.Record))
+        {
+            return new ApprovalDecisionResult(ApprovalDecisionStatus.HashMismatch, result.Record);
+        }
+
         var snapshot = _store.Get(record.TaskId, record.Role);
         if (snapshot is null)
         {

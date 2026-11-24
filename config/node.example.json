@@ -60,6 +60,13 @@
   "approvals": {
     "enabled": true,
     "pipe_name": "odw-approvals",
-    "ttl_minutes": 15
+    "ttl_minutes": 15,
+    "telegram": {
+      "enabled": false,
+      "bot_token_ref": null,
+      "allowed_user_ids": [],
+      "allowed_chat_ids": [],
+      "poll_seconds": 20
+    }
   }
 }

@@ -87,6 +87,18 @@ public static class NodeBootstrap
             {
                 Ttl = TimeSpan.FromMinutes(Math.Clamp(config.Approvals.TtlMinutes, 1, 1440)),
             },
+            ApprovalSigner = settings.ApprovalHmacKey is null
+                ? null
+                : new ApprovalSigner(settings.ApprovalHmacKey),
+            TelegramApprovals = settings.Telegram is null
+                ? null
+                : new TelegramApprovalOptions
+                {
+                    BotToken = settings.Telegram.Token,
+                    AllowedUserIds = settings.Telegram.AllowedUserIds,
+                    AllowedChatIds = settings.Telegram.AllowedChatIds,
+                    PollTimeoutSeconds = settings.Telegram.PollSeconds,
+                },
         };
 
         return await NodeHost.StartAsync(options, cancellationToken).ConfigureAwait(false);

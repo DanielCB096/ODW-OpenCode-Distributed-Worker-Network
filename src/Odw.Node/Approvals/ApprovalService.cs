@@ -27,7 +27,9 @@ public sealed record ApprovalRecord(
     DateTimeOffset? DecidedAt,
     string? DecidedBy,
     string? Reason,
-    DateTimeOffset? UsedAt);
+    DateTimeOffset? UsedAt,
+    string? Signature,
+    DateTimeOffset? NotifiedAt);
 
 public enum ApprovalDecisionStatus
 {
@@ -49,11 +51,13 @@ public sealed class ApprovalService
 {
     private readonly SqliteDatabase _database;
     private readonly TimeProvider _timeProvider;
+    private readonly ApprovalSigner _signer;
 
-    public ApprovalService(SqliteDatabase database, TimeProvider timeProvider)
+    public ApprovalService(SqliteDatabase database, TimeProvider timeProvider, ApprovalSigner? signer = null)
     {
         _database = database ?? throw new ArgumentNullException(nameof(database));
         _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+        _signer = signer ?? new ApprovalSigner(RandomNumberGenerator.GetBytes(32));
     }
 
     public async Task<ApprovalRecord> CreateAsync(
@@ -84,6 +88,8 @@ public sealed class ApprovalService
             ApprovalStatus.Pending,
             now,
             now.Add(ttl),
+            null,
+            null,
             null,
             null,
             null,
@@ -188,7 +194,7 @@ public sealed class ApprovalService
 
             if (record.ExpiresAt <= now)
             {
-                UpdateStatus(connection, transaction, record.ApprovalId, ApprovalStatus.Expired, now, null, null);
+                UpdateStatus(connection, transaction, record.ApprovalId, ApprovalStatus.Expired, now, null, null, null);
                 return new ApprovalDecisionResult(
                     ApprovalDecisionStatus.Expired,
                     record with { Status = ApprovalStatus.Expired });
@@ -201,7 +207,8 @@ public sealed class ApprovalService
             }
 
             var status = approved ? ApprovalStatus.Approved : ApprovalStatus.Denied;
-            UpdateStatus(connection, transaction, record.ApprovalId, status, now, decidedBy, reason);
+            var signature = _signer.Sign(record, status, now, decidedBy);
+            UpdateStatus(connection, transaction, record.ApprovalId, status, now, decidedBy, reason, signature);
 
             AuditLog.Append(
                 connection,
@@ -223,6 +230,7 @@ public sealed class ApprovalService
                 DecidedAt = now,
                 DecidedBy = decidedBy,
                 Reason = reason,
+                Signature = signature,
             };
 
             return new ApprovalDecisionResult(
@@ -252,6 +260,42 @@ public sealed class ApprovalService
         }, cancellationToken).ConfigureAwait(false);
     }
 
+    public bool Verify(ApprovalRecord record) => _signer.Verify(record);
+
+    public async Task<int> MarkNotifiedAsync(
+        IReadOnlyCollection<string> approvalIds,
+        CancellationToken cancellationToken = default)
+    {
+        if (approvalIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var now = PersistenceJson.Timestamp(_timeProvider.GetUtcNow());
+
+        return await _database.Writer.WriteAsync((connection, transaction) =>
+        {
+            var updated = 0;
+
+            foreach (var id in approvalIds)
+            {
+                using var command = connection.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText =
+                    """
+                    UPDATE approval_requests
+                       SET notified_at = $now
+                     WHERE approval_id = $id AND notified_at IS NULL;
+                    """;
+                command.Parameters.AddWithValue("$id", id);
+                command.Parameters.AddWithValue("$now", now);
+                updated += command.ExecuteNonQuery();
+            }
+
+            return updated;
+        }, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<int> ExpireAsync(CancellationToken cancellationToken = default)
     {
         var now = _timeProvider.GetUtcNow();
@@ -272,7 +316,7 @@ public sealed class ApprovalService
     }
 
     private const string Columns =
-        "approval_id, task_id, role, task_hash, summary, nonce, status, created_at, expires_at, decided_at, decided_by, reason, used_at";
+        "approval_id, task_id, role, task_hash, summary, nonce, status, created_at, expires_at, decided_at, decided_by, reason, used_at, signature, notified_at";
 
     private static ApprovalRecord? Read(
         SqliteConnection connection,
@@ -295,14 +339,16 @@ public sealed class ApprovalService
         string status,
         DateTimeOffset at,
         string? decidedBy,
-        string? reason)
+        string? reason,
+        string? signature)
     {
         using var command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText =
             """
             UPDATE approval_requests
-               SET status = $status, decided_at = $decided, decided_by = $by, reason = $reason
+               SET status = $status, decided_at = $decided, decided_by = $by,
+                   reason = $reason, signature = $signature
              WHERE approval_id = $id;
             """;
         command.Parameters.AddWithValue("$id", approvalId);
@@ -310,6 +356,7 @@ public sealed class ApprovalService
         command.Parameters.AddWithValue("$decided", PersistenceJson.Timestamp(at));
         command.Parameters.AddWithValue("$by", (object?)decidedBy ?? DBNull.Value);
         command.Parameters.AddWithValue("$reason", (object?)reason ?? DBNull.Value);
+        command.Parameters.AddWithValue("$signature", (object?)signature ?? DBNull.Value);
         command.ExecuteNonQuery();
     }
 
@@ -326,5 +373,7 @@ public sealed class ApprovalService
         reader.IsDBNull(9) ? null : PersistenceJson.ParseTimestamp(reader.GetString(9)),
         reader.IsDBNull(10) ? null : reader.GetString(10),
         reader.IsDBNull(11) ? null : reader.GetString(11),
-        reader.IsDBNull(12) ? null : PersistenceJson.ParseTimestamp(reader.GetString(12)));
+        reader.IsDBNull(12) ? null : PersistenceJson.ParseTimestamp(reader.GetString(12)),
+        reader.IsDBNull(13) ? null : reader.GetString(13),
+        reader.IsDBNull(14) ? null : PersistenceJson.ParseTimestamp(reader.GetString(14)));
 }

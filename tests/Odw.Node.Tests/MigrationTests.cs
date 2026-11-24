@@ -38,7 +38,7 @@ public class MigrationTests
             Assert.Contains(expected, tables);
         }
 
-        Assert.Equal(2L, Scalar(connection, "SELECT COUNT(*) FROM schema_version;"));
+        Assert.Equal(3L, Scalar(connection, "SELECT COUNT(*) FROM schema_version;"));
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class MigrationTests
             {
                 Assert.Equal(DatabaseMigrator.CurrentVersion, second.SchemaVersion);
                 using var connection = second.OpenReadConnection();
-                Assert.Equal(2L, Scalar(connection, "SELECT COUNT(*) FROM schema_version;"));
+                Assert.Equal(3L, Scalar(connection, "SELECT COUNT(*) FROM schema_version;"));
             }
         }
         finally
@@ -85,15 +85,15 @@ public class MigrationTests
 
             var embedded = DatabaseMigrator.LoadEmbedded(typeof(SqliteDatabase).Assembly);
             var outcome = DatabaseMigrator.Migrate(connection, embedded, time);
-            Assert.Equal(2, outcome.ToVersion);
+            Assert.Equal(3, outcome.ToVersion);
 
             var broken = new[]
             {
-                new Migration(3, "broken", "CREATE TABLE broken (x INTEGER); INSERT INTO missing VALUES (1);"),
+                new Migration(4, "broken", "CREATE TABLE broken (x INTEGER); INSERT INTO missing VALUES (1);"),
             };
 
             Assert.Throws<SqliteException>(() => DatabaseMigrator.Migrate(connection, broken, time));
-            Assert.Equal(2, DatabaseMigrator.GetUserVersion(connection));
+            Assert.Equal(3, DatabaseMigrator.GetUserVersion(connection));
             Assert.Equal(0L, Scalar(connection, "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'broken';"));
         }
         finally

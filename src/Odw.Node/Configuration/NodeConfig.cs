@@ -181,6 +181,30 @@ public sealed record ApprovalsConfig
     [JsonPropertyName("ttl_minutes")]
     public int TtlMinutes { get; init; } = 15;
 
+    [JsonPropertyName("hmac_key_ref")]
+    public string? HmacKeyRef { get; init; }
+
     [JsonPropertyName("security_descriptor")]
     public string? SecurityDescriptor { get; init; } = "D:(A;;GA;;;BA)(A;;GA;;;SY)";
+
+    [JsonPropertyName("telegram")]
+    public TelegramConfig Telegram { get; init; } = new();
+}
+
+public sealed record TelegramConfig
+{
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; init; }
+
+    [JsonPropertyName("bot_token_ref")]
+    public string? BotTokenRef { get; init; }
+
+    [JsonPropertyName("allowed_user_ids")]
+    public List<long> AllowedUserIds { get; init; } = [];
+
+    [JsonPropertyName("allowed_chat_ids")]
+    public List<long> AllowedChatIds { get; init; } = [];
+
+    [JsonPropertyName("poll_seconds")]
+    public int PollSeconds { get; init; } = 20;
 }
