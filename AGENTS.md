@@ -12,7 +12,7 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
 
 ## Estado actual (2026-11-25)
 
-- **328/328 pruebas**, build sin advertencias; commit de referencia `2ca1f24`.
+- **328/328 pruebas**, build sin advertencias; commit de referencia `ebdf119`.
 - H0, H1 (loopback), H2 (pipe/CLI/HMAC) y H3 cerrados.
 - Pendiente: prueba real en dos PCs/Tailscale, artefactos descargables, Telegram real, H4.
 
