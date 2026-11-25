@@ -80,6 +80,20 @@ dotnet publish src/Odw.Cli -c Release -o .\publish
 .\publish\odw.exe service status
 ```
 
+## Sandbox (H3)
+
+Con una consola **elevada** (token sin filtrar), provisiona el agente y la red:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/provision-sandbox.ps1
+odw sandbox check
+```
+
+El script crea `odw-agent`, guarda su secreto con DPAPI de máquina, aplica ACLs al workspace y
+bloquea la salida de red del agente. `odw sandbox check` debe mostrar `admin: True`,
+`agent: True` y `enforced: True`. El lanzamiento de `opencode` como `odw-agent` sigue pendiente:
+hasta entonces las ACLs no protegen del proceso del servicio y así se documenta.
+
 ## CLI
 
 | Comando | Uso |
