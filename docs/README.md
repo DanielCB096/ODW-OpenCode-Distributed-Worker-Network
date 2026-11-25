@@ -29,7 +29,7 @@ Ver `IMPLEMENTATION.md` y `HANDOFF.md`.
 | Escribir pruebas | `TESTING.md` |
 | Saber qué sigue | `ROADMAP.md` |
 | Ver qué está implementado y cómo compilar | `IMPLEMENTATION.md` |
-| **Continuar el proyecto desde otra PC** | **`HANDOFF.md`** |
+| **Continuar el proyecto desde otra PC** | **`HANDOFF.md` / `../CONTINUE.md`** |
 | Consultar el grafo del código | `../graphify-out/GRAPH_REPORT.md` |
 
 Referencia cruda: `reference/opencode-2.3.2-openapi.json` (OpenAPI 3.1, 143 rutas,

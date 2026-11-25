@@ -8,7 +8,7 @@
 
 Este documento es el punto de entrada para retomar el proyecto en otro equipo sin depender de
 la memoria de una sesión. El diseño detallado vive en `docs/`; el grafo del código en
-`graphify-out/`.
+`graphify-out/`. Para una puesta en marcha rápida, usa [`../CONTINUE.md`](../CONTINUE.md).
 
 ---
 

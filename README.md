@@ -6,8 +6,8 @@ y con aprobación humana fuera de banda.
 
 Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Network>
 
-> Continuar desde otra PC: [`docs/HANDOFF.md`](docs/HANDOFF.md) · Grafo:
-> [`graphify-out/GRAPH_REPORT.md`](graphify-out/GRAPH_REPORT.md)
+> Continuar desde otra PC: [`CONTINUE.md`](CONTINUE.md) · [`docs/HANDOFF.md`](docs/HANDOFF.md)
+> · Grafo: [`graphify-out/GRAPH_REPORT.md`](graphify-out/GRAPH_REPORT.md)
 
 ## Estado
 

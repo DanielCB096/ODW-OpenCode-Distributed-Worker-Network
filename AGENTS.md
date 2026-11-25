@@ -1,8 +1,8 @@
 # AGENTS.md — ODW
 
 Guía para cualquier agente que retome este repositorio. La guía completa de continuidad está en
-[`docs/HANDOFF.md`](docs/HANDOFF.md); el estado técnico en
-[`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md).
+[`docs/HANDOFF.md`](docs/HANDOFF.md); la puesta en marcha rápida en [`CONTINUE.md`](CONTINUE.md);
+el estado técnico en [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md).
 
 ## Qué es
 
