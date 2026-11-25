@@ -81,6 +81,18 @@ public sealed record SandboxConfig
     /// <summary>Puerto de loopback del proxy; WFP solo permite ese puerto.</summary>
     [JsonPropertyName("network_proxy_port")]
     public int NetworkProxyPort { get; init; } = 7423;
+
+    /// <summary>Raíz de perfiles de ejecución desechables (uno por tarea).</summary>
+    [JsonPropertyName("runtime_root")]
+    public string RuntimeRoot { get; init; } = @"%PROGRAMDATA%\ODW\runtime";
+
+    /// <summary>Plantilla de opencode.json para el agente (solo lectura).</summary>
+    [JsonPropertyName("agent_config_path")]
+    public string AgentConfigPath { get; init; } = @"%PROGRAMDATA%\ODW\agent-config\opencode.json";
+
+    /// <summary>Marca escrita por el instalador WFP; el servicio sin privilegios la usa.</summary>
+    [JsonPropertyName("network_state_path")]
+    public string NetworkStatePath { get; init; } = @"%PROGRAMDATA%\ODW\network.state";
 }
 
 public sealed record PeerApiConfig

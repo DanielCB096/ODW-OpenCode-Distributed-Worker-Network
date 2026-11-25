@@ -221,7 +221,10 @@ public sealed class WorkspaceManager : IWorkspacePreparer
 
         var grant = await RunToolAsync(
             "icacls",
-            [workspace, "/grant:r", $"{service}:(OI)(CI)F", "/grant:r", $"{agent}:{agentRights}", "/T"],
+            [workspace, "/grant:r", $"{service}:(OI)(CI)F",
+                "/grant:r", "*S-1-5-18:(OI)(CI)F",
+                "/grant:r", "*S-1-5-32-544:(OI)(CI)F",
+                "/grant:r", $"{agent}:{agentRights}", "/T"],
             cancellationToken).ConfigureAwait(false);
 
         if (grant.ExitCode != 0)

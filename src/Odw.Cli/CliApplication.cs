@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text.Json.Nodes;
 using Odw.Approvals;
@@ -88,7 +89,7 @@ public static class CliApplication
         if (args.Length == 0 || args[0] is "--help" or "-h")
         {
             Console.WriteLine("Uso: odw sandbox check [--agent <cuenta>]");
-            Console.WriteLine("     odw sandbox net <install|uninstall|status> [--agent <cuenta>] [--port 7423]");
+            Console.WriteLine("     odw sandbox net <install|uninstall|status> [--agent <cuenta>] [--port 7423] [--state <ruta>]");
             return 0;
         }
 
@@ -131,6 +132,7 @@ public static class CliApplication
         var action = args.Length > 0 ? args[0] : "status";
         var agent = "odw-agent";
         var port = 7423;
+        var statePath = WfpNetworkPolicy.DefaultStatePath;
 
         for (var i = 1; i < args.Length; i++)
         {
@@ -145,6 +147,10 @@ public static class CliApplication
                     return UsageError("--port no es un número válido.");
                 }
             }
+            else if (args[i] == "--state" && i + 1 < args.Length)
+            {
+                statePath = args[++i];
+            }
             else
             {
                 return UsageError($"Opción desconocida: {args[i]}.");
@@ -156,18 +162,18 @@ public static class CliApplication
             switch (action)
             {
                 case "install":
-                    WfpNetworkPolicy.Install(agent, port);
+                    WfpNetworkPolicy.Install(agent, port, statePath);
                     Console.WriteLine(
                         $"WFP instalado para {agent}: salida bloqueada; solo loopback:{port}.");
                     return 0;
 
                 case "uninstall":
-                    WfpNetworkPolicy.Uninstall();
+                    WfpNetworkPolicy.Uninstall(statePath);
                     Console.WriteLine("WFP de ODW eliminado.");
                     return 0;
 
                 case "status":
-                    var installed = WfpNetworkPolicy.IsInstalled();
+                    var installed = WfpNetworkPolicy.IsInstalled(statePath);
                     Console.WriteLine($"network:      {installed}");
                     return installed ? 0 : 1;
 
@@ -200,6 +206,8 @@ public static class CliApplication
         var command = args[0];
         string? configPath = null;
         string? executable = null;
+        string? account = null;
+        string? secretPath = null;
         var name = "OdwNode";
 
         for (var i = 1; i < args.Length; i++)
@@ -212,6 +220,12 @@ public static class CliApplication
                     break;
                 case "--exe":
                     if (!TryNext(args, ref i, out executable)) return MissingValue("--exe");
+                    break;
+                case "--account":
+                    if (!TryNext(args, ref i, out account)) return MissingValue("--account");
+                    break;
+                case "--secret":
+                    if (!TryNext(args, ref i, out secretPath)) return MissingValue("--secret");
                     break;
                 case "--name":
                     if (!TryNext(args, ref i, out name)) return MissingValue("--name");
@@ -239,25 +253,152 @@ public static class CliApplication
             var config = Path.GetFullPath(configPath);
             var binPath = $"\"{executable}\" serve --config \"{config}\"";
 
+            var created = await RunScAsync(
+                ["create", name, "binPath=", binPath, "start=", "auto", "DisplayName=", "ODW Node"])
+                .ConfigureAwait(false);
+
+            if (created != 0)
+            {
+                return created;
+            }
+
+            if (!string.IsNullOrWhiteSpace(account))
+            {
+                var builtIn = account.StartsWith("NT AUTHORITY\\", StringComparison.OrdinalIgnoreCase)
+                              || string.Equals(account, "LocalSystem", StringComparison.OrdinalIgnoreCase);
+                var password = builtIn
+                    ? null
+                    : DpapiSecret.Load(secretPath ?? DefaultServiceSecretPath());
+
+                if (!ChangeServiceAccount(name, account, password, out var error))
+                {
+                    Console.Error.WriteLine($"No se pudo configurar la cuenta del servicio: {error}");
+                    _ = await RunScAsync(["delete", name]).ConfigureAwait(false);
+                    return 1;
+                }
+            }
+
             return await RunScAsync(
-                ["create", name, "binPath=", binPath, "start=", "auto", "DisplayName=", "ODW Node"],
                 ["description", name, "OpenCode Distributed Worker Network node"],
                 ["start", name]).ConfigureAwait(false);
         }
 
         return command switch
         {
-            "uninstall" => await RunScAsync(
-                ["stop", name],
-                ["delete", name]).ConfigureAwait(false),
+            "uninstall" => await UninstallServiceAsync(name).ConfigureAwait(false),
             "status" => await RunScAsync(["query", name]).ConfigureAwait(false),
             _ => UsageError($"Subcomando desconocido: {command}."),
         };
     }
 
-    private static async Task<int> RunScAsync(params string[][] commands)
+    private static async Task<int> UninstallServiceAsync(string name)
     {
-        foreach (var arguments in commands)
+        // Si el servicio ya está parado, 'sc stop' devuelve error; hay que borrarlo igualmente.
+        _ = await RunScAsync(["stop", name]).ConfigureAwait(false);
+        return await RunScAsync(["delete", name]).ConfigureAwait(false);
+    }
+
+    private static string DefaultServiceSecretPath()
+        => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "ODW",
+            "service.secret");
+
+    private static bool ChangeServiceAccount(
+        string name,
+        string account,
+        string? password,
+        out string error)
+    {
+        const uint ScManagerConnect = 0x0001;
+        const uint ServiceChangeConfig = 0x0002;
+        const uint ServiceNoChange = 0xFFFFFFFF;
+
+        error = string.Empty;
+        var manager = OpenSCManager(null, null, ScManagerConnect);
+
+        if (manager == IntPtr.Zero)
+        {
+            error = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+            return false;
+        }
+
+        try
+        {
+            var service = OpenService(manager, name, ServiceChangeConfig);
+            if (service == IntPtr.Zero)
+            {
+                error = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+                return false;
+            }
+
+            try
+            {
+                if (!ChangeServiceConfig(
+                        service,
+                        ServiceNoChange,
+                        ServiceNoChange,
+                        ServiceNoChange,
+                        null,
+                        null,
+                        IntPtr.Zero,
+                        null,
+                        account,
+                        password,
+                        null))
+                {
+                    error = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+                    return false;
+                }
+
+                return true;
+            }
+            finally
+            {
+                _ = CloseServiceHandle(service);
+            }
+        }
+        finally
+        {
+            _ = CloseServiceHandle(manager);
+        }
+    }
+
+#pragma warning disable SYSLIB1054
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr OpenSCManager(
+        string? machineName,
+        string? databaseName,
+        uint desiredAccess);
+
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr OpenService(
+        IntPtr serviceControlManager,
+        string serviceName,
+        uint desiredAccess);
+
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool ChangeServiceConfig(
+        IntPtr service,
+        uint serviceType,
+        uint startType,
+        uint errorControl,
+        string? binaryPathName,
+        string? loadOrderGroup,
+        IntPtr tagId,
+        string? dependencies,
+        string? serviceStartName,
+        string? password,
+        string? displayName);
+
+    [DllImport("advapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool CloseServiceHandle(IntPtr handle);
+#pragma warning restore SYSLIB1054
+
+    private static async Task<int> RunScAsync(params string[][] commands)
+    {        foreach (var arguments in commands)
         {
             var startInfo = new System.Diagnostics.ProcessStartInfo
             {
@@ -302,9 +443,11 @@ public static class CliApplication
     private static void PrintServiceUsage()
     {
         Console.WriteLine("Uso:");
-        Console.WriteLine("  odw service install   --config <node.json> [--exe <odw.exe>] [--name OdwNode]");
+        Console.WriteLine("  odw service install   --config <node.json> [--exe <odw.exe>] [--account .\\odw-svc] [--secret <ruta>] [--name OdwNode]");
         Console.WriteLine("  odw service uninstall [--name OdwNode]");
         Console.WriteLine("  odw service status    [--name OdwNode]");
+        Console.WriteLine("Sin --account el servicio corre como LocalSystem. Con --account usa el secreto DPAPI");
+        Console.WriteLine("(por defecto %PROGRAMDATA%\\ODW\\service.secret) o vacío para cuentas NT AUTHORITY.");
         Console.WriteLine("Requiere una consola elevada.");
     }
 

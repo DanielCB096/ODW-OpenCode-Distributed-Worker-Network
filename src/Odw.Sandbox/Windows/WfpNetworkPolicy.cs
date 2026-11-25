@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.ComponentModel;
+using System.Globalization;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -31,6 +32,12 @@ public static partial class WfpNetworkPolicy
     private static readonly Guid ConditionRemoteAddress = new("b235ae9a-1d64-49b8-a44c-5ff3d9095045");
     private static readonly Guid ConditionRemotePort = new("c35a604d-d22b-4e1a-91b4-68f674ee674b");
 
+    /// <summary>Marca legible por el servicio (no admin) de que los filtros fueron instalados.</summary>
+    public static string DefaultStatePath => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+        "ODW",
+        "network.state");
+
     private const uint FilterFlagPersistent = 0x00000001;
     private const uint ProviderFlagPersistent = 0x00000001;
     private const uint SubLayerFlagPersistent = 0x00000001;
@@ -46,7 +53,7 @@ public static partial class WfpNetworkPolicy
     private const uint TypeSecurityDescriptor = 14;
 
     /// <summary>Instala los filtros persistentes para la cuenta y el puerto del proxy local.</summary>
-    public static void Install(string account, int loopbackPort = 7423)
+    public static void Install(string account, int loopbackPort = 7423, string? statePath = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(account);
 
@@ -88,6 +95,8 @@ public static partial class WfpNetworkPolicy
                     _ = LocalFree(securityDescriptor);
                 }
             }
+
+            WriteState(statePath ?? DefaultStatePath, account, loopbackPort);
         }
         finally
         {
@@ -95,8 +104,8 @@ public static partial class WfpNetworkPolicy
         }
     }
 
-    /// <summary>Elimina los filtros, el sublayer y el proveedor de ODW.</summary>
-    public static void Uninstall()
+    /// <summary>Elimina los filtros, el sublayer, el proveedor y la marca de estado.</summary>
+    public static void Uninstall(string? statePath = null)
     {
         if (!OperatingSystem.IsWindows())
         {
@@ -117,10 +126,19 @@ public static partial class WfpNetworkPolicy
         {
             _ = FwpmEngineClose0(engine);
         }
+
+        var path = statePath ?? DefaultStatePath;
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+        }
     }
 
-    /// <summary>Indica si los cuatro filtros de ODW existen.</summary>
-    public static bool IsInstalled()
+    /// <summary>Indica si los cuatro filtros de ODW existen o, sin acceso WFP, si está la marca.</summary>
+    public static bool IsInstalled(string? statePath = null)
     {
         if (!OperatingSystem.IsWindows())
         {
@@ -133,10 +151,17 @@ public static partial class WfpNetworkPolicy
 
             try
             {
-                return FilterExists(engine, BlockV4Key)
-                       && FilterExists(engine, BlockV6Key)
-                       && FilterExists(engine, PermitV4Key)
-                       && FilterExists(engine, PermitV6Key);
+                var present = FilterExists(engine, BlockV4Key)
+                              && FilterExists(engine, BlockV6Key)
+                              && FilterExists(engine, PermitV4Key)
+                              && FilterExists(engine, PermitV6Key);
+
+                if (present)
+                {
+                    return true;
+                }
+
+                return !IsAdministrator() && File.Exists(statePath ?? DefaultStatePath);
             }
             finally
             {
@@ -145,8 +170,33 @@ public static partial class WfpNetworkPolicy
         }
         catch (Win32Exception)
         {
-            return false;
+            return !IsAdministrator() && File.Exists(statePath ?? DefaultStatePath);
         }
+        catch (UnauthorizedAccessException)
+        {
+            return !IsAdministrator() && File.Exists(statePath ?? DefaultStatePath);
+        }
+    }
+
+    private static bool IsAdministrator()
+        => OperatingSystem.IsWindows()
+           && new WindowsPrincipal(WindowsIdentity.GetCurrent())
+               .IsInRole(WindowsBuiltInRole.Administrator);
+
+    private static void WriteState(string statePath, string account, int loopbackPort)
+    {
+        var directory = Path.GetDirectoryName(statePath);
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        File.WriteAllText(
+            statePath,
+            $"installed={DateTimeOffset.UtcNow.ToString("O", CultureInfo.InvariantCulture)}"
+            + $"{Environment.NewLine}account={account}"
+            + $"{Environment.NewLine}port={loopbackPort.ToString(CultureInfo.InvariantCulture)}"
+            + Environment.NewLine);
     }
 
     private static IntPtr OpenEngine()

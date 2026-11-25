@@ -21,6 +21,9 @@ public sealed record OpenCodeServerOptions
     /// <summary>Si se indica, el servidor se lanza con estas credenciales (agente restringido).</summary>
     public RunAsCredentials? RunAs { get; init; }
 
+    /// <summary>Perfil de ejecución por tarea; si falta se usa el perfil real del agente.</summary>
+    public string? RuntimeRoot { get; init; }
+
     /// <summary>Se invoca tras el arranque para asignar el proceso a un Job Object u otro control.</summary>
     public Func<Process, IDisposable?>? AttachProcess { get; init; }
 }
@@ -176,7 +179,7 @@ public sealed class OpenCodeServer : IAsyncDisposable
             startInfo.Domain = ".";
             startInfo.LoadUserProfile = true;
 
-            ApplyAgentEnvironment(startInfo, runAs.Account);
+            ApplyAgentEnvironment(startInfo, runAs.Account, options.RuntimeRoot);
         }
 
         if (options.Environment is not null)
@@ -300,17 +303,30 @@ public sealed class OpenCodeServer : IAsyncDisposable
     private static string Tail(string text)
         => text.Length <= 500 ? text : text[^500..];
 
-    private static void ApplyAgentEnvironment(ProcessStartInfo startInfo, string account)
+    private static void ApplyAgentEnvironment(
+        ProcessStartInfo startInfo,
+        string account,
+        string? runtimeRoot)
     {
-        var usersRoot = Directory.GetParent(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile))?.FullName;
+        string profile;
 
-        if (usersRoot is null)
+        if (!string.IsNullOrWhiteSpace(runtimeRoot))
         {
-            return;
+            profile = Path.GetFullPath(runtimeRoot);
+        }
+        else
+        {
+            var usersRoot = Directory.GetParent(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile))?.FullName;
+
+            if (usersRoot is null)
+            {
+                return;
+            }
+
+            profile = Path.Combine(usersRoot, account);
         }
 
-        var profile = Path.Combine(usersRoot, account);
         var appData = Path.Combine(profile, "AppData");
         var local = Path.Combine(appData, "Local");
         var roaming = Path.Combine(appData, "Roaming");

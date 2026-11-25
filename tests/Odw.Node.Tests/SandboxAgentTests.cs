@@ -45,6 +45,7 @@ public class SandboxAgentTests
 
         try
         {
+            await using var runtime = CreateRuntime();
             await using var server = await OpenCodeServer.StartAsync(new OpenCodeServerOptions
             {
                 Executable = executable,
@@ -52,95 +53,11 @@ public class SandboxAgentTests
                 PinnedVersion = "2.3.2",
                 StartupTimeout = TimeSpan.FromSeconds(60),
                 RunAs = new RunAsCredentials(credentials.Account, credentials.Password),
+                RuntimeRoot = runtime.Path,
             });
 
             Assert.Equal("2.3.2", server.Info.Version);
             Assert.True(server.Info.Pid > 0);
-        }
-        finally
-        {
-            try
-            {
-                Directory.Delete(workspace, recursive: true);
-            }
-            catch (IOException)
-            {
-            }
-        }
-    }
-
-    [Fact]
-    public async Task OpenCode_completes_a_prompt_as_the_agent()
-    {
-        if (!OperatingSystem.IsWindows()
-            || Environment.GetEnvironmentVariable("ODW_AGENT_E2E") != "1")
-        {
-            return;
-        }
-
-        var common = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-        var credentials = AgentCredentialsStore.Load(
-            "odw-agent",
-            Path.Combine(common, "ODW", "agent.secret"));
-        var workspace = Path.Combine(common, "ODW", "workspaces", "agent-prompt-test");
-
-        Directory.CreateDirectory(workspace);
-        GrantAgent(workspace);
-
-        var model = Environment.GetEnvironmentVariable("ODW_AGENT_MODEL")
-                    ?? "opencode/deepseek-v4.1-flash-free";
-
-        try
-        {
-            await using var server = await OpenCodeServer.StartAsync(new OpenCodeServerOptions
-            {
-                Executable = Path.Combine(common, "ODW", "opencode", "opencode.exe"),
-                WorkingDirectory = workspace,
-                PinnedVersion = "2.3.2",
-                StartupTimeout = TimeSpan.FromSeconds(60),
-                RunAs = new RunAsCredentials(credentials.Account, credentials.Password),
-            });
-
-            using var client = new OpenCodeClient(server.Connection);
-            var executor = new OpenCodeExecutor(client);
-
-            var session = await executor.StartAsync(new ExecutorStartRequest(
-                "01JAZ5Z8Q4XK3V9C2M1N7P6R8T",
-                workspace,
-                "Responde exactamente: OK. No uses herramientas.",
-                model,
-                new ExecutorLimits(5, 12, 64, false, 2m),
-                ToolPolicy.AskAll,
-                new Dictionary<string, string>()), CancellationToken.None);
-
-            var events = new List<ExecutorEvent>();
-            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(120));
-            var pump = Task.Run(async () =>
-            {
-                await foreach (var item in executor.StreamAsync(session.SessionId, timeout.Token))
-                {
-                    events.Add(item);
-                }
-            }, timeout.Token);
-
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await executor.SendAsync(
-                session.SessionId,
-                "Responde exactamente: OK. No uses herramientas.",
-                Odw.Core.Model.MessageDelivery.Queue,
-                timeout.Token);
-
-            await pump;
-
-            var terminal = events.LastOrDefault(item => item.Kind is
-                ExecutorEventKind.Completed or ExecutorEventKind.Failed or ExecutorEventKind.Interrupted);
-
-            Assert.True(
-                terminal?.Kind == ExecutorEventKind.Completed,
-                $"La ejecución no terminó bien: {terminal?.Kind} {terminal?.Detail}");
-
-            var messages = await client.GetMessagesAsync(session.SessionId, CancellationToken.None);
-            Assert.Contains(messages, message => message.Text.Contains("OK", StringComparison.OrdinalIgnoreCase));
         }
         finally
         {
@@ -258,6 +175,7 @@ public class SandboxAgentTests
 
         try
         {
+            await using var runtime = CreateRuntime();
             await using var server = await OpenCodeServer.StartAsync(new OpenCodeServerOptions
             {
                 Executable = Path.Combine(common, "ODW", "opencode", "opencode.exe"),
@@ -265,6 +183,7 @@ public class SandboxAgentTests
                 PinnedVersion = "2.3.2",
                 StartupTimeout = TimeSpan.FromSeconds(60),
                 RunAs = new RunAsCredentials(credentials.Account, credentials.Password),
+                RuntimeRoot = runtime.Path,
                 Environment = new Dictionary<string, string>
                 {
                     ["HTTPS_PROXY"] = proxy.Url,
@@ -311,6 +230,12 @@ public class SandboxAgentTests
                 terminal?.Kind == ExecutorEventKind.Completed,
                 $"La ejecución no terminó bien: {terminal?.Kind} {terminal?.Detail}");
             Assert.NotEmpty(tunnels);
+
+            var data = Path.Combine(runtime.Path, ".local", "share", "opencode");
+            Assert.True(
+                Directory.Exists(data)
+                && Directory.EnumerateFileSystemEntries(data, "*", SearchOption.AllDirectories).Any(),
+                "OpenCode no escribió datos en el perfil de la tarea.");
         }
         finally
         {
@@ -322,6 +247,41 @@ public class SandboxAgentTests
             {
             }
         }
+    }
+
+    [Fact]
+    public void Agent_cannot_write_the_shared_profile_config()
+    {
+        if (!OperatingSystem.IsWindows()
+            || Environment.GetEnvironmentVariable("ODW_AGENT_E2E") != "1")
+        {
+            return;
+        }
+
+        var common = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        var credentials = AgentCredentialsStore.Load(
+            "odw-agent",
+            Path.Combine(common, "ODW", "agent.secret"));
+        var profile = Path.Combine(
+            Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile))!.FullName,
+            credentials.Account);
+        var config = Path.Combine(profile, ".config", "opencode", "opencode.json");
+
+        Assert.NotEqual(0, RunAsAgent(credentials, "/c", "echo", "x>>" + config));
+    }
+
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    private static AgentRuntime CreateRuntime()
+    {
+        var common = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+
+        return AgentRuntime.Create(Guid.NewGuid().ToString("N"), new AgentRuntimeOptions
+        {
+            Root = Path.Combine(common, "ODW", "runtime"),
+            ConfigTemplate = Path.Combine(common, "ODW", "agent-config", "opencode.json"),
+            AgentAccount = "odw-agent",
+            ServiceAccount = WindowsIdentity.GetCurrent().Name,
+        });
     }
 
     private static void GrantAgent(string path)

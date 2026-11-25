@@ -3,6 +3,7 @@ using Odw.Core.Model;
 using Odw.Executors.OpenCode;
 using Odw.Node.Persistence;
 using Odw.Sandbox.Windows;
+using Odw.Sandbox.Workspaces;
 
 namespace Odw.Node.Scheduling;
 
@@ -31,6 +32,19 @@ public sealed record OpenCodeTaskRunnerOptions
 
     /// <summary>Comprueba el aislamiento; por defecto consulta WFP. Inyectable en pruebas.</summary>
     public Func<bool>? NetworkIsolationProbe { get; init; }
+
+    /// <summary>Periodo del watchdog de WFP durante la tarea.</summary>
+    public TimeSpan NetworkWatchdogInterval { get; init; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>Raíz de perfiles por tarea; si falta se usa el perfil real del agente.</summary>
+    public string? AgentRuntimeRoot { get; init; }
+
+    /// <summary>Plantilla de opencode.json copiada a cada perfil de tarea.</summary>
+    public string? AgentConfigTemplate { get; init; }
+
+    public string AgentAccount { get; init; } = "odw-agent";
+
+    public string? ServiceAccount { get; init; }
 
     /// <summary>Permite construir un handler por tarea (política + contexto del contrato).</summary>
     public Func<ExecutionRequest, ToolPermissionHandler?>? PermissionHandlerFactory { get; init; }
@@ -100,19 +114,49 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 ["NO_PROXY"] = "127.0.0.1,localhost",
             };
 
+        AgentRuntime? runtime = null;
         JobObject? job = null;
-        if (_options.UseJobObject && OperatingSystem.IsWindows())
-        {
-            job = JobObject.Create(
-                JobLimits.FromTask(
-                    request.Contract.Limits.MaxMemoryGb,
-                    request.Contract.Limits.MaxProcesses,
-                    request.Contract.Limits.MaxMinutes),
-                $"odw-{request.Snapshot.TaskId}");
-        }
 
         try
         {
+            try
+            {
+                WorkspaceGuard.EnsureNoReparsePoints(request.WorkspacePath);
+            }
+            catch (WorkspaceGuardException exception)
+            {
+                return new ExecutionResult(
+                    ExecutorOutcomeKind.Failed,
+                    ResultJson("failed", exception.Message, request.WorkspaceBranch, review: false));
+            }
+
+            if (_options.AgentRuntimeRoot is not null)
+            {
+                if (string.IsNullOrWhiteSpace(_options.AgentConfigTemplate))
+                {
+                    throw new InvalidOperationException(
+                        "sandbox.runtime_root requiere sandbox.agent_config_path.");
+                }
+
+                runtime = AgentRuntime.Create(request.Snapshot.TaskId, new AgentRuntimeOptions
+                {
+                    Root = _options.AgentRuntimeRoot,
+                    ConfigTemplate = _options.AgentConfigTemplate,
+                    AgentAccount = _options.AgentAccount,
+                    ServiceAccount = _options.ServiceAccount,
+                });
+            }
+
+            if (_options.UseJobObject && OperatingSystem.IsWindows())
+            {
+                job = JobObject.Create(
+                    JobLimits.FromTask(
+                        request.Contract.Limits.MaxMemoryGb,
+                        request.Contract.Limits.MaxProcesses,
+                        request.Contract.Limits.MaxMinutes),
+                    $"odw-{request.Snapshot.TaskId}");
+            }
+
             await using var server = await OpenCodeServer.StartAsync(new OpenCodeServerOptions
             {
                 Executable = _options.Executable,
@@ -120,6 +164,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 PinnedVersion = _options.PinnedVersion,
                 StartupTimeout = _options.StartupTimeout,
                 RunAs = _options.RunAs,
+                RuntimeRoot = runtime?.Path,
                 Environment = serverEnvironment,
                 AttachProcess = job is null
                     ? null
@@ -151,6 +196,14 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
             using var execution = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             execution.CancelAfter(_options.ExecutionTimeout);
 
+            await using var watchdog = _options.RequireNetworkIsolation
+                ? new NetworkIsolationWatchdog(
+                    () => _options.NetworkIsolationProbe?.Invoke()
+                          ?? (OperatingSystem.IsWindows() && WfpNetworkPolicy.IsInstalled()),
+                    _options.NetworkWatchdogInterval,
+                    execution.Cancel)
+                : null;
+
             var events = new List<ExecutorEvent>();
             var pump = Task.Run(async () =>
             {
@@ -178,6 +231,18 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
             }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
+                if (watchdog?.Lost == true)
+                {
+                    return new ExecutionResult(
+                        ExecutorOutcomeKind.Failed,
+                        ResultJson(
+                            "failed",
+                            "NETWORK_UNENFORCED: los filtros WFP dejaron de estar activos durante "
+                            + "la tarea; se canceló la ejecución.",
+                            request.WorkspaceBranch,
+                            review: false));
+                }
+
                 return new ExecutionResult(
                     ExecutorOutcomeKind.Failed,
                     ResultJson("failed", "TIMEOUT: la ejecución excedió el tiempo.", request.WorkspaceBranch, review: false));
@@ -185,6 +250,25 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
 
             var terminal = events.LastOrDefault(item => item.Kind is
                 ExecutorEventKind.Completed or ExecutorEventKind.Failed or ExecutorEventKind.Interrupted);
+
+            if (terminal?.Kind == ExecutorEventKind.Completed)
+            {
+                try
+                {
+                    WorkspaceGuard.EnsureNoReparsePoints(request.WorkspacePath);
+                }
+                catch (WorkspaceGuardException exception)
+                {
+                    return new ExecutionResult(
+                        ExecutorOutcomeKind.Succeeded,
+                        ResultJson(
+                            "review_required",
+                            exception.Message,
+                            request.WorkspaceBranch,
+                            review: true),
+                        RequiresReview: true);
+                }
+            }
 
             var failedTools = events.Any(item => item.Kind == ExecutorEventKind.ToolFailed);
             var summary = await SummaryAsync(client, session.SessionId, cancellationToken).ConfigureAwait(false);
@@ -210,6 +294,11 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
         finally
         {
             job?.Dispose();
+
+            if (runtime is not null)
+            {
+                await runtime.DisposeAsync().ConfigureAwait(false);
+            }
         }
     }
 

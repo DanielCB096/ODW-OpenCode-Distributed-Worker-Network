@@ -60,6 +60,12 @@ public class WfpNetworkPolicyTests
             Assert.NotEqual(0, RunAsAgent(credentials, "/c", "curl.exe", "-sS", "-m", "8",
                 "https://example.com/"));
 
+            Assert.NotEqual(0, RunAsAgent(credentials, "/c", "curl.exe", "-sS", "-m", "3",
+                "http://169.254.169.254/latest/meta-data/"));
+
+            Assert.NotEqual(0, RunAsAgent(credentials, "/c", "curl.exe", "-sS", "-m", "3",
+                "http://192.168.0.1/"));
+
             await server.WaitAsync(TimeSpan.FromSeconds(5));
         }
         finally

@@ -39,6 +39,36 @@ public class ModelProxyTests
     }
 
     [Fact]
+    public async Task Rejects_a_port_that_is_not_allowed()
+    {
+        await using var proxy = ModelProxy.Start(new ModelProxyOptions
+        {
+            AllowedHosts = ["test.local"],
+            AllowedPorts = [443],
+            AuthToken = "secret",
+        });
+
+        var response = await SendAsync(proxy, "test.local:444");
+
+        Assert.StartsWith("HTTP/1.1 403", response, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Rejects_a_wrong_proxy_password()
+    {
+        await using var proxy = ModelProxy.Start(new ModelProxyOptions
+        {
+            AllowedHosts = ["test.local"],
+            AllowedPorts = [443],
+            AuthToken = "secret",
+        });
+
+        var response = await SendAsync(proxy, "test.local:443", auth: "otro");
+
+        Assert.StartsWith("HTTP/1.1 407", response, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Rejects_private_address_even_if_host_is_allowed()
     {
         await using var proxy = ModelProxy.Start(new ModelProxyOptions

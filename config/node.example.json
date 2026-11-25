@@ -48,7 +48,10 @@
     "agent_secret_path": "%PROGRAMDATA%\\ODW\\agent.secret",
     "network_isolation": true,
     "network_allowed_hosts": ["opencode.ai"],
-    "network_proxy_port": 7423
+    "network_proxy_port": 7423,
+    "network_state_path": "%PROGRAMDATA%\\ODW\\network.state",
+    "runtime_root": "%PROGRAMDATA%\\ODW\\runtime",
+    "agent_config_path": "%PROGRAMDATA%\\ODW\\agent-config\\opencode.json"
   },
 
   "policy": "policy.example.json",

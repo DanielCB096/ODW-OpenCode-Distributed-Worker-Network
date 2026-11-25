@@ -6,17 +6,25 @@
 .DESCRIPTION
     Debe ejecutarse en una consola ELEVADA. Crea:
       - usuario local odw-agent con contraseña aleatoria (no se imprime),
-      - secreto DPAPI de máquina en <DataDir>\agent.secret (solo admins/SYSTEM),
-      - ACL del workspace raíz (servicio F, agente RX, sin herencia),
-      - copia de opencode.exe accesible al agente y su opencode.json con un modelo gratuito,
-      - ACL de la raíz de datos (servicio/SYSTEM/administradores; el agente solo traverse) y
-        denegación de lectura sobre configuración, bases y claves existentes,
-      - filtros WFP persistentes que bloquean la salida del agente salvo loopback.
+      - usuario local odw-svc con contraseña aleatoria y secreto DPAPI en <DataDir>\service.secret,
+      - derechos: odw-svc puede iniciar sesión como servicio y aumentar cuota; odw-agent tiene
+        denegados el logon de red y el interactivo remoto (conserva el interactivo local que exige
+        CreateProcessWithLogonW),
+      - ACL del workspace raíz (servicio/odw-svc/SYSTEM/administradores F, agente RX),
+      - copia de opencode.exe accesible al agente y plantilla de opencode.json con modelo gratuito,
+      - perfil de ejecución desechable por tarea (<DataDir>\runtime) y perfil real sin escritura,
+      - ACL de la raíz de datos (servicio/odw-svc/SYSTEM/administradores; el agente solo traverse)
+        y denegación de lectura sobre configuración, bases y claves existentes,
+      - filtros WFP persistentes que bloquean la salida del agente salvo 127.0.0.1:7423 y la marca
+        network.state para el servicio sin privilegios.
     Detén el nodo antes de ejecutarlo: cambia ACLs de archivos en uso.
     No lanza procesos del nodo ni modifica la base de datos.
 
 .PARAMETER AgentAccount
     Cuenta local del agente. Por defecto odw-agent.
+
+.PARAMETER ServiceAccount
+    Cuenta local del servicio. Por defecto odw-svc.
 
 .PARAMETER AgentModel
     Modelo por defecto del agente. Por defecto el gratuito
@@ -40,6 +48,7 @@
 [CmdletBinding()]
 param(
     [string]$AgentAccount = 'odw-agent',
+    [string]$ServiceAccount = 'odw-svc',
     [string]$DataDir = (Join-Path $env:ProgramData 'ODW'),
     [string]$WorkspaceRoot,
     [string]$OpenCodeSource,
@@ -72,6 +81,59 @@ function Invoke-Icacls([string[]]$Arguments) {
         throw "icacls falló: $($output -join ' ')"
     }
     return $output
+}
+
+function Grant-Rights {
+    param([hashtable]$Assignments)
+
+    $base = Join-Path $env:TEMP ("odw-secedit-" + [guid]::NewGuid().ToString('N'))
+    $inf = "$base.inf"
+    $db = "$base.sdb"
+
+    try {
+        & secedit /export /cfg $inf /areas USER_RIGHTS | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw "secedit /export falló." }
+
+        $lines = @(Get-Content -Path $inf)
+        $missing = @()
+        $section = -1
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i].Trim() -eq '[Privilege Rights]') { $section = $i; break }
+        }
+
+        foreach ($sid in $Assignments.Keys) {
+            foreach ($right in $Assignments[$sid]) {
+                $index = -1
+                for ($i = 0; $i -lt $lines.Count; $i++) {
+                    if ($lines[$i] -match "^\s*$([regex]::Escape($right))\s*=") { $index = $i; break }
+                }
+
+                $entry = "*$sid"
+                if ($index -ge 0) {
+                    if ($lines[$index] -notmatch [regex]::Escape($entry)) {
+                        $lines[$index] = $lines[$index].TrimEnd() + ",$entry"
+                    }
+                }
+                else {
+                    $missing += "$right = $entry"
+                }
+            }
+        }
+
+        if ($missing.Count -gt 0) {
+            if ($section -lt 0) { throw "El INF exportado no contiene [Privilege Rights]." }
+            $head = if ($section -ge 0) { @($lines[0..$section]) } else { @() }
+            $tail = if ($section + 1 -lt $lines.Count) { @($lines[($section + 1)..($lines.Count - 1)]) } else { @() }
+            $lines = @($head + $missing + $tail)
+        }
+
+        Set-Content -Path $inf -Value $lines -Encoding Unicode
+        & secedit /configure /db $db /cfg $inf /areas USER_RIGHTS /quiet | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw "secedit /configure falló." }
+    }
+    finally {
+        Remove-Item $inf, $db, "$db.jfm" -Force -ErrorAction SilentlyContinue
+    }
 }
 
 Assert-Admin
@@ -113,10 +175,55 @@ else {
     Write-Host "Usuario creado y secreto DPAPI guardado."
 }
 
+$agentSid = ([Security.Principal.NTAccount]::new($AgentAccount)).Translate(
+    [Security.Principal.SecurityIdentifier]).Value
+
+Write-Host "== Servicio $ServiceAccount =="
+$serviceSecretPath = Join-Path $DataDir 'service.secret'
+
+if (Test-Account $ServiceAccount) {
+    Write-Host "El usuario de servicio ya existe; no se cambia su contraseña."
+    if (-not (Test-Path $serviceSecretPath)) {
+        throw "El usuario existe pero falta $serviceSecretPath. Recrea la cuenta o el secreto."
+    }
+}
+else {
+    $svcAlphabet = [char[]]'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_'
+    $svcPassword = -join (1..48 | ForEach-Object { $svcAlphabet[(Get-Random -Maximum $svcAlphabet.Length)] })
+    $svcSecure = ConvertTo-SecureString $svcPassword -AsPlainText -Force
+
+    New-LocalUser -Name $ServiceAccount -Password $svcSecure `
+        -PasswordNeverExpires -UserMayNotChangePassword -AccountNeverExpires `
+        -Description 'ODW node service (mínimo privilegio)' | Out-Null
+
+    Add-Type -AssemblyName System.Security
+    $svcBytes = [Text.Encoding]::UTF8.GetBytes($svcPassword)
+    $svcProtected = [Security.Cryptography.ProtectedData]::Protect(
+        $svcBytes, $null, [Security.Cryptography.DataProtectionScope]::LocalMachine)
+    [IO.File]::WriteAllBytes($serviceSecretPath, $svcProtected)
+
+    Invoke-Icacls @($serviceSecretPath, '/inheritance:r',
+        '/grant:r', '*S-1-5-32-544:F',
+        '/grant:r', '*S-1-5-18:F') | Out-Null
+
+    Write-Host "Usuario de servicio creado y secreto DPAPI guardado."
+}
+
+$serviceSid = ([Security.Principal.NTAccount]::new($ServiceAccount)).Translate(
+    [Security.Principal.SecurityIdentifier]).Value
+Grant-Rights @{
+    $serviceSid = @('SeServiceLogonRight', 'SeIncreaseQuotaPrivilege')
+    $agentSid   = @('SeDenyNetworkLogonRight', 'SeDenyRemoteInteractiveLogonRight')
+}
+Write-Host "Derechos aplicados: servicio puede iniciar sesión; agente sin red ni RDP."
+
 Write-Host "== ACLs del workspace =="
 $service = [Security.Principal.WindowsIdentity]::GetCurrent().Name
 Invoke-Icacls @($WorkspaceRoot, '/inheritance:r') | Out-Null
 Invoke-Icacls @($WorkspaceRoot, '/grant:r', "$($service):(OI)(CI)F",
+    '/grant:r', "$($ServiceAccount):(OI)(CI)F",
+    '/grant:r', '*S-1-5-18:(OI)(CI)F',
+    '/grant:r', '*S-1-5-32-544:(OI)(CI)F',
     '/grant:r', "$($AgentAccount):(OI)(CI)RX", '/T') | Out-Null
 Write-Host "Raíz con herencia deshabilitada: servicio F, agente RX."
 
@@ -134,11 +241,13 @@ if ($OpenCodeSource) {
     New-Item -ItemType Directory -Force -Path $openDir | Out-Null
     Invoke-Icacls @($openDir, '/inheritance:r',
         '/grant:r', "$($service):(OI)(CI)F",
+        '/grant:r', "$($ServiceAccount):(OI)(CI)RX",
         '/grant:r', "$($AgentAccount):(OI)(CI)RX") | Out-Null
     $openExe = Join-Path $openDir 'opencode.exe'
     Copy-Item $OpenCodeSource $openExe -Force
     Invoke-Icacls @($openExe, '/inheritance:r',
         '/grant:r', "$($service):F",
+        '/grant:r', "$($ServiceAccount):RX",
         '/grant:r', "$($AgentAccount):RX") | Out-Null
     Write-Host "OpenCode para el agente: $openExe"
 }
@@ -162,8 +271,7 @@ Start-Service seclogon -ErrorAction SilentlyContinue
 Start-Process -FilePath 'cmd.exe' -ArgumentList '/c', 'exit' `
     -Credential $agentCredentials -WindowStyle Hidden -Wait
 
-$agentSid = ([Security.Principal.NTAccount]::new($AgentAccount)).Translate(
-    [Security.Principal.SecurityIdentifier]).Value
+
 $agentProfile = Get-CimInstance Win32_UserProfile -Filter "SID='$agentSid'" |
     Select-Object -ExpandProperty LocalPath
 if (-not $agentProfile) { $agentProfile = Join-Path $env:SystemDrive "Users\$AgentAccount" }
@@ -177,23 +285,67 @@ $agentSettings = [ordered]@{
     model     = $AgentModel
 }
 $agentJson = $agentSettings | ConvertTo-Json -Compress
+
+# Plantilla de solo lectura para el perfil desechable de cada tarea.
+$templateDir = Join-Path $DataDir 'agent-config'
+New-Item -ItemType Directory -Force -Path $templateDir | Out-Null
+$agentConfigTemplate = Join-Path $templateDir 'opencode.json'
+[IO.File]::WriteAllText($agentConfigTemplate, $agentJson, (New-Object Text.UTF8Encoding($false)))
+Invoke-Icacls @($templateDir, '/inheritance:r',
+    '/grant:r', "$($service):(OI)(CI)F",
+    '/grant:r', "$($ServiceAccount):(OI)(CI)RX",
+    '/grant:r', "$($AgentAccount):(OI)(CI)RX") | Out-Null
+Invoke-Icacls @($agentConfigTemplate, '/inheritance:r',
+    '/grant:r', "$($service):F",
+    '/grant:r', "$($ServiceAccount):RX",
+    '/grant:r', "$($AgentAccount):RX") | Out-Null
+
+# Copia de compatibilidad en el perfil real, sin escritura para el agente.
+$agentConfigDir = Join-Path $agentProfile '.config\opencode'
+New-Item -ItemType Directory -Force -Path $agentConfigDir | Out-Null
+$agentConfig = Join-Path $agentConfigDir 'opencode.json'
 [IO.File]::WriteAllText($agentConfig, $agentJson, (New-Object Text.UTF8Encoding($false)))
 Invoke-Icacls @($agentConfigDir, '/inheritance:r',
-    '/grant:r', "$($AgentAccount):(OI)(CI)F",
-    '/grant:r', "$($service):(OI)(CI)F") | Out-Null
+    '/grant:r', "$($service):(OI)(CI)F",
+    '/grant:r', "$($AgentAccount):(OI)(CI)RX") | Out-Null
 Invoke-Icacls @($agentConfig, '/inheritance:r',
-    '/grant:r', "$($AgentAccount):F",
-    '/grant:r', "$($service):F") | Out-Null
-Write-Host "Agente configurado con modelo gratuito '$AgentModel' (sin credenciales del usuario)."
+    '/grant:r', "$($service):F",
+    '/grant:r', "$($AgentAccount):RX") | Out-Null
+
+# El agente ya no debe escribir datos de OpenCode en su perfil compartido.
+foreach ($profileDir in @(
+        (Join-Path $agentProfile '.local\share\opencode'),
+        (Join-Path $agentProfile '.cache\opencode'))) {
+    Remove-Item $profileDir -Recurse -Force -ErrorAction SilentlyContinue
+    New-Item -ItemType Directory -Force -Path $profileDir | Out-Null
+    Invoke-Icacls @($profileDir, '/inheritance:r',
+        '/grant:r', "$($service):(OI)(CI)F",
+        '/grant:r', "$($AgentAccount):(OI)(CI)RX") | Out-Null
+}
+
+$runtimeRoot = Join-Path $DataDir 'runtime'
+New-Item -ItemType Directory -Force -Path $runtimeRoot | Out-Null
+Invoke-Icacls @($runtimeRoot, '/inheritance:r',
+    '/grant:r', "$($service):(OI)(CI)F",
+    '/grant:r', "$($ServiceAccount):(OI)(CI)F",
+    '/grant:r', '*S-1-5-18:(OI)(CI)F',
+    '/grant:r', '*S-1-5-32-544:(OI)(CI)F',
+    '/grant:r', "$($AgentAccount):(X)") | Out-Null
+
+Write-Host "Agente configurado con modelo gratuito '$AgentModel' (plantilla + perfiles por tarea)."
 
 Write-Host "== Protección de datos del nodo =="
 # La raíz de datos queda solo para el servicio/SYSTEM/administradores. El agente conserva
 # únicamente traverse (X) para llegar a workspaces y opencode, que tienen su propia ACL.
 Invoke-Icacls @($DataDir, '/inheritance:r',
     '/grant:r', "$($service):(OI)(CI)F",
+    '/grant:r', "$($ServiceAccount):(OI)(CI)F",
     '/grant:r', '*S-1-5-18:(OI)(CI)F',
     '/grant:r', '*S-1-5-32-544:(OI)(CI)F',
     '/grant:r', "$($AgentAccount):(X)") | Out-Null
+
+# El servicio necesita descifrar el secreto del agente para lanzarlo.
+Invoke-Icacls @($secretPath, '/grant:r', "$($ServiceAccount):R") | Out-Null
 
 # Denegación explícita en los datos sensibles ya existentes (defensa en profundidad).
 Get-ChildItem -Path $DataDir -File -Force -ErrorAction SilentlyContinue |
@@ -234,7 +386,8 @@ if (-not $SkipNetwork) {
     $cli = Join-Path $repo 'src\Odw.Cli\Odw.Cli.csproj'
 
     if (Test-Path $cli) {
-        & dotnet run --project $cli -- sandbox net install --agent $AgentAccount
+        & dotnet run --project $cli -- sandbox net install --agent $AgentAccount `
+            --port 7423 --state (Join-Path $DataDir 'network.state')
         if ($LASTEXITCODE -ne 0) {
             throw "No se pudieron instalar los filtros WFP (código $LASTEXITCODE)."
         }

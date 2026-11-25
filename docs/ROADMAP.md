@@ -7,9 +7,9 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (312 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (325 pruebas); falta prueba en dos PCs reales |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
-| H3 — Aislamiento y políticas | 🟡 | Usuario, ACLs, modelo propio y red (WFP + proxy) verificados; falta cuenta de servicio y pruebas hostiles |
+| H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
 | H5 — Colaboración y aceleración | ⬜ | Depende de H4 |
 | H6 — Escalabilidad y usabilidad | ⬜ | Depende de H5 |
@@ -103,9 +103,9 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ `node.json` + `peers_file` + `policy.json`, secretos por `env:`/`file:` y `odw serve` en
   primer plano.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
-- ⬜ Cuenta dedicada y prueba en dos PCs reales.
-- ✅ 284 pruebas verdes, build sin advertencias.
-- ⬜ Listeners del host, monitor, herramientas MCP de escritura, scheduler y sandbox.
+- ✅ Cuenta dedicada `odw-svc`; ⬜ prueba en dos PCs reales.
+- ✅ 325 pruebas verdes, build sin advertencias.
+- ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
 **Entregables**
 
@@ -164,11 +164,12 @@ OpenCode completados (2026-11-24). Resto pendiente.
 
 ---
 
-## H3 — Aislamiento y políticas 🟡
+## H3 — Aislamiento y políticas ✅
 
 **Estado:** ACLs de workspace, usuario `odw-agent`, lanzamiento de `opencode serve` como agente,
-modelo gratuito propio y aislamiento de red con WFP + proxy implementados y verificados. Queda la
-cuenta de servicio dedicada (el nodo corre con la cuenta del administrador) y las pruebas hostiles.
+modelo gratuito propio, red con WFP + proxy, cuenta `odw-svc` sin administrador, perfiles por tarea,
+escaneo de reparse points y pruebas hostiles implementados y verificados. Queda la prueba real en
+dos PCs (H1) y el cálculo de `changed_paths`/`commit`.
 
 - ✅ Job Objects (memoria, procesos, CPU, kill on close).
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
@@ -180,9 +181,14 @@ cuenta de servicio dedicada (el nodo corre con la cuenta del administrador) y la
   credenciales del usuario (tarea real completada como `odw-agent`).
 - ✅ ACL de datos: raíz solo servicio/SYSTEM/administradores, agente con traverse y denegación de
   lectura verificada sobre configuración, bases y claves.
-- ✅ Aislamiento de red: WFP por SID (bloqueo salvo loopback) + proxy CONNECT con allowlist;
-  Internet, LAN y DNS directo bloqueados al agente. Tarea real completada a través del proxy.
-- ⬜ Escaneo de reparse points y pruebas hostiles automatizadas.
+- ✅ Aislamiento de red: WFP por SID (bloqueo salvo `127.0.0.1:7423`) + proxy CONNECT con allowlist;
+  Internet, LAN, metadata y DNS directo bloqueados al agente. Tarea real a través del proxy.
+- ✅ Perfil/config/datos desechables por tarea; guardas `max_concurrent=1` y `keep=false`.
+- ✅ Reparse points y hard links detectados antes/después; watchdog de red durante la tarea.
+- ✅ Servicio `odw-svc` sin administrador (`SeServiceLogonRight` + `SeIncreaseQuotaPrivilege`);
+  agente con logon de red/RDP denegado.
+- ✅ Pruebas hostiles: junction, hard link, allowlist de proxy, IPs privadas/metadata, puertos no
+  permitidos y guardas de red.
 
 **Entregables**
 

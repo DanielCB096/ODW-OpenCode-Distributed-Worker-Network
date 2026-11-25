@@ -10,6 +10,7 @@ using Odw.Policy;
 using Odw.Sandbox.Network;
 using Odw.Sandbox.Windows;
 using Odw.Sandbox.Workspaces;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -26,6 +27,8 @@ public static class NodeBootstrap
 
         var config = settings.Config;
 
+        SandboxGuard.Validate(config.Sandbox, config.Scheduler, config.Workspaces);
+
         var policy = BuildPolicy(settings);
         var capabilities = config.Capabilities.Count > 0 ? config.Capabilities : ["opencode"];
         var accepts = config.Accepts.Count > 0 ? config.Accepts : ["analysis", "test_run"];
@@ -35,11 +38,24 @@ public static class NodeBootstrap
         OpenCodeTaskRunner? runner = null;
 
         RunAsCredentials? runAs = null;
+        var runtimeRoot = Environment.ExpandEnvironmentVariables(config.Sandbox.RuntimeRoot);
+        var agentConfigTemplate = Environment.ExpandEnvironmentVariables(config.Sandbox.AgentConfigPath);
+        var networkStatePath = Environment.ExpandEnvironmentVariables(config.Sandbox.NetworkStatePath);
+
         if (config.Scheduler.Enabled && config.Sandbox.RunAsAgent)
         {
             var secretPath = Environment.ExpandEnvironmentVariables(config.Sandbox.AgentSecretPath);
             var credentials = AgentCredentialsStore.Load(config.Sandbox.AgentAccount, secretPath);
             runAs = new RunAsCredentials(credentials.Account, credentials.Password);
+
+            if (!File.Exists(agentConfigTemplate))
+            {
+                throw new NodeConfigurationException(
+                    $"Falta la plantilla del agente en {agentConfigTemplate}. "
+                    + "Ejecuta tools/provision-sandbox.ps1.");
+            }
+
+            AgentRuntime.Cleanup(runtimeRoot);
         }
 
         ModelProxy? modelProxy = null;
@@ -65,7 +81,15 @@ public static class NodeBootstrap
 
             try
             {
-                WfpNetworkPolicy.Install(config.Sandbox.AgentAccount, modelProxy.Port);
+                if (!WfpNetworkPolicy.IsInstalled(networkStatePath))
+                {
+                    throw new NodeConfigurationException(
+                        "sandbox.network_isolation requiere los filtros WFP. Ejecuta "
+                        + "'odw sandbox net install --agent " + config.Sandbox.AgentAccount
+                        + " --port " + modelProxy.Port.ToString(CultureInfo.InvariantCulture)
+                        + " --state " + networkStatePath
+                        + "' con una consola elevada.");
+                }
             }
             catch
             {
@@ -98,6 +122,15 @@ public static class NodeBootstrap
                 RunAs = runAs,
                 ModelProxyUrl = modelProxy?.Url,
                 RequireNetworkIsolation = config.Sandbox.NetworkIsolation,
+                NetworkIsolationProbe = config.Sandbox.NetworkIsolation
+                    ? () => WfpNetworkPolicy.IsInstalled(networkStatePath)
+                    : null,
+                AgentRuntimeRoot = config.Sandbox.RunAsAgent ? runtimeRoot : null,
+                AgentConfigTemplate = agentConfigTemplate,
+                AgentAccount = config.Sandbox.AgentAccount,
+                ServiceAccount = OperatingSystem.IsWindows()
+                    ? System.Security.Principal.WindowsIdentity.GetCurrent().Name
+                    : null,
                 PermissionHandlerFactory = request => BuildToolHandler(
                     policy, settings, request, capabilities),
             });

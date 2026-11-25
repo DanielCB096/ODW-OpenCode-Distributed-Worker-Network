@@ -13,22 +13,22 @@
 ```
 src/
   Odw.Core/                  ← contrato, hash y estados (96 pruebas)
-  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (111 pruebas)
+  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (117 pruebas)
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
-  Odw.Sandbox/               ← workspace Git, ACLs, Job Objects, WFP y proxy de modelo (28 pruebas)
+  Odw.Sandbox/               ← workspace Git, ACLs, WFP, proxy y perfiles por tarea (35 pruebas)
   Odw.Cli/                   ← ejecutable: init, doctor, sandbox, service
   Odw.Trust/                 ← esqueleto
   Odw.Approvals/             ← esqueleto
   Odw.PeerApi/               ← esqueleto
 tests/
   Odw.Core.Tests/            ← 96 pruebas
-  Odw.Node.Tests/            ← 111 pruebas
+  Odw.Node.Tests/            ← 117 pruebas
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
-  Odw.Sandbox.Tests/         ← 28 pruebas
+  Odw.Sandbox.Tests/         ← 35 pruebas
 ```
 
 Dependencias: `Core` no referencia nada; `Policy`/`Trust`/`Sandbox`/`Executors.OpenCode` → `Core`;
@@ -227,10 +227,22 @@ Límites que siguen abiertos y se declaran:
   proxy CONNECT con allowlist (`opencode.ai`). Una tarea real completó a través del proxy.
   `models.dev` no es necesario en ejecución (el modelo se fija en el contrato/config); si se
   necesita refrescar el catálogo, puede añadirse a `network_allowed_hosts`.
+- Perfil desechable por tarea (`AgentRuntime`): configuración, datos, caché y temporales propios;
+  el perfil real del agente queda sin escritura. `sandbox.run_as_agent` exige
+  `scheduler.max_concurrent=1` y `workspaces.keep=false` (`SandboxGuard`).
+- `WorkspaceGuard` escanea reparse points y hard links antes y después de la tarea; un junction
+  previo impide ejecutar y uno creado durante la tarea deja `ReviewRequired`.
+- `NetworkIsolationWatchdog` comprueba el aislamiento durante la ejecución y cancela si
+  desaparece.
+- El nodo corre como `odw-svc` (sin administrador): el aprovisionamiento instala WFP y le concede
+  `SeServiceLogonRight`/`SeIncreaseQuotaPrivilege`; `odw service install --account` usa DPAPI y
+  `ChangeServiceConfig`. Arranque del nodo como `odw-svc` verificado.
+- `odw-agent` conserva el logon interactivo local que exige `CreateProcessWithLogonW`; tiene
+  denegados el logon de red y el interactivo remoto.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
-- Pendiente: escaneo de reparse points y pruebas hostiles automatizadas.
+- Pendiente: prueba real en dos PCs (H1) y el resultado aún no calcula `changed_paths`/`commit`.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El resultado no calcula todavía `changed_paths`/`commit` (quedan vacíos) y no empaqueta artefactos.
 - El runner usa `ToolPolicy.AskAll`; sin un `ToolPermissionHandler`, toda herramienta se rechaza.
@@ -328,16 +340,23 @@ Reglas de configuración:
 - El aprovisionamiento endurece `%PROGRAMDATA%\ODW`: raíz solo para servicio/SYSTEM/administradores,
   agente con traverse y `DENY (R)` sobre configuración, bases y claves existentes. Ejecútalo con el
   nodo detenido.
-- `sandbox.network_isolation` (requiere `run_as_agent`) instala filtros WFP persistentes para el SID
-  del agente: bloqueo total salvo `127.0.0.1:<network_proxy_port>` (por defecto 7423). El nodo
-  arranca un proxy CONNECT en ese puerto y pasa `HTTPS_PROXY`/`HTTP_PROXY` al agente. La allowlist
-  (`network_allowed_hosts`) limita los destinos del proxy y rechaza IPs privadas/LAN.
-  Comandos: `odw sandbox net install|uninstall|status`.
+- `sandbox.network_isolation` (requiere `run_as_agent`) exige filtros WFP persistentes instalados por
+  el aprovisionamiento para el SID del agente: bloqueo total salvo
+  `127.0.0.1:<network_proxy_port>` (por defecto 7423). El nodo verifica los filtros (admin) o la
+  marca `network_state_path` (servicio sin privilegios), arranca un proxy CONNECT en ese puerto y
+  pasa `HTTPS_PROXY`/`HTTP_PROXY` al agente. La allowlist (`network_allowed_hosts`) limita los
+  destinos del proxy y rechaza IPs privadas/LAN. Comandos:
+  `odw sandbox net install|uninstall|status`.
+- `sandbox.runtime_root` y `sandbox.agent_config_path` definen el perfil desechable por tarea y la
+  plantilla de `opencode.json`; el aprovisionamiento los crea. El perfil real del agente queda sin
+  escritura.
 - `peer_api.tls.enabled` exige `certificate_path` (PFX con clave privada) y permite
   `password_ref`; con TLS el listener de pares usa **HTTPS**.
 - `odw serve` usa el *host* de .NET: Ctrl+C en consola y parada del servicio Windows.
-- `odw service install` crea el servicio con `sc.exe` (requiere consola elevada y un
-  `odw.exe` publicado con `dotnet publish`).
+- `odw service install --account .\odw-svc` crea el servicio con `sc.exe`, lee el secreto DPAPI
+  (`service.secret`) y cambia la cuenta con `ChangeServiceConfig` (sin exponer la contraseña en la
+  línea de comandos). Requiere consola elevada y un `odw.exe` publicado con `dotnet publish`;
+  `odw-svc` necesita RX sobre ese binario y su directorio.
 
 Ejemplo completo en `config/node.example.json` (`config/peers.example.json` como `peers_file`).
 
@@ -362,7 +381,8 @@ dotnet run --project src/Odw.Cli -- init --db .\odw.db
 dotnet run --project src/Odw.Cli -- doctor --db .\odw.db --mcp-token <base64-32B> --json
 dotnet run --project src/Odw.Cli -- serve --config config\node.example.json
 # instalación como servicio (consola elevada, odw.exe publicado)
-odw service install --config C:\ODW\node.json --exe C:\ODW\odw.exe
+odw service install --config C:\ODW\node.json --exe C:\ODW\odw.exe `
+  --account .\odw-svc --secret %PROGRAMDATA%\ODW\service.secret
 
 # sandbox H3 (consola elevada)
 powershell -ExecutionPolicy Bypass -File tools\provision-sandbox.ps1
@@ -384,7 +404,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **312/312 pruebas** (96 Core + 111 Node + 26 MCP + 23 OpenCode + 28 Policy + 28 Sandbox).
+Estado actual: build 0 warnings, **325/325 pruebas** (96 Core + 117 Node + 26 MCP + 23 OpenCode + 28 Policy + 35 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---
@@ -421,9 +441,9 @@ La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no 
 
 ## 14. Siguiente
 
-1. Cuenta dedicada `odw-svc` para el servicio y prueba en dos PCs reales.
-2. Bot de Telegram + firma HMAC de aprobaciones (resto de H2).
-3. `Odw.Sandbox` H3: usuario `odw-agent`, ACLs y red restringida.
-4. Protocolo restante: SSE de eventos, mensajes, cancelación y artefactos.
+1. Prueba real en dos PCs (H1): delegación A→B con el servicio `odw-svc`.
+2. Probar Telegram con un bot real (H2); la firma HMAC ya está implementada.
+3. Calcular `changed_paths`/`commit` y empaquetar artefactos.
+4. H4: leases, mensajes, cancelación remota y reconciliación tras reinicio.
 5. Cerrar H0-6 (aislamiento por directorio) con instancias ya separadas.
 

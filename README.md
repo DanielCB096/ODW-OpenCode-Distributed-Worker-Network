@@ -13,10 +13,10 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
   Job Object, ejecutor OpenCode y poller de resultado.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **312 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- **325 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
 - TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
-- ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente, modelo gratuito propio
-  y red aislada con WFP + proxy (solo el endpoint del modelo).
+- ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente, modelo gratuito propio,
+  red aislada con WFP + proxy, `odw-svc` sin admin y perfiles por tarea.
 
 Detalle: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) · Hoja de ruta:
 [`docs/ROADMAP.md`](docs/ROADMAP.md).
@@ -91,26 +91,40 @@ powershell -ExecutionPolicy Bypass -File tools/provision-sandbox.ps1
 odw sandbox check
 ```
 
-El script crea `odw-agent`, guarda su secreto con DPAPI de máquina, aplica ACLs al workspace,
-copia `opencode.exe` a `%PROGRAMDATA%\ODW\opencode`, escribe la configuración del agente con el
-modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del usuario) y endurece
-`%PROGRAMDATA%\ODW` para que el agente no pueda leer configuración, bases ni claves. Con
-`sandbox.run_as_agent` activo, `opencode serve` se lanza como `odw-agent`; `odw sandbox check` debe
-mostrar `admin: True`, `agent: True`, `network: True` y `enforced: True`.
+El script crea `odw-agent` y `odw-svc`, guarda sus secretos con DPAPI de máquina, aplica ACLs al
+workspace, copia `opencode.exe` a `%PROGRAMDATA%\ODW\opencode`, escribe la configuración del agente
+con el modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del usuario), prepara
+un perfil desechable por tarea y endurece `%PROGRAMDATA%\ODW` para que el agente no pueda leer
+configuración, bases ni claves. Con `sandbox.run_as_agent` activo, `opencode serve` se lanza como
+`odw-agent`; `odw sandbox check` debe mostrar `admin: True`, `agent: True`, `network: True` y
+`enforced: True`.
+
+El nodo corre como `odw-svc` (sin administrador):
+
+```powershell
+odw service install --config C:\ODW\node.json --exe C:\ODW\odw.exe `
+  --account .\odw-svc --secret %PROGRAMDATA%\ODW\service.secret
+```
 
 La red se aísla con **WFP por SID** más un **proxy CONNECT en loopback**:
 
 ```powershell
-odw sandbox net install --agent odw-agent   # bloquea la salida salvo 127.0.0.1:7423
+odw sandbox net install --agent odw-agent --port 7423 `
+  --state %PROGRAMDATA%\ODW\network.state
 odw sandbox net status
 odw sandbox net uninstall
 ```
 
-Con `sandbox.network_isolation` activo, el nodo instala los filtros al arrancar (requiere admin),
+Con `sandbox.network_isolation` activo, el nodo verifica los filtros (o la marca del instalador),
 levanta el proxy en `network_proxy_port` (7423 por defecto) y limita al agente a `opencode.ai`
-(configurable con `network_allowed_hosts`). Internet, LAN, DNS directo y el resto de puertos de
-loopback quedan bloqueados; una tarea con `network: "allow"` se rechaza porque el filtro es por
-usuario, no por tarea.
+(configurable con `network_allowed_hosts`). Internet, LAN, metadata, DNS directo y el resto de
+puertos de loopback quedan bloqueados; una tarea con `network: "allow"` se rechaza porque el filtro
+es por usuario, no por tarea.
+
+Además, cada tarea recibe un perfil/config/datos propios (`runtime_root`), se escanean reparse
+points y hard links antes/después, y un watchdog cancela la tarea si WFP deja de estar activo. Con
+`run_as_agent`, el nodo exige `scheduler.max_concurrent=1` y `workspaces.keep=false` para no
+mezclar workspaces del mismo SID.
 
 ## CLI
 
@@ -159,5 +173,5 @@ src/Odw.Sandbox               workspace Git + Job Objects
 src/Odw.PeerApi               cliente de pares
 src/Odw.Approvals             cliente del pipe de aprobaciones
 src/Odw.Cli                   ejecutable odw
-tests/*                       312 pruebas
+tests/*                       325 pruebas
 ```

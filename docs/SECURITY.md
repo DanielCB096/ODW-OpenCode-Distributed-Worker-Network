@@ -33,15 +33,18 @@ el usuario del proceso, las ACL y el Job Object.
 
 | Identidad | Uso | Privilegios |
 |---|---|---|
-| `odw-svc` (usuario local dedicado) | Servicio `OdwNode` | `SeServiceLogonRight`, `SeAssignPrimaryTokenPrivilege`, `SeIncreaseQuotaPrivilege`, `SeChangeNotifyPrivilege`. **No** administrador, **no** `SeDebugPrivilege`, **no** `SeImpersonatePrivilege`, **no** `SeCreateSymbolicLinkPrivilege`. |
-| `odw-agent` (usuario local dedicado) | Procesos `opencode serve` y herramientas | Sin grupos privilegiados; `SeDenyInteractiveLogonRight`, `SeDenyRemoteInteractiveLogonRight`, `SeDenyNetworkLogonRight`; solo inicio de sesión por lote (`SeBatchLogonRight`) para tokens creados por el servicio. |
+| `odw-svc` (usuario local dedicado) | Servicio `OdwNode` | `SeServiceLogonRight`, `SeIncreaseQuotaPrivilege`; sin administrador, sin `SeDebugPrivilege`, sin `SeImpersonatePrivilege`, sin `SeCreateSymbolicLinkPrivilege`. |
+| `odw-agent` (usuario local dedicado) | Procesos `opencode serve` y herramientas | Sin grupos privilegiados; `SeDenyRemoteInteractiveLogonRight`, `SeDenyNetworkLogonRight`. Conserva el inicio de sesión interactivo local porque `CreateProcessWithLogonW` lo exige; no tiene derecho de red ni RDP. |
 | Usuario humano | Cliente OpenCode, aprobaciones por CLI | Sin privilegios especiales; pipe de aprobación restringido a administradores (§5.2). |
 
-- El servicio **no** corre como `LocalSystem`. Requiere dos privilegios, no la cuenta todopoderosa.
-- `odw-agent` no tiene perfil de usuario con secretos: su `%USERPROFILE%` es un directorio vacío
-  bajo `%PROGRAMDATA%\ODW\agent-home`.
+- El servicio **no** corre como `LocalSystem` ni como administrador: `odw service install --account .\odw-svc`
+  usa el secreto DPAPI y `ChangeServiceConfig` (sin exponer la contraseña en la línea de comandos).
+- `odw-agent` no usa su perfil real para OpenCode: cada tarea recibe un `%USERPROFILE%` desechable
+  bajo `%PROGRAMDATA%\ODW\runtime\<task_id>` con su configuración, datos y temporales.
 - Sin variables de entorno heredadas: el proceso hijo se crea con un bloque de entorno explícito
-  y mínimo (`PATH` acotado, `TEMP` dentro del sandbox, `OPENCODE_SERVER_PASSWORD` efímera).
+  y mínimo (`PATH` acotado, `TEMP` dentro del runtime, `OPENCODE_SERVER_PASSWORD` efímera).
+- Los filtros WFP se instalan en el aprovisionamiento elevado; `odw-svc` solo verifica la marca
+  `network.state` (no puede consultar WFP) y un watchdog comprueba durante la tarea.
 
 ---
 
@@ -91,23 +94,25 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
   SYSTEM y administradores tienen acceso completo; `odw-agent` conserva únicamente traverse (X)
   para llegar a `workspaces` y `opencode`, que tienen su propia ACL. Los datos sensibles ya
   existentes llevan además una ACE de **denegación de lectura** para el agente.
-- **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F y agente RX/M.
-  Verificado: procesos lanzados como `odw-agent`, escritura denegada en `read_only`, permitida en
-  escritura, **`opencode serve` arrancando como `odw-agent`** con perfil propio, **una tarea real
-  completada** con el modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del
-  usuario) y **lectura de datos del nodo denegada** al agente (probado con un proceso real).
-  Pendiente: aislamiento de red.
+- **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F (y SYSTEM/
+  administradores), agente RX/M. Verificado: procesos lanzados como `odw-agent`, escritura
+  denegada en `read_only`, permitida en escritura, **`opencode serve` arrancando como `odw-agent`**
+  con un perfil desechable por tarea, **una tarea real completada** con el modelo gratuito
+  `opencode/deepseek-v4.1-flash-free` (sin credenciales del usuario), **lectura de datos del nodo
+  denegada** y **red aislada** (WFP + proxy). El nodo arranca como `odw-svc` sin privilegios de
+  administrador.
 
 ### 3.3 Rutas y reparse points
 
 - `allowed_paths`/`denied_paths` se validan **antes** de crear el workspace: relativas,
   normalizadas, sin `..`, sin unidad, sin UNC, sin NUL, sin nombres reservados de Windows
   (`CON`, `PRN`, `AUX`, `NUL`, `COM1-9`, `LPT1-9`), sin ADS (`:`).
-- `odw-agent` no tiene `SeCreateSymbolicLinkPrivilege`; aun así, antes y después de ejecutar se
-  escanea el workspace con `FILE_FLAG_OPEN_REPARSE_POINT` y se **falla** la tarea si aparece
-  cualquier reparse point (símbolo, junction, mount point).
-- Los hardlinks no se pueden crear entre volúmenes por `odw-agent` sin permisos; se detectan
-  con `GetFileInformationByHandle` (`nNumberOfLinks > 1`) en la verificación final.
+- `odw-agent` no tiene `SeCreateSymbolicLinkPrivilege`, pero las junctions no lo requieren: por eso
+  `WorkspaceGuard` escanea el árbol **antes** de ejecutar y **después** de completar. Si aparece un
+  reparse point, la tarea no arranca (`REPARSE_DETECTED`) o queda en `ReviewRequired` si se creó
+  durante la ejecución.
+- Los hardlinks se detectan con `GetFileInformationByHandle` (`nNumberOfLinks > 1`) en el mismo
+  escaneo; también hacen fallar la tarea.
 - Ninguna ruta absoluta remota se usa jamás (ADR-012).
 
 ### 3.4 Red
@@ -126,14 +131,18 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
   - resuelve el nombre él mismo y rechaza direcciones privadas, loopback, link-local, CGNAT y
     multicast (evita SSRF a la LAN y a metadata cloud);
   - no inspecciona TLS: decide el destino y transporta bytes.
-- `sandbox.network_isolation` instala los filtros al arrancar (requiere admin y `run_as_agent`) y
-  arranca el proxy; el runner inyecta `HTTPS_PROXY`/`HTTP_PROXY` y `NO_PROXY=127.0.0.1,localhost`.
-  Si faltan los filtros o el proxy, la tarea con `network=none` **no se ejecuta**
-  (`NETWORK_UNENFORCED`).
+- `sandbox.network_isolation` **verifica** los filtros (como admin) o la marca `network.state`
+  dejada por el instalador (como `odw-svc`, que no puede consultar WFP), arranca el proxy y el
+  runner inyecta `HTTPS_PROXY`/`HTTP_PROXY` y `NO_PROXY=127.0.0.1,localhost`. Si falta el
+  aislamiento o el proxy, la tarea con `network=none` **no se ejecuta** (`NETWORK_UNENFORCED`).
+- Un watchdog (`NetworkIsolationWatchdog`) revisa el aislamiento durante la tarea; si desaparece,
+  cancela la ejecución y la marca como fallida.
+- La instalación de los filtros se hace en el aprovisionamiento elevado, no en el servicio:
+  `odw sandbox net install --agent odw-agent --port 7423 --state <ruta>`.
 - Verificado con una tarea real como `odw-agent` a través del proxy, y con `curl` como agente:
-  loopback OK, `https://example.com` y DNS externo bloqueados.
+  loopback OK; `https://example.com`, `169.254.169.254`, una IP de LAN y DNS externo bloqueados.
 - Comandos: `odw sandbox net install|uninstall|status`; `odw sandbox check` muestra `network: True`
-  solo si los cuatro filtros existen.
+  si existen los cuatro filtros (admin) o la marca del instalador.
 - El proceso `opencode serve` escucha **solo** en `127.0.0.1`; se verifica con
   `Get-NetTCPConnection -OwningProcess <pid>` tras el arranque (falla la tarea si no es loopback).
 - **API de pares:** HTTP sobre Tailscale (cifrado por WireGuard) por defecto; HTTPS opt-in con
@@ -167,8 +176,8 @@ Cualquier cambio en el contrato después de aprobar ⇒ hash distinto ⇒ `APPRO
 | CLI pipe | `\\.\pipe\odw-approvals`, SDDL `D:(A;;GA;;;BA)(A;;GA;;;SY)`, `PIPE_REJECT_REMOTE_CLIENTS` | Administradores y SYSTEM | ✅ |
 
 Implementado: comandos `list/approve/deny/expire`, decisión vinculada a `task_hash`, TTL 15 min,
-un solo uso y auditoría. Pendiente: Telegram, firma HMAC y `PIPE_REJECT_REMOTE_CLIENTS`
-explícito (los named pipes locales de Windows no aceptan conexiones remotas por diseño).
+un solo uso, firma HMAC y auditoría. Telegram está implementado pero **no probado con un bot real**.
+Los named pipes locales de Windows no aceptan conexiones remotas por diseño.
 
 - El mensaje de Telegram muestra: nodo, par, `kind`, `mode`, repo, límites, hash corto (8 hex),
   instrucciones truncadas a 500 caracteres y un botón **Ver instrucciones completas** (mensaje
