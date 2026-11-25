@@ -153,6 +153,73 @@ public class SandboxAgentTests
         }
     }
 
+    [Fact]
+    public void Agent_cannot_read_node_data()
+    {
+        if (!OperatingSystem.IsWindows()
+            || Environment.GetEnvironmentVariable("ODW_AGENT_E2E") != "1")
+        {
+            return;
+        }
+
+        var common = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        var credentials = AgentCredentialsStore.Load(
+            "odw-agent",
+            Path.Combine(common, "ODW", "agent.secret"));
+
+        var probe = Path.Combine(common, "ODW", $"acl-probe-{Guid.NewGuid():N}.tmp");
+        File.WriteAllText(probe, "odw-acl-probe");
+
+        try
+        {
+            Assert.NotEqual(0, RunAsAgent(credentials, "/c", "type", probe));
+            Assert.NotEqual(0, RunAsAgent(
+                credentials,
+                "/c",
+                "type",
+                Path.Combine(common, "ODW", "agent.secret")));
+
+            var profile = Path.Combine(
+                Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile))!.FullName,
+                credentials.Account);
+            var agentConfig = Path.Combine(profile, ".config", "opencode", "opencode.json");
+
+            Assert.Equal(0, RunAsAgent(credentials, "/c", "type", agentConfig));
+        }
+        finally
+        {
+            File.Delete(probe);
+        }
+    }
+
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    private static int RunAsAgent(AgentCredentials credentials, params string[] arguments)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "cmd.exe",
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UserName = credentials.Account,
+            PasswordInClearText = credentials.Password,
+            Domain = ".",
+            LoadUserProfile = true,
+        };
+
+        foreach (var argument in arguments)
+        {
+            startInfo.ArgumentList.Add(argument);
+        }
+
+        using var process = Process.Start(startInfo)!;
+        process.StandardOutput.ReadToEnd();
+        process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return process.ExitCode;
+    }
+
     private static void GrantAgent(string path)
     {
         if (!OperatingSystem.IsWindows())

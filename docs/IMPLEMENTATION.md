@@ -13,7 +13,7 @@
 ```
 src/
   Odw.Core/                  ← contrato, hash y estados (96 pruebas)
-  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (106 pruebas)
+  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (107 pruebas)
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
@@ -24,7 +24,7 @@ src/
   Odw.PeerApi/               ← esqueleto
 tests/
   Odw.Core.Tests/            ← 96 pruebas
-  Odw.Node.Tests/            ← 106 pruebas
+  Odw.Node.Tests/            ← 107 pruebas
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
@@ -220,7 +220,8 @@ Límites que siguen abiertos y se declaran:
   procesos como el agente, **`opencode serve` arrancando como `odw-agent`** con su perfil y
   variables de entorno propias, y **una tarea real completada** con el modelo gratuito
   `opencode/deepseek-v4.1-flash-free`, sin credenciales del usuario. Escritura denegada en
-  `read_only` y permitida en escritura.
+  `read_only` y permitida en escritura. Lectura de los datos del nodo denegada al agente (probado
+  con un proceso real).
 - Pendiente: aislar la red (el firewall por usuario no está soportado en esta versión de Windows)
   y el escaneo de reparse points.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
@@ -317,6 +318,9 @@ Reglas de configuración:
   modelo gratuito `opencode/deepseek-v4.1-flash-free` (parámetro `-AgentModel`). No se copian
   credenciales ni la base de datos del usuario; los modelos `opencode-go/*` requieren su cuenta y
   no están disponibles para el agente.
+- El aprovisionamiento endurece `%PROGRAMDATA%\ODW`: raíz solo para servicio/SYSTEM/administradores,
+  agente con traverse y `DENY (R)` sobre configuración, bases y claves existentes. Ejecútalo con el
+  nodo detenido.
 - `peer_api.tls.enabled` exige `certificate_path` (PFX con clave privada) y permite
   `password_ref`; con TLS el listener de pares usa **HTTPS**.
 - `odw serve` usa el *host* de .NET: Ctrl+C en consola y parada del servicio Windows.
@@ -363,7 +367,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **289/289 pruebas** (96 Core + 106 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
+Estado actual: build 0 warnings, **290/290 pruebas** (96 Core + 107 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---

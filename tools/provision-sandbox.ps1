@@ -9,9 +9,12 @@
       - secreto DPAPI de máquina en <DataDir>\agent.secret (solo admins/SYSTEM),
       - ACL del workspace raíz (servicio F, agente RX, sin herencia),
       - copia de opencode.exe accesible al agente y su opencode.json con un modelo gratuito,
+      - ACL de la raíz de datos (servicio/SYSTEM/administradores; el agente solo traverse) y
+        denegación de lectura sobre configuración, bases y claves existentes,
       - regla de firewall que intenta bloquear la salida de red del agente (no soportada en
         todas las versiones de Windows).
-    No lanza procesos ni modifica la base de datos.
+    Detén el nodo antes de ejecutarlo: cambia ACLs de archivos en uso.
+    No lanza procesos del nodo ni modifica la base de datos.
 
 .PARAMETER AgentAccount
     Cuenta local del agente. Por defecto odw-agent.
@@ -130,6 +133,9 @@ if (-not $OpenCodeSource) {
 if ($OpenCodeSource) {
     $openDir = Join-Path $DataDir 'opencode'
     New-Item -ItemType Directory -Force -Path $openDir | Out-Null
+    Invoke-Icacls @($openDir, '/inheritance:r',
+        '/grant:r', "$($service):(OI)(CI)F",
+        '/grant:r', "$($AgentAccount):(OI)(CI)RX") | Out-Null
     $openExe = Join-Path $openDir 'opencode.exe'
     Copy-Item $OpenCodeSource $openExe -Force
     Invoke-Icacls @($openExe, '/inheritance:r',
@@ -180,6 +186,48 @@ Invoke-Icacls @($agentConfig, '/inheritance:r',
     '/grant:r', "$($AgentAccount):F",
     '/grant:r', "$($service):F") | Out-Null
 Write-Host "Agente configurado con modelo gratuito '$AgentModel' (sin credenciales del usuario)."
+
+Write-Host "== Protección de datos del nodo =="
+# La raíz de datos queda solo para el servicio/SYSTEM/administradores. El agente conserva
+# únicamente traverse (X) para llegar a workspaces y opencode, que tienen su propia ACL.
+Invoke-Icacls @($DataDir, '/inheritance:r',
+    '/grant:r', "$($service):(OI)(CI)F",
+    '/grant:r', '*S-1-5-18:(OI)(CI)F',
+    '/grant:r', '*S-1-5-32-544:(OI)(CI)F',
+    '/grant:r', "$($AgentAccount):(X)") | Out-Null
+
+# Denegación explícita en los datos sensibles ya existentes (defensa en profundidad).
+Get-ChildItem -Path $DataDir -File -Force -ErrorAction SilentlyContinue |
+    Where-Object {
+        $_.Name -like '*.json' -or $_.Name -like '*.db*' -or
+        $_.Name -like '*.key' -or $_.Name -like '*.pfx' -or $_.Name -like '*.secret'
+    } |
+    ForEach-Object {
+        Invoke-Icacls @($_.FullName, '/deny', "$($AgentAccount):(R)") | Out-Null
+    }
+
+$probe = Join-Path $DataDir 'acl-probe.tmp'
+[IO.File]::WriteAllText($probe, 'odw-acl-probe')
+try {
+    $readProbe = Start-Process -FilePath 'cmd.exe' `
+        -ArgumentList '/c', "type `"$probe`" >nul 2>&1" `
+        -Credential $agentCredentials -WindowStyle Hidden -PassThru -Wait
+    if ($readProbe.ExitCode -eq 0) {
+        throw "El agente puede leer ${probe}: la ACL de datos no se aplicó."
+    }
+
+    $readConfig = Start-Process -FilePath 'cmd.exe' `
+        -ArgumentList '/c', "type `"$agentConfig`" >nul 2>&1" `
+        -Credential $agentCredentials -WindowStyle Hidden -PassThru -Wait
+    if ($readConfig.ExitCode -ne 0) {
+        throw "El agente no puede leer su propia configuración: $agentConfig"
+    }
+}
+finally {
+    Remove-Item $probe -Force -ErrorAction SilentlyContinue
+}
+
+Write-Host "Verificado: el agente no lee datos del nodo y sí su propia configuración."
 
 if (-not $SkipFirewall) {
     Write-Host "== Firewall =="

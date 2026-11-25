@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (288 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (290 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | 🟡 | ACLs de workspace y `odw sandbox check`; falta usuario/launch real y red |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -178,8 +178,9 @@ siguen pendientes y **no se declaran aislamiento** hasta verificarlos.
 - ✅ Lanzar `opencode serve` como `odw-agent` (verificado con perfil propio).
 - ✅ Configuración y modelo propios del agente: `opencode/deepseek-v4.1-flash-free`, sin
   credenciales del usuario (tarea real completada como `odw-agent`).
+- ✅ ACL de datos: raíz solo servicio/SYSTEM/administradores, agente con traverse y denegación de
+  lectura verificada sobre configuración, bases y claves.
 - ⬜ Aislamiento de red (firewall por usuario no soportado en esta versión de Windows).
-- ⬜ ACE de denegación para `node.json`, `odw.db` y claves frente a `odw-agent`.
 - ⬜ Escaneo de reparse points y pruebas hostiles automatizadas.
 
 **Entregables**

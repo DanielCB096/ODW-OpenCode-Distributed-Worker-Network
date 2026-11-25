@@ -13,7 +13,7 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
   Job Object, ejecutor OpenCode y poller de resultado.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **289 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- **290 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
 - TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
 - ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente y modelo gratuito propio;
   aislamiento de red pendiente.
@@ -92,8 +92,9 @@ odw sandbox check
 ```
 
 El script crea `odw-agent`, guarda su secreto con DPAPI de máquina, aplica ACLs al workspace,
-copia `opencode.exe` a `%PROGRAMDATA%\ODW\opencode` y escribe la configuración del agente con el
-modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del usuario). Con
+copia `opencode.exe` a `%PROGRAMDATA%\ODW\opencode`, escribe la configuración del agente con el
+modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del usuario) y endurece
+`%PROGRAMDATA%\ODW` para que el agente no pueda leer configuración, bases ni claves. Con
 `sandbox.run_as_agent` activo, `opencode serve` se lanza como `odw-agent`; `odw sandbox check` debe
 mostrar `admin: True`, `agent: True` y `enforced: True`.
 
@@ -147,5 +148,5 @@ src/Odw.Sandbox               workspace Git + Job Objects
 src/Odw.PeerApi               cliente de pares
 src/Odw.Approvals             cliente del pipe de aprobaciones
 src/Odw.Cli                   ejecutable odw
-tests/*                       289 pruebas
+tests/*                       290 pruebas
 ```
