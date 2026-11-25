@@ -22,6 +22,7 @@ using Odw.Node.Persistence.Tasks;
 using Odw.Node.Scheduling;
 using Odw.Node.Tasks;
 using Odw.Policy;
+using Odw.Sandbox.Network;
 
 namespace Odw.Node.Hosting;
 
@@ -38,6 +39,7 @@ public sealed class NodeHost : IAsyncDisposable
     private readonly OriginPoller? _poller;
     private readonly ApprovalPipeServer? _pipe;
     private readonly TelegramApprovalService? _telegram;
+    private readonly ModelProxy? _modelProxy;
     private bool _disposed;
 
     private NodeHost(
@@ -74,6 +76,7 @@ public sealed class NodeHost : IAsyncDisposable
         ApprovalCoordinator = approvalCoordinator;
         _pipe = pipe;
         _telegram = telegram;
+        _modelProxy = options.ModelProxy;
     }
 
     public NodeHostOptions Options { get; }
@@ -257,6 +260,11 @@ public sealed class NodeHost : IAsyncDisposable
                 await SafeStopAsync(mcp).ConfigureAwait(false);
             }
 
+            if (options.ModelProxy is not null)
+            {
+                await options.ModelProxy.DisposeAsync().ConfigureAwait(false);
+            }
+
             await database.DisposeAsync().ConfigureAwait(false);
             throw;
         }
@@ -289,6 +297,11 @@ public sealed class NodeHost : IAsyncDisposable
         if (_scheduler is not null)
         {
             await _scheduler.DisposeAsync().ConfigureAwait(false);
+        }
+
+        if (_modelProxy is not null)
+        {
+            await _modelProxy.DisposeAsync().ConfigureAwait(false);
         }
 
         await SafeStopAsync(_peer).ConfigureAwait(false);

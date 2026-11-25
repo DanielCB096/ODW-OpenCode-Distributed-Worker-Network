@@ -45,6 +45,9 @@ public sealed record NodeHostOptions
 
     public IWorkspacePreparer? WorkspacePreparer { get; init; }
 
+    /// <summary>Proxy de modelo para el agente; el host lo libera al parar.</summary>
+    public Odw.Sandbox.Network.ModelProxy? ModelProxy { get; init; }
+
     public ExecutionSchedulerOptions? SchedulerOptions { get; init; }
 
     /// <summary>Certificado para la API de pares; si está presente, el listener usa HTTPS.</summary>

@@ -13,22 +13,22 @@
 ```
 src/
   Odw.Core/                  ← contrato, hash y estados (96 pruebas)
-  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (107 pruebas)
+  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (111 pruebas)
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
-  Odw.Sandbox/               ← workspace Git, ACLs y Job Objects (10 pruebas)
-  Odw.Cli/                   ← ejecutable: init, doctor, version
+  Odw.Sandbox/               ← workspace Git, ACLs, Job Objects, WFP y proxy de modelo (28 pruebas)
+  Odw.Cli/                   ← ejecutable: init, doctor, sandbox, service
   Odw.Trust/                 ← esqueleto
   Odw.Approvals/             ← esqueleto
   Odw.PeerApi/               ← esqueleto
 tests/
   Odw.Core.Tests/            ← 96 pruebas
-  Odw.Node.Tests/            ← 107 pruebas
+  Odw.Node.Tests/            ← 111 pruebas
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
-  Odw.Sandbox.Tests/         ← 10 pruebas
+  Odw.Sandbox.Tests/         ← 28 pruebas
 ```
 
 Dependencias: `Core` no referencia nada; `Policy`/`Trust`/`Sandbox`/`Executors.OpenCode` → `Core`;
@@ -222,8 +222,15 @@ Límites que siguen abiertos y se declaran:
   `opencode/deepseek-v4.1-flash-free`, sin credenciales del usuario. Escritura denegada en
   `read_only` y permitida en escritura. Lectura de los datos del nodo denegada al agente (probado
   con un proceso real).
-- Pendiente: aislar la red (el firewall por usuario no está soportado en esta versión de Windows)
-  y el escaneo de reparse points.
+- Red verificada con WFP + proxy: como `odw-agent`, Internet, LAN, DNS directo y otros puertos de
+  loopback quedan bloqueados; solo `127.0.0.1:<proxy>` está permitido y el modelo se alcanza por un
+  proxy CONNECT con allowlist (`opencode.ai`). Una tarea real completó a través del proxy.
+  `models.dev` no es necesario en ejecución (el modelo se fija en el contrato/config); si se
+  necesita refrescar el catálogo, puede añadirse a `network_allowed_hosts`.
+- `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
+  modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
+  por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
+- Pendiente: escaneo de reparse points y pruebas hostiles automatizadas.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El resultado no calcula todavía `changed_paths`/`commit` (quedan vacíos) y no empaqueta artefactos.
 - El runner usa `ToolPolicy.AskAll`; sin un `ToolPermissionHandler`, toda herramienta se rechaza.
@@ -321,6 +328,11 @@ Reglas de configuración:
 - El aprovisionamiento endurece `%PROGRAMDATA%\ODW`: raíz solo para servicio/SYSTEM/administradores,
   agente con traverse y `DENY (R)` sobre configuración, bases y claves existentes. Ejecútalo con el
   nodo detenido.
+- `sandbox.network_isolation` (requiere `run_as_agent`) instala filtros WFP persistentes para el SID
+  del agente: bloqueo total salvo `127.0.0.1:<network_proxy_port>` (por defecto 7423). El nodo
+  arranca un proxy CONNECT en ese puerto y pasa `HTTPS_PROXY`/`HTTP_PROXY` al agente. La allowlist
+  (`network_allowed_hosts`) limita los destinos del proxy y rechaza IPs privadas/LAN.
+  Comandos: `odw sandbox net install|uninstall|status`.
 - `peer_api.tls.enabled` exige `certificate_path` (PFX con clave privada) y permite
   `password_ref`; con TLS el listener de pares usa **HTTPS**.
 - `odw serve` usa el *host* de .NET: Ctrl+C en consola y parada del servicio Windows.
@@ -352,6 +364,11 @@ dotnet run --project src/Odw.Cli -- serve --config config\node.example.json
 # instalación como servicio (consola elevada, odw.exe publicado)
 odw service install --config C:\ODW\node.json --exe C:\ODW\odw.exe
 
+# sandbox H3 (consola elevada)
+powershell -ExecutionPolicy Bypass -File tools\provision-sandbox.ps1
+odw sandbox check --agent odw-agent
+odw sandbox net install --agent odw-agent --port 7423
+
 # integración real con OpenCode (opt-in). Modelo gratuito por defecto;
 # si no está disponible, fija ODW_TEST_MODEL (fallback acordado).
 $env:ODW_OPENCODE_EXE = "C:\ruta\a\opencode.cmd"
@@ -367,7 +384,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **290/290 pruebas** (96 Core + 107 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
+Estado actual: build 0 warnings, **312/312 pruebas** (96 Core + 111 Node + 26 MCP + 23 OpenCode + 28 Policy + 28 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---

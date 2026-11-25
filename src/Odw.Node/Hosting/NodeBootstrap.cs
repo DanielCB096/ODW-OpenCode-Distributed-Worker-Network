@@ -7,6 +7,7 @@ using Odw.Node.Hosting;
 using Odw.Node.Origins;
 using Odw.Node.Scheduling;
 using Odw.Policy;
+using Odw.Sandbox.Network;
 using Odw.Sandbox.Windows;
 using Odw.Sandbox.Workspaces;
 using System.Security.Cryptography;
@@ -41,6 +42,39 @@ public static class NodeBootstrap
             runAs = new RunAsCredentials(credentials.Account, credentials.Password);
         }
 
+        ModelProxy? modelProxy = null;
+        if (config.Scheduler.Enabled && config.Sandbox.NetworkIsolation)
+        {
+            if (!config.Sandbox.RunAsAgent)
+            {
+                throw new NodeConfigurationException(
+                    "sandbox.network_isolation requiere sandbox.run_as_agent.");
+            }
+
+            if (!OperatingSystem.IsWindows())
+            {
+                throw new NodeConfigurationException(
+                    "sandbox.network_isolation solo está disponible en Windows (WFP).");
+            }
+
+            modelProxy = ModelProxy.Start(new ModelProxyOptions
+            {
+                Port = config.Sandbox.NetworkProxyPort,
+                AllowedHosts = config.Sandbox.NetworkAllowedHosts,
+            });
+
+            try
+            {
+                WfpNetworkPolicy.Install(config.Sandbox.AgentAccount, modelProxy.Port);
+            }
+            catch
+            {
+                await modelProxy.DisposeAsync().ConfigureAwait(false);
+                modelProxy = null;
+                throw;
+            }
+        }
+
         if (config.Scheduler.Enabled)
         {
             workspaces = new WorkspaceManager(new WorkspaceOptions
@@ -62,6 +96,8 @@ public static class NodeBootstrap
                 PinnedVersion = config.OpenCode.PinnedVersion,
                 UseJobObject = config.OpenCode.UseJobObject,
                 RunAs = runAs,
+                ModelProxyUrl = modelProxy?.Url,
+                RequireNetworkIsolation = config.Sandbox.NetworkIsolation,
                 PermissionHandlerFactory = request => BuildToolHandler(
                     policy, settings, request, capabilities),
             });
@@ -81,6 +117,7 @@ public static class NodeBootstrap
             Capabilities = capabilities,
             Accepts = accepts,
             Policy = policy,
+            ModelProxy = modelProxy,
             EnableScheduler = config.Scheduler.Enabled,
             WorkspacePreparer = workspaces,
             ExecutionRunner = runner,
@@ -116,7 +153,19 @@ public static class NodeBootstrap
                 },
         };
 
-        return await NodeHost.StartAsync(options, cancellationToken).ConfigureAwait(false);
+        try
+        {
+            return await NodeHost.StartAsync(options, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            if (modelProxy is not null)
+            {
+                await modelProxy.DisposeAsync().ConfigureAwait(false);
+            }
+
+            throw;
+        }
     }
 
     private static X509Certificate2? LoadCertificate(NodeSettings settings)

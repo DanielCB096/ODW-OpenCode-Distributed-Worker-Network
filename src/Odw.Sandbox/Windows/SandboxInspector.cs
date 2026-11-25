@@ -10,6 +10,8 @@ public sealed record SandboxReport(
     string Detail)
 {
     public bool FullyEnforced => IsWindows && IsAdministrator && AgentAccountExists;
+
+    public bool NetworkEnforced { get; init; }
 }
 
 /// <summary>Comprueba si el equipo puede aplicar el aislamiento real de H3.</summary>
@@ -29,6 +31,7 @@ public static class SandboxInspector
         var principal = new WindowsPrincipal(identity);
         var admin = principal.IsInRole(WindowsBuiltInRole.Administrator);
         var exists = AccountExists(agentAccount);
+        var network = exists && WfpNetworkPolicy.IsInstalled();
 
         var detail = (admin, exists) switch
         {
@@ -40,11 +43,17 @@ public static class SandboxInspector
                 + "SeAssignPrimaryToken/SeIncreaseQuota para lanzar el agente.",
             (true, false) =>
                 $"Sesión elevada: falta crear '{agentAccount}'.",
-            _ => "Usuario y ACLs listos. Red sin aislar (firewall por usuario no soportado en esta "
-                 + "versión de Windows); el lanzamiento como agente depende de sandbox.run_as_agent.",
+            _ when network =>
+                "Usuario, ACLs y red listos: salida bloqueada por WFP y solo el proxy local "
+                + "del modelo es alcanzable.",
+            _ => "Usuario y ACLs listos. Red sin aislar (WFP no instalado o sin privilegios); "
+                 + "ejecuta 'odw sandbox net install'.",
         };
 
-        return new SandboxReport(true, admin, exists, true, detail);
+        return new SandboxReport(true, admin, exists, true, detail)
+        {
+            NetworkEnforced = network,
+        };
     }
 
     public static bool AccountExists(string account)

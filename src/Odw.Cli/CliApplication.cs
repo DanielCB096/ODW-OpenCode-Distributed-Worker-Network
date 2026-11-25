@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json.Nodes;
@@ -87,7 +88,13 @@ public static class CliApplication
         if (args.Length == 0 || args[0] is "--help" or "-h")
         {
             Console.WriteLine("Uso: odw sandbox check [--agent <cuenta>]");
+            Console.WriteLine("     odw sandbox net <install|uninstall|status> [--agent <cuenta>] [--port 7423]");
             return 0;
+        }
+
+        if (args[0] == "net")
+        {
+            return SandboxNetwork(args[1..]);
         }
 
         if (args[0] != "check")
@@ -113,9 +120,68 @@ public static class CliApplication
         Console.WriteLine($"admin:        {report.IsAdministrator}");
         Console.WriteLine($"agent:        {agent} (existe: {report.AgentAccountExists})");
         Console.WriteLine($"acls:         {report.AclsSupported}");
+        Console.WriteLine($"network:      {report.NetworkEnforced}");
         Console.WriteLine($"enforced:     {report.FullyEnforced}");
         Console.WriteLine(report.Detail);
         return report.FullyEnforced ? 0 : 1;
+    }
+
+    private static int SandboxNetwork(string[] args)
+    {
+        var action = args.Length > 0 ? args[0] : "status";
+        var agent = "odw-agent";
+        var port = 7423;
+
+        for (var i = 1; i < args.Length; i++)
+        {
+            if (args[i] == "--agent" && i + 1 < args.Length)
+            {
+                agent = args[++i];
+            }
+            else if (args[i] == "--port" && i + 1 < args.Length)
+            {
+                if (!int.TryParse(args[++i], NumberStyles.Integer, CultureInfo.InvariantCulture, out port))
+                {
+                    return UsageError("--port no es un número válido.");
+                }
+            }
+            else
+            {
+                return UsageError($"Opción desconocida: {args[i]}.");
+            }
+        }
+
+        try
+        {
+            switch (action)
+            {
+                case "install":
+                    WfpNetworkPolicy.Install(agent, port);
+                    Console.WriteLine(
+                        $"WFP instalado para {agent}: salida bloqueada; solo loopback:{port}.");
+                    return 0;
+
+                case "uninstall":
+                    WfpNetworkPolicy.Uninstall();
+                    Console.WriteLine("WFP de ODW eliminado.");
+                    return 0;
+
+                case "status":
+                    var installed = WfpNetworkPolicy.IsInstalled();
+                    Console.WriteLine($"network:      {installed}");
+                    return installed ? 0 : 1;
+
+                default:
+                    return UsageError($"Subcomando desconocido: net {action}.");
+            }
+        }
+        catch (Exception exception) when (exception is Win32Exception
+                                              or PlatformNotSupportedException
+                                              or UnauthorizedAccessException)
+        {
+            Console.Error.WriteLine(exception.Message);
+            return 1;
+        }
     }
 
     private static async Task<int> ServiceAsync(string[] args)
@@ -612,7 +678,8 @@ public static class CliApplication
         Console.WriteLine("  odw init --db <ruta>    Crea la base del nodo y aplica migraciones.");
         Console.WriteLine("  odw serve --config <n>  Arranca el nodo con node.json.");
         Console.WriteLine("  odw service install     Instala el nodo como servicio Windows.");
-        Console.WriteLine("  odw sandbox check       Comprueba usuario restringido y ACLs (H3).");
+        Console.WriteLine("  odw sandbox check       Comprueba usuario restringido, ACLs y red (H3).");
+        Console.WriteLine("  odw sandbox net install Instala los filtros WFP de bloqueo (admin).");
         Console.WriteLine("  odw doctor [opciones]   Comprueba base de datos, binds, token y OpenCode.");
         Console.WriteLine("  odw approvals <cmd>     list | approve | deny | expire (named pipe).");
         Console.WriteLine("  odw version             Muestra la versión.");

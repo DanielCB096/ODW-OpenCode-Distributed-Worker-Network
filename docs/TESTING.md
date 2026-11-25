@@ -14,7 +14,7 @@
 | `Odw.Planner.Tests` | Puntuación, empates, viabilidad, divisibilidad | ms |
 | `Odw.Node.Tests` | Persistencia, outbox, recuperación, scheduler (SQLite temporal) | 10–100 ms |
 | `Odw.Trust.Tests` | Tokens, hash de tokens, nonce, firma de aprobaciones | ms |
-| `Odw.Sandbox.Tests` | ACLs, Job Objects, reparse points, kill de árbol (Windows) | s |
+| `Odw.Sandbox.Tests` | ACLs, Job Objects, WFP, proxy de modelo, reparse points, kill de árbol (Windows) | s |
 | `Odw.Integration.Tests` | Dos nodos en loopback, OpenCode real, SSE, cancelación | 10–120 s |
 | `Odw.Architecture.Tests` | Invariantes estructurales (sin aprobar por HTTP, sin `Always`) | ms |
 
@@ -94,7 +94,7 @@ y las ACL, y se marcan `[Trait("Category","WindowsSecurity")]`.
 | Memoria | reservar 2× límite | Job Object mata; nodo estable |
 | Procesos | 200 procesos | límite respetado |
 | Tiempo | bucle infinito | timeout + `TerminateJobObject` |
-| Red | `curl` externo con `network:none` | bloqueado (o tarea rechazada si el mecanismo no está verificado) |
+| Red | `curl` externo con `network:none` | bloqueado por WFP; solo loopback:<proxy> permitido |
 | Cancelación | cancelar en `Running` | árbol muerto ≤ 5 s, `Cancelled` |
 | Autoaprobación | `POST /peer/v1/tasks/{id}/approve` | `404` |
 | Herramienta de aprobación | buscar `odw_approve` | no existe |

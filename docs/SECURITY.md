@@ -112,14 +112,28 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
 
 ### 3.4 Red
 
-- `limits.network = "none"` (por defecto) debe impedir conexiones salientes del Job.
-- Mecanismo candidato (a verificar en H3, `[VERIFICAR H3-NET]`):
-  1. Regla de Windows Firewall con `localuser=odw-agent` que bloquea salida.
-  2. Si (1) no resulta fiable: filtro WFP por usuario/SID.
-  3. Fallback: ejecutar el agente en WSL2/contenedor con `--network none` (hito posterior).
-- Mientras no exista un mecanismo verificado, el nodo **rechaza** `network:"none"` en tareas que
-  declaren herramientas de red, o degrada a `ASK` con advertencia explícita en la aprobación.
-  No se documenta como control algo que no se probó.
+- `limits.network = "none"` (por defecto) significa **sin red arbitraria**: solo se permite el
+  gateway del modelo. `network = "allow"` no se puede aplicar por tarea con filtros por SID y el
+  runner lo rechaza (`NETWORK_ALLOW_UNSUPPORTED`).
+- **Mecanismo implementado y verificado:** filtros WFP persistentes en
+  `ALE_AUTH_CONNECT_V4/V6`, por SID de `odw-agent`: bloqueo con peso 12 y permiso de loopback
+  limitado al **puerto del proxy** con peso 13. Internet, LAN, DNS directo y el resto de puertos de
+  loopback quedan bloqueados.
+- El agente habla con un **proxy CONNECT en loopback** que corre como el servicio. El proxy:
+  - exige `Proxy-Authorization` con un token aleatorio por ejecución;
+  - solo permite hosts de `sandbox.network_allowed_hosts` (`opencode.ai` por defecto) y el puerto
+    443;
+  - resuelve el nombre él mismo y rechaza direcciones privadas, loopback, link-local, CGNAT y
+    multicast (evita SSRF a la LAN y a metadata cloud);
+  - no inspecciona TLS: decide el destino y transporta bytes.
+- `sandbox.network_isolation` instala los filtros al arrancar (requiere admin y `run_as_agent`) y
+  arranca el proxy; el runner inyecta `HTTPS_PROXY`/`HTTP_PROXY` y `NO_PROXY=127.0.0.1,localhost`.
+  Si faltan los filtros o el proxy, la tarea con `network=none` **no se ejecuta**
+  (`NETWORK_UNENFORCED`).
+- Verificado con una tarea real como `odw-agent` a través del proxy, y con `curl` como agente:
+  loopback OK, `https://example.com` y DNS externo bloqueados.
+- Comandos: `odw sandbox net install|uninstall|status`; `odw sandbox check` muestra `network: True`
+  solo si los cuatro filtros existen.
 - El proceso `opencode serve` escucha **solo** en `127.0.0.1`; se verifica con
   `Get-NetTCPConnection -OwningProcess <pid>` tras el arranque (falla la tarea si no es loopback).
 - **API de pares:** HTTP sobre Tailscale (cifrado por WireGuard) por defecto; HTTPS opt-in con

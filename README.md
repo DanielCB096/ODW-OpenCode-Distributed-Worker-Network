@@ -13,10 +13,10 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
   Job Object, ejecutor OpenCode y poller de resultado.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **290 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- **312 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
 - TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
-- ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente y modelo gratuito propio;
-  aislamiento de red pendiente.
+- ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente, modelo gratuito propio
+  y red aislada con WFP + proxy (solo el endpoint del modelo).
 
 Detalle: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) · Hoja de ruta:
 [`docs/ROADMAP.md`](docs/ROADMAP.md).
@@ -96,10 +96,21 @@ copia `opencode.exe` a `%PROGRAMDATA%\ODW\opencode`, escribe la configuración d
 modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del usuario) y endurece
 `%PROGRAMDATA%\ODW` para que el agente no pueda leer configuración, bases ni claves. Con
 `sandbox.run_as_agent` activo, `opencode serve` se lanza como `odw-agent`; `odw sandbox check` debe
-mostrar `admin: True`, `agent: True` y `enforced: True`.
+mostrar `admin: True`, `agent: True`, `network: True` y `enforced: True`.
 
-El bloqueo de red por usuario **no está soportado** en todas las versiones de Windows: el script lo
-avisa y deja constancia de que la red del agente sigue sin aislar.
+La red se aísla con **WFP por SID** más un **proxy CONNECT en loopback**:
+
+```powershell
+odw sandbox net install --agent odw-agent   # bloquea la salida salvo 127.0.0.1:7423
+odw sandbox net status
+odw sandbox net uninstall
+```
+
+Con `sandbox.network_isolation` activo, el nodo instala los filtros al arrancar (requiere admin),
+levanta el proxy en `network_proxy_port` (7423 por defecto) y limita al agente a `opencode.ai`
+(configurable con `network_allowed_hosts`). Internet, LAN, DNS directo y el resto de puertos de
+loopback quedan bloqueados; una tarea con `network: "allow"` se rechaza porque el filtro es por
+usuario, no por tarea.
 
 ## CLI
 
@@ -148,5 +159,5 @@ src/Odw.Sandbox               workspace Git + Job Objects
 src/Odw.PeerApi               cliente de pares
 src/Odw.Approvals             cliente del pipe de aprobaciones
 src/Odw.Cli                   ejecutable odw
-tests/*                       290 pruebas
+tests/*                       312 pruebas
 ```

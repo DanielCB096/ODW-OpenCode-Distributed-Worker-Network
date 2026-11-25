@@ -7,9 +7,9 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (290 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (312 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
-| H3 — Aislamiento y políticas | 🟡 | ACLs de workspace y `odw sandbox check`; falta usuario/launch real y red |
+| H3 — Aislamiento y políticas | 🟡 | Usuario, ACLs, modelo propio y red (WFP + proxy) verificados; falta cuenta de servicio y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
 | H5 — Colaboración y aceleración | ⬜ | Depende de H4 |
 | H6 — Escalabilidad y usabilidad | ⬜ | Depende de H5 |
@@ -166,9 +166,9 @@ OpenCode completados (2026-11-24). Resto pendiente.
 
 ## H3 — Aislamiento y políticas 🟡
 
-**Estado:** ACLs de workspace, usuario `odw-agent`, lanzamiento de `opencode serve` como agente y
-modelo gratuito propio implementados y verificados. La cuenta de servicio y el aislamiento de red
-siguen pendientes y **no se declaran aislamiento** hasta verificarlos.
+**Estado:** ACLs de workspace, usuario `odw-agent`, lanzamiento de `opencode serve` como agente,
+modelo gratuito propio y aislamiento de red con WFP + proxy implementados y verificados. Queda la
+cuenta de servicio dedicada (el nodo corre con la cuenta del administrador) y las pruebas hostiles.
 
 - ✅ Job Objects (memoria, procesos, CPU, kill on close).
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
@@ -180,7 +180,8 @@ siguen pendientes y **no se declaran aislamiento** hasta verificarlos.
   credenciales del usuario (tarea real completada como `odw-agent`).
 - ✅ ACL de datos: raíz solo servicio/SYSTEM/administradores, agente con traverse y denegación de
   lectura verificada sobre configuración, bases y claves.
-- ⬜ Aislamiento de red (firewall por usuario no soportado en esta versión de Windows).
+- ✅ Aislamiento de red: WFP por SID (bloqueo salvo loopback) + proxy CONNECT con allowlist;
+  Internet, LAN y DNS directo bloqueados al agente. Tarea real completada a través del proxy.
 - ⬜ Escaneo de reparse points y pruebas hostiles automatizadas.
 
 **Entregables**

@@ -69,6 +69,18 @@ public sealed record SandboxConfig
 
     [JsonPropertyName("agent_secret_path")]
     public string AgentSecretPath { get; init; } = @"%PROGRAMDATA%\ODW\agent.secret";
+
+    /// <summary>Bloquea la salida de red del agente (WFP) y la limita al proxy del modelo.</summary>
+    [JsonPropertyName("network_isolation")]
+    public bool NetworkIsolation { get; init; }
+
+    /// <summary>Hosts que el proxy permite; por defecto el endpoint del modelo y el catálogo.</summary>
+    [JsonPropertyName("network_allowed_hosts")]
+    public IReadOnlyList<string> NetworkAllowedHosts { get; init; } = ["opencode.ai"];
+
+    /// <summary>Puerto de loopback del proxy; WFP solo permite ese puerto.</summary>
+    [JsonPropertyName("network_proxy_port")]
+    public int NetworkProxyPort { get; init; } = 7423;
 }
 
 public sealed record PeerApiConfig

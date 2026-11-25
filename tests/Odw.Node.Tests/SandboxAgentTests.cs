@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Security.Principal;
 using Odw.Core.Contracts;
 using Odw.Executors.OpenCode;
+using Odw.Sandbox.Network;
 using Odw.Sandbox.Windows;
 using Xunit;
 
@@ -218,6 +219,109 @@ public class SandboxAgentTests
         process.StandardError.ReadToEnd();
         process.WaitForExit();
         return process.ExitCode;
+    }
+
+    [Fact]
+    public async Task OpenCode_reaches_the_model_through_the_proxy()
+    {
+        if (!OperatingSystem.IsWindows()
+            || Environment.GetEnvironmentVariable("ODW_AGENT_E2E") != "1")
+        {
+            return;
+        }
+
+        var common = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        var credentials = AgentCredentialsStore.Load(
+            "odw-agent",
+            Path.Combine(common, "ODW", "agent.secret"));
+        var workspace = Path.Combine(common, "ODW", "workspaces", "agent-proxy-test");
+
+        Directory.CreateDirectory(workspace);
+        GrantAgent(workspace);
+
+        var tunnels = new System.Collections.Concurrent.ConcurrentQueue<string>();
+        await using var proxy = ModelProxy.Start(new ModelProxyOptions
+        {
+            Port = 7423,
+            AllowedHosts = ["opencode.ai"],
+            Log = message =>
+            {
+                if (message.Contains("túnel", StringComparison.Ordinal))
+                {
+                    tunnels.Enqueue(message);
+                }
+            },
+        });
+
+        var model = Environment.GetEnvironmentVariable("ODW_AGENT_MODEL")
+                    ?? "opencode/deepseek-v4.1-flash-free";
+
+        try
+        {
+            await using var server = await OpenCodeServer.StartAsync(new OpenCodeServerOptions
+            {
+                Executable = Path.Combine(common, "ODW", "opencode", "opencode.exe"),
+                WorkingDirectory = workspace,
+                PinnedVersion = "2.3.2",
+                StartupTimeout = TimeSpan.FromSeconds(60),
+                RunAs = new RunAsCredentials(credentials.Account, credentials.Password),
+                Environment = new Dictionary<string, string>
+                {
+                    ["HTTPS_PROXY"] = proxy.Url,
+                    ["HTTP_PROXY"] = proxy.Url,
+                    ["NO_PROXY"] = "127.0.0.1,localhost",
+                },
+            });
+
+            using var client = new OpenCodeClient(server.Connection);
+            var executor = new OpenCodeExecutor(client);
+
+            var session = await executor.StartAsync(new ExecutorStartRequest(
+                "01JAZ5Z8Q4XK3V9C2M1N7P6R8T",
+                workspace,
+                "Responde exactamente: PROXY. No uses herramientas.",
+                model,
+                new ExecutorLimits(5, 12, 64, false, 2m),
+                ToolPolicy.AskAll,
+                new Dictionary<string, string>()), CancellationToken.None);
+
+            var events = new List<ExecutorEvent>();
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(120));
+            var pump = Task.Run(async () =>
+            {
+                await foreach (var item in executor.StreamAsync(session.SessionId, timeout.Token))
+                {
+                    events.Add(item);
+                }
+            }, timeout.Token);
+
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await executor.SendAsync(
+                session.SessionId,
+                "Responde exactamente: PROXY. No uses herramientas.",
+                Odw.Core.Model.MessageDelivery.Queue,
+                timeout.Token);
+
+            await pump;
+
+            var terminal = events.LastOrDefault(item => item.Kind is
+                ExecutorEventKind.Completed or ExecutorEventKind.Failed or ExecutorEventKind.Interrupted);
+
+            Assert.True(
+                terminal?.Kind == ExecutorEventKind.Completed,
+                $"La ejecución no terminó bien: {terminal?.Kind} {terminal?.Detail}");
+            Assert.NotEmpty(tunnels);
+        }
+        finally
+        {
+            try
+            {
+                Directory.Delete(workspace, recursive: true);
+            }
+            catch (IOException)
+            {
+            }
+        }
     }
 
     private static void GrantAgent(string path)

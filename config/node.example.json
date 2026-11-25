@@ -45,7 +45,10 @@
     "agent_account": "odw-agent",
     "apply_acls": true,
     "run_as_agent": true,
-    "agent_secret_path": "%PROGRAMDATA%\\ODW\\agent.secret"
+    "agent_secret_path": "%PROGRAMDATA%\\ODW\\agent.secret",
+    "network_isolation": true,
+    "network_allowed_hosts": ["opencode.ai"],
+    "network_proxy_port": 7423
   },
 
   "policy": "policy.example.json",

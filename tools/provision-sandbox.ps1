@@ -1,7 +1,7 @@
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
-    Provisiona el sandbox de ODW (H3): usuario odw-agent, secreto DPAPI, ACLs y firewall.
+    Provisiona el sandbox de ODW (H3): usuario odw-agent, secreto DPAPI, ACLs y red.
 
 .DESCRIPTION
     Debe ejecutarse en una consola ELEVADA. Crea:
@@ -11,8 +11,7 @@
       - copia de opencode.exe accesible al agente y su opencode.json con un modelo gratuito,
       - ACL de la raíz de datos (servicio/SYSTEM/administradores; el agente solo traverse) y
         denegación de lectura sobre configuración, bases y claves existentes,
-      - regla de firewall que intenta bloquear la salida de red del agente (no soportada en
-        todas las versiones de Windows).
+      - filtros WFP persistentes que bloquean la salida del agente salvo loopback.
     Detén el nodo antes de ejecutarlo: cambia ACLs de archivos en uso.
     No lanza procesos del nodo ni modifica la base de datos.
 
@@ -32,8 +31,8 @@
 .PARAMETER OpenCodeSource
     Ruta de opencode.exe a copiar para el agente. Si falta, se busca en el PATH.
 
-.PARAMETER SkipFirewall
-    No crea la regla de bloqueo de red.
+.PARAMETER SkipNetwork
+    No instala los filtros WFP (la red del agente queda sin aislar).
 
 .EXAMPLE
     powershell -ExecutionPolicy Bypass -File tools/provision-sandbox.ps1
@@ -45,7 +44,7 @@ param(
     [string]$WorkspaceRoot,
     [string]$OpenCodeSource,
     [string]$AgentModel = 'opencode/deepseek-v4.1-flash-free',
-    [switch]$SkipFirewall
+    [switch]$SkipNetwork
 )
 
 $ErrorActionPreference = 'Stop'
@@ -229,26 +228,25 @@ finally {
 
 Write-Host "Verificado: el agente no lee datos del nodo y sí su propia configuración."
 
-if (-not $SkipFirewall) {
-    Write-Host "== Firewall =="
-    $ruleName = 'ODW-Agent-Block-Out'
-    Get-NetFirewallRule -DisplayName $ruleName -ErrorAction SilentlyContinue |
-        Remove-NetFirewallRule -ErrorAction SilentlyContinue
+if (-not $SkipNetwork) {
+    Write-Host "== Red (WFP) =="
+    $repo = Split-Path $PSScriptRoot -Parent
+    $cli = Join-Path $repo 'src\Odw.Cli\Odw.Cli.csproj'
 
-    try {
-        New-NetFirewallRule -DisplayName $ruleName -Direction Out -Action Block `
-            -LocalUser $AgentAccount -Profile Any `
-            -Description 'ODW: bloquea la red del agente de sandbox' `
-            -ErrorAction Stop | Out-Null
-        Write-Host "Regla '$ruleName' creada (salida bloqueada para $AgentAccount)."
+    if (Test-Path $cli) {
+        & dotnet run --project $cli -- sandbox net install --agent $AgentAccount
+        if ($LASTEXITCODE -ne 0) {
+            throw "No se pudieron instalar los filtros WFP (código $LASTEXITCODE)."
+        }
+        Write-Host "Red del agente bloqueada salvo loopback (proxy del modelo)."
     }
-    catch {
-        Write-Warning "Esta versión de Windows no admite firewall por usuario (-LocalUser)."
-        Write-Warning "La red del agente NO está aislada todavía; hace falta WFP o WSL/AppContainer."
+    else {
+        Write-Warning "No se encontró el proyecto del CLI. Ejecuta 'odw sandbox net install --agent $AgentAccount'."
     }
 }
 
 Write-Host ""
 Write-Host "Provisionado. Verifica con:"
 Write-Host "  odw sandbox check --agent $AgentAccount"
+Write-Host "  odw sandbox net status --agent $AgentAccount"
 Write-Host "El secreto está en $secretPath (DPAPI máquina)."

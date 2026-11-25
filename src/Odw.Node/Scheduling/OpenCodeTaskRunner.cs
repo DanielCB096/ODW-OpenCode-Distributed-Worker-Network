@@ -23,6 +23,15 @@ public sealed record OpenCodeTaskRunnerOptions
     /// <summary>Credenciales del agente restringido para lanzar `opencode serve`.</summary>
     public RunAsCredentials? RunAs { get; init; }
 
+    /// <summary>URL del proxy de modelo (con credenciales) para el entorno del agente.</summary>
+    public string? ModelProxyUrl { get; init; }
+
+    /// <summary>Exige WFP activo y proxy para ejecutar tareas con red deshabilitada.</summary>
+    public bool RequireNetworkIsolation { get; init; }
+
+    /// <summary>Comprueba el aislamiento; por defecto consulta WFP. Inyectable en pruebas.</summary>
+    public Func<bool>? NetworkIsolationProbe { get; init; }
+
     /// <summary>Permite construir un handler por tarea (política + contexto del contrato).</summary>
     public Func<ExecutionRequest, ToolPermissionHandler?>? PermissionHandlerFactory { get; init; }
 
@@ -53,6 +62,44 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        if (_options.RequireNetworkIsolation)
+        {
+            if (request.Contract.Limits.Network != NetworkAccess.None)
+            {
+                return new ExecutionResult(
+                    ExecutorOutcomeKind.Failed,
+                    ResultJson(
+                        "failed",
+                        "NETWORK_ALLOW_UNSUPPORTED: con aislamiento WFP por usuario no se puede "
+                        + "abrir la red para una sola tarea; la tarea no se ejecuta.",
+                        request.WorkspaceBranch,
+                        review: false));
+            }
+
+            if (_options.ModelProxyUrl is null
+                || !(_options.NetworkIsolationProbe?.Invoke()
+                     ?? (OperatingSystem.IsWindows() && WfpNetworkPolicy.IsInstalled())))
+            {
+                return new ExecutionResult(
+                    ExecutorOutcomeKind.Failed,
+                    ResultJson(
+                        "failed",
+                        "NETWORK_UNENFORCED: falta el proxy del modelo o los filtros WFP; "
+                        + "la tarea con network=none no se ejecuta.",
+                        request.WorkspaceBranch,
+                        review: false));
+            }
+        }
+
+        var serverEnvironment = _options.ModelProxyUrl is null
+            ? null
+            : new Dictionary<string, string>
+            {
+                ["HTTPS_PROXY"] = _options.ModelProxyUrl,
+                ["HTTP_PROXY"] = _options.ModelProxyUrl,
+                ["NO_PROXY"] = "127.0.0.1,localhost",
+            };
+
         JobObject? job = null;
         if (_options.UseJobObject && OperatingSystem.IsWindows())
         {
@@ -73,6 +120,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 PinnedVersion = _options.PinnedVersion,
                 StartupTimeout = _options.StartupTimeout,
                 RunAs = _options.RunAs,
+                Environment = serverEnvironment,
                 AttachProcess = job is null
                     ? null
                     : process =>
