@@ -131,6 +131,7 @@ public static class NodeBootstrap
                 ServiceAccount = OperatingSystem.IsWindows()
                     ? System.Security.Principal.WindowsIdentity.GetCurrent().Name
                     : null,
+                ServerLog = message => Console.Error.WriteLine($"opencode: {message}"),
                 PermissionHandlerFactory = request => BuildToolHandler(
                     policy, settings, request, capabilities),
             });

@@ -24,6 +24,9 @@ public sealed record OpenCodeServerOptions
     /// <summary>Perfil de ejecución por tarea; si falta se usa el perfil real del agente.</summary>
     public string? RuntimeRoot { get; init; }
 
+    /// <summary>Recibe las líneas de stderr del servidor (diagnóstico).</summary>
+    public Action<string>? Log { get; init; }
+
     /// <summary>Se invoca tras el arranque para asignar el proceso a un Job Object u otro control.</summary>
     public Func<Process, IDisposable?>? AttachProcess { get; init; }
 }
@@ -45,14 +48,15 @@ public sealed class OpenCodeServer : IAsyncDisposable
         Process process,
         OpenCodeConnection connection,
         OpenCodeServerInfo info,
-        IDisposable? attachment)
+        IDisposable? attachment,
+        Action<string>? log)
     {
         _process = process;
         _attachment = attachment;
         Connection = connection;
         Info = info;
-        _stdoutDrain = Task.Run(() => DrainAsync(process.StandardOutput));
-        _stderrDrain = Task.Run(() => DrainAsync(process.StandardError));
+        _stdoutDrain = Task.Run(() => DrainAsync(process.StandardOutput, log));
+        _stderrDrain = Task.Run(() => DrainAsync(process.StandardError, log));
     }
 
     public OpenCodeConnection Connection { get; }
@@ -100,7 +104,7 @@ public sealed class OpenCodeServer : IAsyncDisposable
                     $"OpenCode {info.Version} != versión fijada {options.PinnedVersion}.");
             }
 
-            return new OpenCodeServer(process, connection, info, attachment);
+            return new OpenCodeServer(process, connection, info, attachment, options.Log);
         }
         catch
         {
@@ -260,12 +264,16 @@ public sealed class OpenCodeServer : IAsyncDisposable
         throw new TimeoutException("No se pudo confirmar /api/info a tiempo.", last);
     }
 
-    private static async Task DrainAsync(StreamReader reader)
+    private static async Task DrainAsync(StreamReader reader, Action<string>? log)
     {
         try
         {
-            while (await reader.ReadLineAsync().ConfigureAwait(false) is not null)
+            while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
             {
+                if (!line.Contains("password", StringComparison.OrdinalIgnoreCase))
+                {
+                    log?.Invoke(line);
+                }
             }
         }
         catch (Exception)

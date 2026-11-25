@@ -89,11 +89,19 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
   aplicar ACEs.
 - Las ACEs de denegación explícita ganan sobre permisos heredados.
 - En `read_only` el agente recibe **RX** (sin permiso de escritura); en escritura, **M**.
-- El secreto del agente (`agent.secret`) tiene ACE explícita solo para administradores y SYSTEM.
+- La ACL se aplica **antes** del `git clone`: los archivos ocultos de `.git` heredan el acceso del
+  agente. Aplicarla después con `/T` los dejaba sin DACL y OpenCode recibía `EPERM`.
+- El padre de la raíz de workspaces recibe **RX** para el agente: git necesita `stat` del ancestro
+  al descubrir el repo. El runtime incluye `.gitconfig` con `safe.directory=*` porque el workspace
+  lo crea `odw-svc` y git corre como `odw-agent`. El repo de origen debe ser legible por `odw-svc`.
+- El agente tiene `snapshots=false`: no intenta operar git para snapshots en un workspace de solo
+  lectura.
+- El secreto del agente (`agent.secret`) tiene ACE explícita para administradores, SYSTEM y
+  **lectura** para `odw-svc` (necesario para lanzarlo).
 - La raíz de datos (`%PROGRAMDATA%\ODW`) tiene la herencia deshabilitada: solo el servicio,
-  SYSTEM y administradores tienen acceso completo; `odw-agent` conserva únicamente traverse (X)
-  para llegar a `workspaces` y `opencode`, que tienen su propia ACL. Los datos sensibles ya
-  existentes llevan además una ACE de **denegación de lectura** para el agente.
+  SYSTEM y administradores tienen acceso completo; `odw-agent` conserva **RX** para poder listar
+  nombres y que git haga `stat`, pero los archivos de configuración, base y claves siguen sin ACE
+  de lectura (o con denegación explícita).
 - **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F (y SYSTEM/
   administradores), agente RX/M. Verificado: procesos lanzados como `odw-agent`, escritura
   denegada en `read_only`, permitida en escritura, **`opencode serve` arrancando como `odw-agent`**

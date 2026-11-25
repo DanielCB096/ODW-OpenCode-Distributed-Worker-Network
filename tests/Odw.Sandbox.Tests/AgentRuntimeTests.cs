@@ -53,6 +53,10 @@ public class AgentRuntimeTests
             var path = runtime.Path;
             Assert.True(File.Exists(Path.Combine(path, ".config", "opencode", "opencode.json")));
             Assert.True(Directory.Exists(Path.Combine(path, ".local", "share")));
+            Assert.Contains(
+                "directory = *",
+                File.ReadAllText(Path.Combine(path, ".gitconfig")),
+                StringComparison.Ordinal);
 
             await runtime.DisposeAsync();
             Assert.False(Directory.Exists(path));

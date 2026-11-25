@@ -46,6 +46,9 @@ public sealed record OpenCodeTaskRunnerOptions
 
     public string? ServiceAccount { get; init; }
 
+    /// <summary>Recibe stderr de OpenCode para diagnóstico.</summary>
+    public Action<string>? ServerLog { get; init; }
+
     /// <summary>Permite construir un handler por tarea (política + contexto del contrato).</summary>
     public Func<ExecutionRequest, ToolPermissionHandler?>? PermissionHandlerFactory { get; init; }
 
@@ -165,6 +168,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 StartupTimeout = _options.StartupTimeout,
                 RunAs = _options.RunAs,
                 RuntimeRoot = runtime?.Path,
+                Log = _options.ServerLog,
                 Environment = serverEnvironment,
                 AttachProcess = job is null
                     ? null

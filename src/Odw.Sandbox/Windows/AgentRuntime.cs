@@ -83,6 +83,12 @@ public sealed class AgentRuntime : IAsyncDisposable
             System.IO.Path.Combine(path, ".config", "opencode", "opencode.json"),
             overwrite: true);
 
+        // El workspace lo crea odw-svc y git lo ejecuta odw-agent: sin safe.directory, git
+        // rechaza el repo por propietario distinto. El ACL del workspace sigue siendo la frontera.
+        File.WriteAllText(
+            System.IO.Path.Combine(path, ".gitconfig"),
+            "[safe]" + Environment.NewLine + "\tdirectory = *" + Environment.NewLine);
+
         if (options.ApplyAcls && OperatingSystem.IsWindows())
         {
             ApplyAcls(path, options);

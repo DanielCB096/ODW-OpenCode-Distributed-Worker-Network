@@ -126,6 +126,10 @@ points y hard links antes/después, y un watchdog cancela la tarea si WFP deja d
 `run_as_agent`, el nodo exige `scheduler.max_concurrent=1` y `workspaces.keep=false` para no
 mezclar workspaces del mismo SID.
 
+El repo configurado en `repos` debe ser **legible por `odw-svc`** (es quien clona). El agente lleva
+`snapshots=false` y `safe.directory=*` en su `.gitconfig` para trabajar con un workspace creado por
+otra cuenta sin intentar escribir en `.git` en modo `read_only`.
+
 ## CLI
 
 | Comando | Uso |

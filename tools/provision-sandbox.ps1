@@ -281,8 +281,9 @@ New-Item -ItemType Directory -Force -Path $agentConfigDir | Out-Null
 $agentConfig = Join-Path $agentConfigDir 'opencode.json'
 
 $agentSettings = [ordered]@{
-    '$schema' = 'https://opencode.ai/config.json'
-    model     = $AgentModel
+    '$schema'   = 'https://opencode.ai/config.json'
+    model       = $AgentModel
+    snapshots   = $false
 }
 $agentJson = $agentSettings | ConvertTo-Json -Compress
 
@@ -342,7 +343,7 @@ Invoke-Icacls @($DataDir, '/inheritance:r',
     '/grant:r', "$($ServiceAccount):(OI)(CI)F",
     '/grant:r', '*S-1-5-18:(OI)(CI)F',
     '/grant:r', '*S-1-5-32-544:(OI)(CI)F',
-    '/grant:r', "$($AgentAccount):(X)") | Out-Null
+    '/grant:r', "$($AgentAccount):(RX)") | Out-Null
 
 # El servicio necesita descifrar el secreto del agente para lanzarlo.
 Invoke-Icacls @($secretPath, '/grant:r', "$($ServiceAccount):R") | Out-Null

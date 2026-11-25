@@ -95,6 +95,7 @@ y las ACL, y se marcan `[Trait("Category","WindowsSecurity")]`.
 | Procesos | 200 procesos | límite respetado |
 | Tiempo | bucle infinito | timeout + `TerminateJobObject` |
 | Red | `curl` externo con `network:none` | bloqueado por WFP; solo loopback:<proxy> permitido |
+| Servicio real | nodo como `odw-svc` + `POST /peer/v1/tasks` | tarea `E2E-SVC` completada con proxy/WFP |
 | Cancelación | cancelar en `Running` | árbol muerto ≤ 5 s, `Cancelled` |
 | Autoaprobación | `POST /peer/v1/tasks/{id}/approve` | `404` |
 | Herramienta de aprobación | buscar `odw_approve` | no existe |

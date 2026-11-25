@@ -236,7 +236,15 @@ Límites que siguen abiertos y se declaran:
   desaparece.
 - El nodo corre como `odw-svc` (sin administrador): el aprovisionamiento instala WFP y le concede
   `SeServiceLogonRight`/`SeIncreaseQuotaPrivilege`; `odw service install --account` usa DPAPI y
-  `ChangeServiceConfig`. Arranque del nodo como `odw-svc` verificado.
+  `ChangeServiceConfig`. **Tarea real A→B completada como servicio** (`E2E-SVC`) con workspace,
+  proxy, WFP y perfil por tarea.
+- El workspace aplica la ACL **antes** del `git clone` para que los archivos ocultos de `.git`
+  hereden el acceso del agente; el padre de la raíz de workspaces recibe `RX` para que git pueda
+  hacer `stat` al descubrir el repo. El runtime del agente incluye `.gitconfig` con
+  `safe.directory=*` (el repo lo crea `odw-svc` y git corre como `odw-agent`). El repo de origen
+  debe ser legible por `odw-svc`.
+- `snapshots=false` en la configuración del agente: evita que OpenCode intente operar git en un
+  workspace de solo lectura. El resultado sigue siendo el resumen del modelo.
 - `odw-agent` conserva el logon interactivo local que exige `CreateProcessWithLogonW`; tiene
   denegados el logon de red y el interactivo remoto.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del

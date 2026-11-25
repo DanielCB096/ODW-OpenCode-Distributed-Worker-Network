@@ -63,6 +63,7 @@ public sealed class WorkspaceManager : IWorkspacePreparer
             throw new WorkspaceException($"La ruta del repo no existe: {repoPath}.");
         }
 
+        await EnsureRootAsync(cancellationToken).ConfigureAwait(false);
         Directory.CreateDirectory(_options.WorkspaceRoot);
         var workspace = Path.Combine(_options.WorkspaceRoot, request.TaskId);
 
@@ -71,11 +72,19 @@ public sealed class WorkspaceManager : IWorkspacePreparer
             throw new WorkspaceException($"El workspace ya existe: {workspace}.");
         }
 
+        Directory.CreateDirectory(workspace);
+        if (_options.ApplyAcls)
+        {
+            // Antes del clone: los archivos (incluido .git) heredan la ACL. Aplicarla después
+            // con /T deja sin acceso los archivos ocultos de .git.
+            await ApplyAclsAsync(workspace, request.ReadOnly, cancellationToken).ConfigureAwait(false);
+        }
+
         try
         {
             var clone = await GitAsync(
                 null,
-                ["clone", "--no-hardlinks", "--quiet", repoPath, workspace],
+                ["-c", "safe.directory=*", "clone", "--no-hardlinks", "--quiet", repoPath, workspace],
                 cancellationToken).ConfigureAwait(false);
 
             if (clone.ExitCode != 0)
@@ -93,11 +102,6 @@ public sealed class WorkspaceManager : IWorkspacePreparer
             if (removeRemote.ExitCode != 0)
             {
                 throw new WorkspaceException($"No se pudo quitar origin: {Tail(removeRemote.Error)}");
-            }
-
-            if (_options.ApplyAcls)
-            {
-                await ApplyAclsAsync(workspace, request.ReadOnly, cancellationToken).ConfigureAwait(false);
             }
 
             return new WorkspaceLease(workspace, branch, request.ReadOnly, _options.KeepWorkspaces);
@@ -190,6 +194,58 @@ public sealed class WorkspaceManager : IWorkspacePreparer
         return (process.ExitCode, await outputTask.ConfigureAwait(false), await errorTask.ConfigureAwait(false));
     }
 
+    private async Task EnsureRootAsync(CancellationToken cancellationToken)
+    {
+        var root = _options.WorkspaceRoot;
+        Directory.CreateDirectory(root);
+
+        if (!_options.ApplyAcls || !OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var agent = _options.AgentAccount;
+        if (string.IsNullOrWhiteSpace(agent))
+        {
+            throw new WorkspaceException("ApplyAcls requiere AgentAccount.");
+        }
+
+        var service = string.IsNullOrWhiteSpace(_options.ServiceAccount)
+            ? System.Security.Principal.WindowsIdentity.GetCurrent().Name
+            : _options.ServiceAccount;
+
+        // Sin /T: no degradar los workspaces existentes (que ya tienen su ACL explícita).
+        var result = await RunToolAsync(
+            "icacls",
+            [root, "/inheritance:r",
+                "/grant:r", $"{service}:(OI)(CI)F",
+                "/grant:r", "*S-1-5-18:(OI)(CI)F",
+                "/grant:r", "*S-1-5-32-544:(OI)(CI)F",
+                "/grant:r", $"{agent}:(OI)(CI)RX"],
+            cancellationToken).ConfigureAwait(false);
+
+        if (result.ExitCode != 0)
+        {
+            throw new WorkspaceException($"icacls de la raíz falló: {Tail(result.Error)}");
+        }
+
+        var parent = Path.GetDirectoryName(root);
+        if (!string.IsNullOrWhiteSpace(parent)
+            && !string.Equals(Path.GetPathRoot(parent), parent, StringComparison.OrdinalIgnoreCase))
+        {
+            // Git hace stat del padre del workspace; sin lectura de atributos falla con EPERM.
+            var parentGrant = await RunToolAsync(
+                "icacls",
+                [parent, "/grant:r", $"{agent}:(RX)"],
+                cancellationToken).ConfigureAwait(false);
+
+            if (parentGrant.ExitCode != 0)
+            {
+                throw new WorkspaceException($"icacls del padre del workspace falló: {Tail(parentGrant.Error)}");
+            }
+        }
+    }
+
     private async Task ApplyAclsAsync(string workspace, bool readOnly, CancellationToken cancellationToken)
     {
         if (!OperatingSystem.IsWindows())
@@ -224,7 +280,7 @@ public sealed class WorkspaceManager : IWorkspacePreparer
             [workspace, "/grant:r", $"{service}:(OI)(CI)F",
                 "/grant:r", "*S-1-5-18:(OI)(CI)F",
                 "/grant:r", "*S-1-5-32-544:(OI)(CI)F",
-                "/grant:r", $"{agent}:{agentRights}", "/T"],
+                "/grant:r", $"{agent}:{agentRights}"],
             cancellationToken).ConfigureAwait(false);
 
         if (grant.ExitCode != 0)
