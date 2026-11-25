@@ -80,6 +80,8 @@ public sealed class SqliteTaskQuery : ITaskQuery
             details.Artifacts,
             details.RequiresReview || outcome == TaskOutcome.ReviewRequired,
             available,
+            details.Diff,
+            details.DiffTruncated,
             events);
 
         return Task.FromResult<TaskResultView?>(view);
@@ -140,11 +142,13 @@ public sealed class SqliteTaskQuery : ITaskQuery
         string? Branch,
         string? Commit,
         IReadOnlyList<string> Artifacts,
+        string? Diff,
+        bool DiffTruncated,
         bool RequiresReview);
 
     private static ResultDetails ParseResult(string? json)
     {
-        var empty = new ResultDetails(null, null, [], null, null, [], false);
+        var empty = new ResultDetails(null, null, [], null, null, [], null, false, false);
         if (string.IsNullOrWhiteSpace(json))
         {
             return empty;
@@ -172,6 +176,12 @@ public sealed class SqliteTaskQuery : ITaskQuery
                     ? commit.GetString()
                     : null,
                 ReadArtifacts(root),
+                root.TryGetProperty("diff", out var diff) && diff.ValueKind == JsonValueKind.String
+                    ? diff.GetString()
+                    : null,
+                root.TryGetProperty("diff_truncated", out var truncated)
+                && truncated.ValueKind is JsonValueKind.True or JsonValueKind.False
+                && truncated.GetBoolean(),
                 root.TryGetProperty("requires_review", out var review)
                 && review.ValueKind is JsonValueKind.True or JsonValueKind.False
                 && review.GetBoolean());

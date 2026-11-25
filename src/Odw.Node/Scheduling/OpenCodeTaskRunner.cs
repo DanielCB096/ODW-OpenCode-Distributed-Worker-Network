@@ -277,16 +277,63 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
             var failedTools = events.Any(item => item.Kind == ExecutorEventKind.ToolFailed);
             var summary = await SummaryAsync(client, session.SessionId, cancellationToken).ConfigureAwait(false);
 
+            var changedPaths = Array.Empty<string>();
+            string? commit = null;
+            string? diff = null;
+            var diffTruncated = false;
+            string? reviewReason = null;
+
+            if (terminal?.Kind == ExecutorEventKind.Completed)
+            {
+                try
+                {
+                    var changes = await WorkspaceChanges.CaptureAsync(
+                        request.WorkspacePath,
+                        request.Contract.Workspace.Mode == WorkspaceMode.ReadWriteWorktree,
+                        request.Snapshot.TaskId,
+                        cancellationToken).ConfigureAwait(false);
+
+                    changedPaths = changes.Paths.ToArray();
+                    commit = changes.Commit;
+                    diff = changes.Diff;
+                    diffTruncated = changes.DiffTruncated;
+
+                    var violations = FindPathViolations(request.Contract, changedPaths);
+                    if (violations.Count > 0)
+                    {
+                        reviewReason = "Cambios fuera de allowed_paths/denied_paths: "
+                                       + string.Join(", ", violations);
+                        summary = string.IsNullOrWhiteSpace(summary)
+                            ? reviewReason
+                            : summary + "\n\n" + reviewReason;
+                    }
+                }
+                catch (Exception exception) when (exception is WorkspaceException or IOException)
+                {
+                    reviewReason = $"CAPTURE_FAILED: {exception.Message}";
+                    summary = string.IsNullOrWhiteSpace(summary)
+                        ? reviewReason
+                        : summary + "\n\n" + reviewReason;
+                }
+            }
+
+            var review = failedTools || reviewReason is not null;
+
             return terminal?.Kind switch
             {
                 ExecutorEventKind.Completed => new ExecutionResult(
                     ExecutorOutcomeKind.Succeeded,
                     ResultJson(
-                        failedTools ? "review_required" : "succeeded",
+                        review ? "review_required" : "succeeded",
                         summary,
                         request.WorkspaceBranch,
-                        failedTools),
-                    failedTools),
+                        review,
+                        changedPaths,
+                        commit,
+                        diff,
+                        diffTruncated,
+                        reviewReason),
+                    review),
                 ExecutorEventKind.Interrupted => new ExecutionResult(
                     ExecutorOutcomeKind.Interrupted,
                     ResultJson("cancelled", summary, request.WorkspaceBranch, review: false)),
@@ -304,6 +351,60 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 await runtime.DisposeAsync().ConfigureAwait(false);
             }
         }
+    }
+
+    private static IReadOnlyList<string> FindPathViolations(
+        TaskRequest contract,
+        IReadOnlyList<string> changedPaths)
+    {
+        if (changedPaths.Count == 0)
+        {
+            return [];
+        }
+
+        var allowed = contract.Workspace.AllowedPaths
+            .Select(NormalizePath)
+            .Where(path => path.Length > 0)
+            .ToArray();
+        var denied = contract.Workspace.DeniedPaths
+            .Select(NormalizePath)
+            .Where(path => path.Length > 0)
+            .ToArray();
+
+        var violations = new List<string>();
+
+        foreach (var path in changedPaths)
+        {
+            var value = NormalizePath(path);
+            var isDenied = denied.Any(prefix => IsUnder(value, prefix));
+            var isAllowed = allowed.Length == 0 || allowed.Any(prefix => IsUnder(value, prefix));
+
+            if (isDenied || !isAllowed)
+            {
+                violations.Add(value);
+            }
+        }
+
+        return violations;
+    }
+
+    private static string NormalizePath(string path)
+    {
+        var value = path.Replace('\\', '/').Trim();
+
+        while (value.StartsWith("./", StringComparison.Ordinal))
+        {
+            value = value[2..];
+        }
+
+        return value.TrimStart('/');
+    }
+
+    private static bool IsUnder(string path, string prefix)
+    {
+        var root = prefix.TrimEnd('/');
+        return path.Equals(root, StringComparison.OrdinalIgnoreCase)
+               || path.StartsWith(root + "/", StringComparison.OrdinalIgnoreCase);
     }
 
     private static async Task<string> SummaryAsync(
@@ -332,14 +433,27 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
         }
     }
 
-    private static string ResultJson(string outcome, string summary, string branch, bool review)
+    private static string ResultJson(
+        string outcome,
+        string summary,
+        string branch,
+        bool review,
+        IReadOnlyList<string>? changedPaths = null,
+        string? commit = null,
+        string? diff = null,
+        bool diffTruncated = false,
+        string? reviewReason = null)
         => PersistenceJson.Serialize(new
         {
             outcome,
             summary_md = summary,
-            changed_paths = Array.Empty<string>(),
+            changed_paths = changedPaths ?? Array.Empty<string>(),
             branch = string.IsNullOrWhiteSpace(branch) ? null : branch,
-            commit = (string?)null,
+            commit,
+            diff,
+            diff_truncated = diffTruncated,
+            review_reason = reviewReason,
+            artifacts = Array.Empty<string>(),
             requires_review = review,
         });
 }

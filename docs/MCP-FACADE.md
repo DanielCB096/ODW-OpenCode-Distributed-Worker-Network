@@ -201,7 +201,7 @@ Error si el par no existe (`PEER_UNKNOWN`) o está offline (`PEER_OFFLINE`, sin 
   "branch": "odw/01JAZ...", "commit": "9f1c2ab",
   "tests": [{ "name": "dotnet test", "status": "passed" }],
   "artifacts": [{ "name": "report.md", "bytes": 8123 }],
-  "diff": "diff --git ...",           // truncado a 256 KiB; el resto como artefacto
+  "diff": "diff --git ...",           // truncado a 256 KiB; el resto queda pendiente
   "requires_review": false }
 ```
 

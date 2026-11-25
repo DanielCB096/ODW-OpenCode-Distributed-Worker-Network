@@ -104,7 +104,8 @@ y las ACL, y se marcan `[Trait("Category","WindowsSecurity")]`.
 
 `tools/e2e-loopback.ps1` levanta `PC-A` (origen) y `PC-B` (destino) como `odw-svc`, propone por
 MCP, aprueba por el pipe y comprueba el resultado. Verificado: tarea `DONE`, resumen
-`E2E-LOOPBACK`. No valida Tailscale/firewall; eso queda para la prueba en dos PCs.
+`E2E-LOOPBACK`; con `-WriteTask`, `E2E-WRITE`, `changed_paths=["src/e2e-changed.txt"]`, commit y
+diff. No valida Tailscale/firewall; eso queda para la prueba en dos PCs.
 
 ---
 

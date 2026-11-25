@@ -33,6 +33,8 @@ public sealed record TaskResultView(
     IReadOnlyList<string> Artifacts,
     bool RequiresReview,
     bool ResultAvailable,
+    string? Diff,
+    bool DiffTruncated,
     IReadOnlyList<TaskEventView> Events);
 
 public interface ITaskQuery

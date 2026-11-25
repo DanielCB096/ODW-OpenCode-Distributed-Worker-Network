@@ -37,7 +37,8 @@ public static class TaskTools
                   "type": "object",
                   "properties": {
                     "task_id": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
-                    "include_events": { "type": "boolean", "default": false }
+                    "include_events": { "type": "boolean", "default": false },
+                    "include_diff": { "type": "boolean", "default": false }
                   },
                   "required": ["task_id"],
                   "additionalProperties": false
@@ -81,6 +82,7 @@ public static class TaskTools
         }
 
         var includeEvents = JsonTools.GetBool(arguments, "include_events") ?? false;
+        var includeDiff = JsonTools.GetBool(arguments, "include_diff") ?? false;
         var result = await query.GetResultAsync(taskId!, includeEvents, cancellationToken).ConfigureAwait(false);
         if (result is null)
         {
@@ -96,7 +98,7 @@ public static class TaskTools
                 extra: new JsonObject { ["state"] = result.State.ToContractString() });
         }
 
-        var structured = ToJson(result, includeEvents);
+        var structured = ToJson(result, includeEvents, includeDiff);
         var summary = result.SummaryMarkdown.Length == 0
             ? $"{result.TaskId} terminó con resultado {result.Outcome.ToWireValue()}."
             : $"{result.TaskId}: {FirstLine(result.SummaryMarkdown)}";
@@ -128,7 +130,7 @@ public static class TaskTools
         return json;
     }
 
-    internal static JsonObject ToJson(TaskResultView result, bool includeEvents)
+    internal static JsonObject ToJson(TaskResultView result, bool includeEvents, bool includeDiff = false)
     {
         var json = new JsonObject
         {
@@ -145,6 +147,12 @@ public static class TaskTools
             result.Branch is null ? null : JsonValue.Create(result.Branch));
         JsonTools.AddIfNotNull(json, "commit",
             result.Commit is null ? null : JsonValue.Create(result.Commit));
+
+        if (includeDiff)
+        {
+            json["diff"] = result.Diff is null ? null : JsonValue.Create(result.Diff);
+            json["diff_truncated"] = JsonValue.Create(result.DiffTruncated);
+        }
 
         if (includeEvents)
         {

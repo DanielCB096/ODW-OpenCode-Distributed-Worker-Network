@@ -27,6 +27,7 @@ param(
     [string]$DataRoot = (Join-Path $env:ProgramData 'ODW\e2e-loopback'),
     [string]$OdwExe,
     [switch]$Keep,
+    [switch]$WriteTask,
     [int]$TimeoutSeconds = 300
 )
 
@@ -184,6 +185,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "No se pudo crear el repo de prueba." }
 
     $targetPolicy = Join-Path $targetDir 'policy.json'
+    $taskMode = if ($WriteTask) { 'read_write_worktree' } else { 'read_only' }
     Write-Json $targetPolicy ([ordered]@{
         version = 1
         default = 'ASK'
@@ -195,7 +197,7 @@ try {
                 when     = [ordered]@{
                     direction  = 'in'
                     kind       = @('analysis')
-                    mode       = 'read_only'
+                    mode       = $taskMode
                     peer_trust = 'trusted'
                     limits     = [ordered]@{ network = 'none' }
                 }
@@ -305,10 +307,14 @@ try {
         arguments = [ordered]@{
             target_node     = 'PC-B'
             kind            = 'analysis'
-            mode            = 'read_only'
+            mode            = $taskMode
             repo            = 'SistemaMaestro'
             base_ref        = 'main'
-            instructions    = 'Responde exactamente: E2E-LOOPBACK. No uses herramientas.'
+            instructions    = if ($WriteTask) {
+                'Crea el archivo src/e2e-changed.txt con el texto CAMBIO. Responde exactamente: E2E-WRITE.'
+            } else {
+                'Responde exactamente: E2E-LOOPBACK. No uses herramientas.'
+            }
             allowed_paths   = @('src/', 'tests/')
             denied_paths    = @()
             limits          = [ordered]@{
@@ -366,11 +372,26 @@ try {
 
     $result = Invoke-Mcp $mcpUrl $originMcpToken 5 'tools/call' ([ordered]@{
         name      = 'odw_get_task_result'
-        arguments = [ordered]@{ task_id = $taskId; include_diff = $false }
+        arguments = [ordered]@{ task_id = $taskId; include_diff = $true }
     })
-    $summary = $result.result.structuredContent.summary_md
+    $final = $result.result.structuredContent
+    $summary = $final.summary_md
 
-    if ($summary -notmatch 'E2E-LOOPBACK') {
+    if ($WriteTask) {
+        $changed = @($final.changed_paths)
+        if ($changed -notcontains 'src/e2e-changed.txt') {
+            throw "No se registró src/e2e-changed.txt. Cambios: $($changed -join ', ')"
+        }
+
+        if ([string]::IsNullOrWhiteSpace($final.commit)) {
+            throw "No se creó el commit de la tarea."
+        }
+
+        if ($final.diff -notmatch 'e2e-changed') {
+            throw "El parche no contiene el archivo esperado."
+        }
+    }
+    elseif ($summary -notmatch 'E2E-LOOPBACK') {
         throw "Resultado inesperado: $summary"
     }
 
@@ -379,6 +400,12 @@ try {
     Write-Host "  tarea:  $taskId"
     Write-Host "  estado: $state"
     Write-Host "  result: $summary"
+
+    if ($WriteTask) {
+        Write-Host "  paths:  $($changed -join ', ')"
+        Write-Host "  commit: $($final.commit)"
+    }
+
     Write-Host "  logs:   $DataRoot"
     $succeeded = $true
 }

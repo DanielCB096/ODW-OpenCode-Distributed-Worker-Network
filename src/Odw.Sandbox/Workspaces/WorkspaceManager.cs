@@ -327,12 +327,33 @@ public sealed class WorkspaceManager : IWorkspacePreparer
 
     private static void TryDelete(string path)
     {
+        if (!Directory.Exists(path))
+        {
+            return;
+        }
+
         try
         {
-            if (Directory.Exists(path))
+            // git marca los objetos como read-only y Directory.Delete falla en Windows.
+            foreach (var file in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories))
             {
-                Directory.Delete(path, recursive: true);
+                var attributes = File.GetAttributes(file);
+                if ((attributes & FileAttributes.ReadOnly) != 0)
+                {
+                    File.SetAttributes(file, attributes & ~FileAttributes.ReadOnly);
+                }
             }
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+
+        try
+        {
+            Directory.Delete(path, recursive: true);
         }
         catch (IOException)
         {

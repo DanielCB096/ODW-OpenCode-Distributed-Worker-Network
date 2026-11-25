@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (325 pruebas); E2E A→B en loopback; falta prueba en dos PCs con Tailscale |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (328 pruebas); E2E A→B en loopback; falta prueba en dos PCs con Tailscale |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -104,7 +104,7 @@ OpenCode completados (2026-11-24). Resto pendiente.
   primer plano.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
 - ✅ Cuenta dedicada `odw-svc`; ⬜ prueba en dos PCs reales con Tailscale.
-- ✅ 325 pruebas verdes, build sin advertencias.
+- ✅ 328 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
 **Entregables**
@@ -168,8 +168,8 @@ OpenCode completados (2026-11-24). Resto pendiente.
 
 **Estado:** ACLs de workspace, usuario `odw-agent`, lanzamiento de `opencode serve` como agente,
 modelo gratuito propio, red con WFP + proxy, cuenta `odw-svc` sin administrador, perfiles por tarea,
-escaneo de reparse points y pruebas hostiles implementados y verificados. Queda la prueba real en
-dos PCs (H1) y el cálculo de `changed_paths`/`commit`.
+escaneo de reparse points, pruebas hostiles, `changed_paths`/`commit`/diff y E2E loopback
+implementados y verificados. Queda la prueba real en dos PCs (H1) y el empaquetado de artefactos.
 
 - ✅ Job Objects (memoria, procesos, CPU, kill on close).
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
@@ -183,6 +183,8 @@ dos PCs (H1) y el cálculo de `changed_paths`/`commit`.
   lectura verificada sobre configuración, bases y claves.
 - ✅ Aislamiento de red: WFP por SID (bloqueo salvo `127.0.0.1:7423`) + proxy CONNECT con allowlist;
   Internet, LAN, metadata y DNS directo bloqueados al agente. Tarea real a través del proxy.
+- ✅ `changed_paths`, `commit` y `diff` inline; validación contra `allowed_paths`/`denied_paths`
+  (`E2E-WRITE`).
 - ✅ Perfil/config/datos desechables por tarea; guardas `max_concurrent=1` y `keep=false`.
 - ✅ Reparse points y hard links detectados antes/después; watchdog de red durante la tarea.
 - ✅ Servicio `odw-svc` sin administrador (`SeServiceLogonRight` + `SeIncreaseQuotaPrivilege`);

@@ -76,6 +76,8 @@ internal static class McpTestData
         ["report.md"],
         false,
         available,
+        null,
+        false,
         [new TaskEventView(1, "task.completed", DateTimeOffset.UnixEpoch, "{}")]);
 
     public static JsonObject Request(string method, JsonNode? id, JsonObject? parameters = null)

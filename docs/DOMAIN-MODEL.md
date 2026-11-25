@@ -140,7 +140,8 @@
   `outcome=review_required`, y el resultado **no** se marca como entregable.
 - Artefactos: máximo 20, 2 MiB cada uno, 20 MiB totales; `name` es un nombre simple
   (`^[A-Za-z0-9._-]{1,64}$`), nunca una ruta. Contenido por `GET /tasks/{id}/artifacts/{name}`.
-- El diff se adjunta dentro de los límites; si excede, se sirve como artefacto `diff.patch`.
+- El diff se adjunta inline hasta 256 KiB y se marca `diff_truncated`; el artefacto descargable
+  `diff.patch` queda pendiente (no implementado todavía).
 
 ---
 

@@ -17,7 +17,7 @@ src/
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
-  Odw.Sandbox/               ← workspace Git, ACLs, WFP, proxy y perfiles por tarea (35 pruebas)
+  Odw.Sandbox/               ← workspace Git, ACLs, WFP, proxy y perfiles por tarea (38 pruebas)
   Odw.Cli/                   ← ejecutable: init, doctor, sandbox, service
   Odw.Trust/                 ← esqueleto
   Odw.Approvals/             ← esqueleto
@@ -28,7 +28,7 @@ tests/
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
-  Odw.Sandbox.Tests/         ← 35 pruebas
+  Odw.Sandbox.Tests/         ← 38 pruebas
 ```
 
 Dependencias: `Core` no referencia nada; `Policy`/`Trust`/`Sandbox`/`Executors.OpenCode` → `Core`;
@@ -248,14 +248,18 @@ Límites que siguen abiertos y se declaran:
 - `odw-agent` conserva el logon interactivo local que exige `CreateProcessWithLogonW`; tiene
   denegados el logon de red y el interactivo remoto.
 - E2E loopback verificado: dos nodos `odw-svc` (`PC-A` origen, `PC-B` destino), propuesta por MCP,
-  aprobación por pipe, ejecución con sandbox y resultado `E2E-LOOPBACK`. Falta la prueba en dos
-  PCs con Tailscale.
+  aprobación por pipe, ejecución con sandbox. Casos `E2E-LOOPBACK` (read_only) y `E2E-WRITE`
+  (read_write con `changed_paths`, `commit` y `diff`). Falta la prueba en dos PCs con Tailscale.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
-- Pendiente: prueba real en dos PCs (H1) y el resultado aún no calcula `changed_paths`/`commit`.
+- Pendiente: prueba real en dos PCs (H1). El resultado ya calcula `changed_paths`, `commit` y un
+  `diff` inline (256 KiB) para tareas de escritura; el empaquetado de artefactos queda pendiente.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
-- El resultado no calcula todavía `changed_paths`/`commit` (quedan vacíos) y no empaqueta artefactos.
+- El runner captura los cambios antes de borrar el workspace: en `read_write_worktree` hace
+  `git add`, guarda el diff, crea el commit y valida las rutas contra `allowed_paths`/`denied_paths`.
+  El workspace temporal se borra después: el `diff` inline es la evidencia persistente; el SHA es
+  informativo y un commit/artefacto descargable queda pendiente.
 - El runner usa `ToolPolicy.AskAll`; sin un `ToolPermissionHandler`, toda herramienta se rechaza.
 
 ---
@@ -418,7 +422,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **325/325 pruebas** (96 Core + 117 Node + 26 MCP + 23 OpenCode + 28 Policy + 35 Sandbox).
+Estado actual: build 0 warnings, **328/328 pruebas** (96 Core + 117 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---
@@ -457,7 +461,7 @@ La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no 
 
 1. Prueba real en dos PCs (H1): delegación A→B con el servicio `odw-svc`.
 2. Probar Telegram con un bot real (H2); la firma HMAC ya está implementada.
-3. Calcular `changed_paths`/`commit` y empaquetar artefactos.
+3. Empaquetar artefactos descargables (el diff ya viaja inline, truncado a 256 KiB).
 4. H4: leases, mensajes, cancelación remota y reconciliación tras reinicio.
 5. Cerrar H0-6 (aislamiento por directorio) con instancias ya separadas.
 

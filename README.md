@@ -12,9 +12,11 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
 - Delegación **A→B→resultado** funcionando: propuesta, política, envío, scheduler, workspace Git,
   Job Object, ejecutor OpenCode y poller de resultado. **E2E A→B verificado en un PC** con dos nodos
   loopback; falta la prueba en dos máquinas con Tailscale.
+- Resultado con `changed_paths`, `commit` y `diff` inline para tareas `read_write_worktree`; el
+  workspace temporal se borra, así que el diff es la evidencia persistente.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **325 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- **328 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
 - TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
 - ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente, modelo gratuito propio,
   red aislada con WFP + proxy, `odw-svc` sin admin y perfiles por tarea.
@@ -141,7 +143,8 @@ powershell -ExecutionPolicy Bypass -File tools/e2e-loopback.ps1
 
 Arranca dos nodos separados como `odw-svc` (`PC-A` origen y `PC-B` destino) en loopback, propone
 por MCP, aprueba por el pipe y espera el resultado del destino con sandbox real. Requiere el
-aprovisionamiento previo y consola elevada. Usa `-Keep` para conservar logs y configuración.
+aprovisionamiento previo y consola elevada. Usa `-Keep` para conservar logs y configuración y
+`-WriteTask` para validar `changed_paths`, commit y diff.
 
 No sustituye a la prueba en dos PCs: no valida Tailscale, el firewall ni la red física.
 
@@ -192,5 +195,5 @@ src/Odw.Sandbox               workspace Git + Job Objects
 src/Odw.PeerApi               cliente de pares
 src/Odw.Approvals             cliente del pipe de aprobaciones
 src/Odw.Cli                   ejecutable odw
-tests/*                       325 pruebas
+tests/*                       328 pruebas
 ```
