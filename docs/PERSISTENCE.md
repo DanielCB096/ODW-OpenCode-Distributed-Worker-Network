@@ -180,7 +180,8 @@ CREATE TABLE artifacts (
 - **`request_json`** guarda el contrato recibido (para auditoría y recomputación del hash).
   No se usa como estado operativo.
 - **Artefactos** se guardan en disco (`%PROGRAMDATA%\ODW\artifacts\<task_id>\`), no como BLOB:
-  la BD se mantiene pequeña y el respaldo de la BD es rápido.
+  la BD se mantiene pequeña y el respaldo de la BD es rápido. En el MVP actual el diff viaja
+  inline (256 KiB); el directorio/endpoint de artefactos descargables aún no se implementa.
 - **Sin `ON DELETE CASCADE` en `tasks`**: las tareas no se borran por accidente; se purgan con
   un job explícito y auditado.
 - **Formato de valores**: `role` se guarda `origin`/`target`; `state` en su forma de contrato

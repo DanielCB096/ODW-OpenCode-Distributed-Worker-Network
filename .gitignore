@@ -27,3 +27,8 @@ odw.db-shm
 ## OS
 Thumbs.db
 .DS_Store
+
+## graphify generated (keep graph.json, GRAPH_REPORT.md, graph.html)
+graphify-out/cache/
+graphify-out/.graphify_*
+graphify-out/*.tmp

@@ -9,6 +9,12 @@
 > especificación está en **`GET /openapi.json`**; la superficie es **V2** (`/api/...`); el prompt
 > es `POST /api/session/{id}/prompt`. Las decisiones de diseño vinculantes están en
 > [`docs/DECISIONS.md`](docs/DECISIONS.md) y el diseño detallado en [`docs/README.md`](docs/README.md).
+>
+> **Estado actual (2026-11-25):** H3 cerrado (odw-agent/odw-svc, ACLs, WFP + proxy, perfiles por
+> tarea), delegación A→B verificada en loopback, resultado con `changed_paths`/commit/diff y
+> **328/328 pruebas**. Para retomar el proyecto usa [`docs/HANDOFF.md`](docs/HANDOFF.md); este
+> documento conserva la visión y el diseño originales. Pendiente: dos PCs/Tailscale, artefactos
+> descargables, Telegram real y H4.
 
 ---
 

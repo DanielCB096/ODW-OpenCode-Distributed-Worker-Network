@@ -6,6 +6,9 @@ y con aprobación humana fuera de banda.
 
 Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Network>
 
+> Continuar desde otra PC: [`docs/HANDOFF.md`](docs/HANDOFF.md) · Grafo:
+> [`graphify-out/GRAPH_REPORT.md`](graphify-out/GRAPH_REPORT.md)
+
 ## Estado
 
 - Diseño cerrado y verificado contra **OpenCode 2.3.2**.
@@ -156,7 +159,10 @@ No sustituye a la prueba en dos PCs: no valida Tailscale, el firewall ni la red 
 | `odw doctor --db ... --mcp-token ...` | Diagnóstico: BD, binds, listeners, token, OpenCode y spec |
 | `odw approvals list\|approve\|deny\|expire` | Aprobaciones por named pipe |
 | `odw init --db ...` | Crea la base y aplica migraciones |
-| `odw service install\|uninstall\|status` | Servicio Windows |
+| `odw service install\|uninstall\|status` | Servicio Windows (`--account .\odw-svc` para mínimo privilegio) |
+| `odw sandbox check` | Usuario, ACLs, red y watchdog |
+| `odw sandbox net install\|uninstall\|status` | Filtros WFP del agente |
+| `tools/e2e-loopback.ps1` | E2E origen→destino en un PC |
 | `odw version` | Versión |
 
 ## Documentación
@@ -173,6 +179,8 @@ No sustituye a la prueba en dos PCs: no valida Tailscale, el firewall ni la red 
 | Adaptador de OpenCode | [`docs/OPENCODE-ADAPTER.md`](docs/OPENCODE-ADAPTER.md) |
 | Planner y políticas | [`docs/PLANNER-POLICY.md`](docs/PLANNER-POLICY.md) |
 | Pruebas | [`docs/TESTING.md`](docs/TESTING.md) |
+| **Continuar desde otra PC** | [`docs/HANDOFF.md`](docs/HANDOFF.md) |
+| Grafo del proyecto | [`graphify-out/GRAPH_REPORT.md`](graphify-out/GRAPH_REPORT.md) |
 | Arquitectura original | [`ARCHITECTURE.md`](ARCHITECTURE.md) |
 
 ## Seguridad (resumen)

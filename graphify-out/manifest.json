@@ -1,0 +1,1184 @@
+{
+  "Odw.slnx": {
+    "mtime": 1795558901.3785326,
+    "seen": 1795649036.967208,
+    "ast_hash": "f02b684456a015a13a9367558ce9e186",
+    "semantic_hash": "f02b684456a015a13a9367558ce9e186"
+  },
+  "config/node.example.json": {
+    "mtime": 1795633397.5118186,
+    "seen": 1795649036.967229,
+    "ast_hash": "3a3809abd78066142c5d89d6a100e16e",
+    "semantic_hash": "3a3809abd78066142c5d89d6a100e16e"
+  },
+  "config/peers.example.json": {
+    "mtime": 1795561898.9390361,
+    "seen": 1795649036.967236,
+    "ast_hash": "03a34d6a0897563c0c8a8c7e6712ae05",
+    "semantic_hash": "03a34d6a0897563c0c8a8c7e6712ae05"
+  },
+  "config/policy.example.json": {
+    "mtime": 1795543112.979021,
+    "seen": 1795649036.967241,
+    "ast_hash": "35a99c796a445b787f050c6d426f9002",
+    "semantic_hash": "35a99c796a445b787f050c6d426f9002"
+  },
+  "docs/reference/opencode-2.3.2-openapi.json": {
+    "mtime": 1795542508.7164423,
+    "seen": 1795649036.9672456,
+    "ast_hash": "d614576d2b51b01f3f3bff95d6e6acd7",
+    "semantic_hash": "d614576d2b51b01f3f3bff95d6e6acd7"
+  },
+  "docs/schemas/policy.schema.json": {
+    "mtime": 1795543148.5806718,
+    "seen": 1795649036.9672499,
+    "ast_hash": "bb782d1d069d7f4f1ac4fbc1e17d6949",
+    "semantic_hash": "bb782d1d069d7f4f1ac4fbc1e17d6949"
+  },
+  "docs/schemas/task-request.schema.json": {
+    "mtime": 1795543207.075496,
+    "seen": 1795649036.9672542,
+    "ast_hash": "bf18a4d6cdddb6c4b857408cc4f46d56",
+    "semantic_hash": "bf18a4d6cdddb6c4b857408cc4f46d56"
+  },
+  "docs/schemas/task-result.schema.json": {
+    "mtime": 1795543140.0564063,
+    "seen": 1795649036.9672577,
+    "ast_hash": "0932d23f30c5ab6029d4f2b87d2b0a2a",
+    "semantic_hash": "0932d23f30c5ab6029d4f2b87d2b0a2a"
+  },
+  "global.json": {
+    "mtime": 1795545257.8110733,
+    "seen": 1795649036.9672616,
+    "ast_hash": "0ef2a004d7a52ea446fba19d7aa02d35",
+    "semantic_hash": "0ef2a004d7a52ea446fba19d7aa02d35"
+  },
+  "src/Odw.Approvals/ApprovalPipeClient.cs": {
+    "mtime": 1795560569.2365682,
+    "seen": 1795649036.9672658,
+    "ast_hash": "4d9aefe7fa314dbb58a06340eaab5845",
+    "semantic_hash": "4d9aefe7fa314dbb58a06340eaab5845"
+  },
+  "src/Odw.Approvals/Odw.Approvals.csproj": {
+    "mtime": 1795545283.678808,
+    "seen": 1795649036.9672694,
+    "ast_hash": "d5fe7cf87e76dac7bef59afe680c2ad8",
+    "semantic_hash": "d5fe7cf87e76dac7bef59afe680c2ad8"
+  },
+  "src/Odw.Approvals/TelegramClient.cs": {
+    "mtime": 1795563725.389222,
+    "seen": 1795649036.9672744,
+    "ast_hash": "8e03e999a9fd07d8cebe904e79c8e1aa",
+    "semantic_hash": "8e03e999a9fd07d8cebe904e79c8e1aa"
+  },
+  "src/Odw.Cli/CliApplication.cs": {
+    "mtime": 1795634619.3003123,
+    "seen": 1795649036.967278,
+    "ast_hash": "d05b8f8f62579ab8e0d552f5a99be776",
+    "semantic_hash": "d05b8f8f62579ab8e0d552f5a99be776"
+  },
+  "src/Odw.Cli/Odw.Cli.csproj": {
+    "mtime": 1795562431.8767958,
+    "seen": 1795649036.967282,
+    "ast_hash": "a00b3b435a818964ad1f53e74ac2dca0",
+    "semantic_hash": "a00b3b435a818964ad1f53e74ac2dca0"
+  },
+  "src/Odw.Cli/Program.cs": {
+    "mtime": 1795555705.7040257,
+    "seen": 1795649036.9672859,
+    "ast_hash": "996d07d462c84fe42f59b187940380e6",
+    "semantic_hash": "996d07d462c84fe42f59b187940380e6"
+  },
+  "src/Odw.Cli/ServeHost.cs": {
+    "mtime": 1795562437.0634842,
+    "seen": 1795649036.9672897,
+    "ast_hash": "b498a7f4f3f8cfb6ff5191844623a3e0",
+    "semantic_hash": "b498a7f4f3f8cfb6ff5191844623a3e0"
+  },
+  "src/Odw.Core/Contracts/IApprovalChannel.cs": {
+    "mtime": 1795545535.5926595,
+    "seen": 1795649036.967293,
+    "ast_hash": "f00420e12e982bb43b0a54b9338f17ce",
+    "semantic_hash": "f00420e12e982bb43b0a54b9338f17ce"
+  },
+  "src/Odw.Core/Contracts/IExecutor.cs": {
+    "mtime": 1795545528.5846934,
+    "seen": 1795649036.9672966,
+    "ast_hash": "af042fd921062c68a54d4bda0a35806d",
+    "semantic_hash": "af042fd921062c68a54d4bda0a35806d"
+  },
+  "src/Odw.Core/Contracts/IPolicyEngine.cs": {
+    "mtime": 1795557380.8237958,
+    "seen": 1795649036.9673007,
+    "ast_hash": "dc46aef1b8182365ef87596afe42fb84",
+    "semantic_hash": "dc46aef1b8182365ef87596afe42fb84"
+  },
+  "src/Odw.Core/Delegation/LineageGuard.cs": {
+    "mtime": 1795545546.8358028,
+    "seen": 1795649036.967304,
+    "ast_hash": "bbb496a39bfdf049b655ab584d54427e",
+    "semantic_hash": "bbb496a39bfdf049b655ab584d54427e"
+  },
+  "src/Odw.Core/Hashing/CanonicalJson.cs": {
+    "mtime": 1795545430.125688,
+    "seen": 1795649036.967308,
+    "ast_hash": "402005146e4d0aa80667ef847c4f1869",
+    "semantic_hash": "402005146e4d0aa80667ef847c4f1869"
+  },
+  "src/Odw.Core/Hashing/TaskHash.cs": {
+    "mtime": 1795545437.374673,
+    "seen": 1795649036.9673119,
+    "ast_hash": "1dfe0a93c8653008c80071bdcca09353",
+    "semantic_hash": "1dfe0a93c8653008c80071bdcca09353"
+  },
+  "src/Odw.Core/Model/EnumExtensions.cs": {
+    "mtime": 1795546476.0096138,
+    "seen": 1795649036.9673178,
+    "ast_hash": "3b4ca4e185fe9f925f695ee3c83b1b3d",
+    "semantic_hash": "3b4ca4e185fe9f925f695ee3c83b1b3d"
+  },
+  "src/Odw.Core/Model/Enums.cs": {
+    "mtime": 1795545395.3365862,
+    "seen": 1795649036.967321,
+    "ast_hash": "e2a259e8c57240f21f3b19538e9ce209",
+    "semantic_hash": "e2a259e8c57240f21f3b19538e9ce209"
+  },
+  "src/Odw.Core/Model/TaskRequest.cs": {
+    "mtime": 1795545407.2843294,
+    "seen": 1795649036.9673245,
+    "ast_hash": "f9893dfe6c7b2b6e56fc2b5f976110c8",
+    "semantic_hash": "f9893dfe6c7b2b6e56fc2b5f976110c8"
+  },
+  "src/Odw.Core/Model/TaskResult.cs": {
+    "mtime": 1795545410.4523294,
+    "seen": 1795649036.967328,
+    "ast_hash": "59a44925b18a9760c21f44c94c05a26f",
+    "semantic_hash": "59a44925b18a9760c21f44c94c05a26f"
+  },
+  "src/Odw.Core/Model/TaskTrigger.cs": {
+    "mtime": 1795545490.3371677,
+    "seen": 1795649036.9673316,
+    "ast_hash": "c22c68ea91aef41924e581e035d3a915",
+    "semantic_hash": "c22c68ea91aef41924e581e035d3a915"
+  },
+  "src/Odw.Core/Odw.Core.csproj": {
+    "mtime": 1795545272.140164,
+    "seen": 1795649036.967335,
+    "ast_hash": "116dd76aad414bf25df4ae1ac7087305",
+    "semantic_hash": "116dd76aad414bf25df4ae1ac7087305"
+  },
+  "src/Odw.Core/Primitives/ContractFormat.cs": {
+    "mtime": 1795545659.9125717,
+    "seen": 1795649036.967338,
+    "ast_hash": "2459bc74a6716c16dda913844e10f69e",
+    "semantic_hash": "2459bc74a6716c16dda913844e10f69e"
+  },
+  "src/Odw.Core/Primitives/Ulid.cs": {
+    "mtime": 1795545782.6425807,
+    "seen": 1795649036.9673414,
+    "ast_hash": "ce5f8f080504472286de307bb49c0003",
+    "semantic_hash": "ce5f8f080504472286de307bb49c0003"
+  },
+  "src/Odw.Core/StateMachines/TaskAggregate.cs": {
+    "mtime": 1795545563.4407413,
+    "seen": 1795649036.9673452,
+    "ast_hash": "04e40879554a647ebcaac3d4e293ed37",
+    "semantic_hash": "04e40879554a647ebcaac3d4e293ed37"
+  },
+  "src/Odw.Core/StateMachines/TaskStateChange.cs": {
+    "mtime": 1795545512.2630053,
+    "seen": 1795649036.9673488,
+    "ast_hash": "aeaeacdb6488247c3c342dca1441d6f8",
+    "semantic_hash": "aeaeacdb6488247c3c342dca1441d6f8"
+  },
+  "src/Odw.Core/StateMachines/TaskStateMachine.cs": {
+    "mtime": 1795545506.8985643,
+    "seen": 1795649036.9673526,
+    "ast_hash": "2647766df75015c283691f8a9fb964ca",
+    "semantic_hash": "2647766df75015c283691f8a9fb964ca"
+  },
+  "src/Odw.Core/StateMachines/TransitionContext.cs": {
+    "mtime": 1795545493.5013435,
+    "seen": 1795649036.967357,
+    "ast_hash": "32e8953f076e3d0386e1f3a74647823d",
+    "semantic_hash": "32e8953f076e3d0386e1f3a74647823d"
+  },
+  "src/Odw.Core/Validation/TaskValidator.cs": {
+    "mtime": 1795545548.748742,
+    "seen": 1795649036.9673605,
+    "ast_hash": "21fa9c8497b22d2b19e8ad35c3369f09",
+    "semantic_hash": "21fa9c8497b22d2b19e8ad35c3369f09"
+  },
+  "src/Odw.Core/Validation/ValidationResult.cs": {
+    "mtime": 1795545458.2766144,
+    "seen": 1795649036.9673638,
+    "ast_hash": "f2f481bae51b63e5fc4ca2e3aa565c04",
+    "semantic_hash": "f2f481bae51b63e5fc4ca2e3aa565c04"
+  },
+  "src/Odw.Executors.OpenCode/Odw.Executors.OpenCode.csproj": {
+    "mtime": 1795545281.2662256,
+    "seen": 1795649036.9673672,
+    "ast_hash": "5288c43aefd08d5ca01cc8c221d06ff7",
+    "semantic_hash": "5288c43aefd08d5ca01cc8c221d06ff7"
+  },
+  "src/Odw.Executors.OpenCode/OpenCode/IOpenCodeClient.cs": {
+    "mtime": 1795556602.222046,
+    "seen": 1795649036.967371,
+    "ast_hash": "ddbbcaf2279a6abe8a7ae0f41e4d8599",
+    "semantic_hash": "ddbbcaf2279a6abe8a7ae0f41e4d8599"
+  },
+  "src/Odw.Executors.OpenCode/OpenCode/OpenCodeClient.cs": {
+    "mtime": 1795556813.3069034,
+    "seen": 1795649036.967374,
+    "ast_hash": "274b3d7f9a51e9af77291ec82fec7fc1",
+    "semantic_hash": "274b3d7f9a51e9af77291ec82fec7fc1"
+  },
+  "src/Odw.Executors.OpenCode/OpenCode/OpenCodeDtos.cs": {
+    "mtime": 1795556590.2954843,
+    "seen": 1795649036.9673772,
+    "ast_hash": "fac86fa37498a5b55d3cae8a88e75c2c",
+    "semantic_hash": "fac86fa37498a5b55d3cae8a88e75c2c"
+  },
+  "src/Odw.Executors.OpenCode/OpenCode/OpenCodeExecutor.cs": {
+    "mtime": 1795556652.511905,
+    "seen": 1795649036.9673808,
+    "ast_hash": "e046d689dc0ad6da590eb2eda9309296",
+    "semantic_hash": "e046d689dc0ad6da590eb2eda9309296"
+  },
+  "src/Odw.Executors.OpenCode/OpenCode/OpenCodeServer.cs": {
+    "mtime": 1795637008.1946955,
+    "seen": 1795649036.9673839,
+    "ast_hash": "01fc0dbe92eb961fb8b5841b2c08d606",
+    "semantic_hash": "01fc0dbe92eb961fb8b5841b2c08d606"
+  },
+  "src/Odw.Mcp/Abstractions/Peers.cs": {
+    "mtime": 1795555544.8588686,
+    "seen": 1795649036.967388,
+    "ast_hash": "cc1616b9af1385aa26dbacc36d9daa5d",
+    "semantic_hash": "cc1616b9af1385aa26dbacc36d9daa5d"
+  },
+  "src/Odw.Mcp/Abstractions/Proposals.cs": {
+    "mtime": 1795560527.592839,
+    "seen": 1795649036.9673944,
+    "ast_hash": "02fb86bded83e4bb05f780dbabbe2c0f",
+    "semantic_hash": "02fb86bded83e4bb05f780dbabbe2c0f"
+  },
+  "src/Odw.Mcp/Abstractions/Tasks.cs": {
+    "mtime": 1795647380.010757,
+    "seen": 1795649036.9673975,
+    "ast_hash": "946d27729b9d4bdff0a528ec6f5809e5",
+    "semantic_hash": "946d27729b9d4bdff0a528ec6f5809e5"
+  },
+  "src/Odw.Mcp/JsonRpc.cs": {
+    "mtime": 1795555565.372584,
+    "seen": 1795649036.9674008,
+    "ast_hash": "dc62c6938510215b20d07e9122d5caa2",
+    "semantic_hash": "dc62c6938510215b20d07e9122d5caa2"
+  },
+  "src/Odw.Mcp/McpEndpoint.cs": {
+    "mtime": 1795555773.2513497,
+    "seen": 1795649036.9674048,
+    "ast_hash": "5ff4f0dabe902759b45e38986bfde11c",
+    "semantic_hash": "5ff4f0dabe902759b45e38986bfde11c"
+  },
+  "src/Odw.Mcp/McpServer.cs": {
+    "mtime": 1795555584.2078855,
+    "seen": 1795649036.9674087,
+    "ast_hash": "f2389bd643fc155bdebf277cf4e4a758",
+    "semantic_hash": "f2389bd643fc155bdebf277cf4e4a758"
+  },
+  "src/Odw.Mcp/McpTool.cs": {
+    "mtime": 1795555568.670814,
+    "seen": 1795649036.9674122,
+    "ast_hash": "23eb0884c60fdd86df7b6918e239f60a",
+    "semantic_hash": "23eb0884c60fdd86df7b6918e239f60a"
+  },
+  "src/Odw.Mcp/Odw.Mcp.csproj": {
+    "mtime": 1795555539.6006422,
+    "seen": 1795649036.9674153,
+    "ast_hash": "a6edd270cb5ec60a1a3e68ef8979316d",
+    "semantic_hash": "a6edd270cb5ec60a1a3e68ef8979316d"
+  },
+  "src/Odw.Mcp/Tools/JsonTools.cs": {
+    "mtime": 1795560138.353701,
+    "seen": 1795649036.9674187,
+    "ast_hash": "38abe74da1b9433b15ea9b1e8315e05d",
+    "semantic_hash": "38abe74da1b9433b15ea9b1e8315e05d"
+  },
+  "src/Odw.Mcp/Tools/OriginTools.cs": {
+    "mtime": 1795560547.976178,
+    "seen": 1795649036.9674225,
+    "ast_hash": "fcf2b207e005bb5f878669ce574b928e",
+    "semantic_hash": "fcf2b207e005bb5f878669ce574b928e"
+  },
+  "src/Odw.Mcp/Tools/PeerTools.cs": {
+    "mtime": 1795555613.368995,
+    "seen": 1795649036.9674258,
+    "ast_hash": "4f46b14be8fe1d6c65c0cf44f0881969",
+    "semantic_hash": "4f46b14be8fe1d6c65c0cf44f0881969"
+  },
+  "src/Odw.Mcp/Tools/TaskTools.cs": {
+    "mtime": 1795647693.451725,
+    "seen": 1795649036.967429,
+    "ast_hash": "0418d0b3839fb5e22ab62d71995879be",
+    "semantic_hash": "0418d0b3839fb5e22ab62d71995879be"
+  },
+  "src/Odw.Node/Approvals/ApprovalCoordinator.cs": {
+    "mtime": 1795563666.1055155,
+    "seen": 1795649036.9674325,
+    "ast_hash": "fda5d6e7c023b4009e58c9131217eaff",
+    "semantic_hash": "fda5d6e7c023b4009e58c9131217eaff"
+  },
+  "src/Odw.Node/Approvals/ApprovalOptions.cs": {
+    "mtime": 1795560529.8693347,
+    "seen": 1795649036.9674356,
+    "ast_hash": "11e333a42cec96b08fffd38ced06f8c9",
+    "semantic_hash": "11e333a42cec96b08fffd38ced06f8c9"
+  },
+  "src/Odw.Node/Approvals/ApprovalPipeServer.cs": {
+    "mtime": 1795560758.8554776,
+    "seen": 1795649036.9674392,
+    "ast_hash": "d1078b0bbecd9623666b0de56a519198",
+    "semantic_hash": "d1078b0bbecd9623666b0de56a519198"
+  },
+  "src/Odw.Node/Approvals/ApprovalService.cs": {
+    "mtime": 1795563659.1649559,
+    "seen": 1795649036.9674428,
+    "ast_hash": "8ca8390c0121614bd5d4435800ea7e63",
+    "semantic_hash": "8ca8390c0121614bd5d4435800ea7e63"
+  },
+  "src/Odw.Node/Approvals/ApprovalSigner.cs": {
+    "mtime": 1795563582.4749675,
+    "seen": 1795649036.9674466,
+    "ast_hash": "85991f109eb504dab3b37241d8caf7d1",
+    "semantic_hash": "85991f109eb504dab3b37241d8caf7d1"
+  },
+  "src/Odw.Node/Approvals/TelegramApprovalService.cs": {
+    "mtime": 1795563737.8197603,
+    "seen": 1795649036.9674501,
+    "ast_hash": "e4d07ede43df0886ce1440562de9c0da",
+    "semantic_hash": "e4d07ede43df0886ce1440562de9c0da"
+  },
+  "src/Odw.Node/Configuration/NodeConfig.cs": {
+    "mtime": 1795633358.346972,
+    "seen": 1795649036.9674537,
+    "ast_hash": "50dd5aec4e31b50b76778dc4e5e69d2f",
+    "semantic_hash": "50dd5aec4e31b50b76778dc4e5e69d2f"
+  },
+  "src/Odw.Node/Configuration/NodeConfigLoader.cs": {
+    "mtime": 1795563765.403946,
+    "seen": 1795649036.9674573,
+    "ast_hash": "41bccca248d1ee7c5dabc10b66cfa889",
+    "semantic_hash": "41bccca248d1ee7c5dabc10b66cfa889"
+  },
+  "src/Odw.Node/Contracts/TaskContractReader.cs": {
+    "mtime": 1795558337.9279203,
+    "seen": 1795649036.9674606,
+    "ast_hash": "3b824eb5c154b2a1a11a47b19ec54979",
+    "semantic_hash": "3b824eb5c154b2a1a11a47b19ec54979"
+  },
+  "src/Odw.Node/Contracts/TaskContractWriter.cs": {
+    "mtime": 1795559666.4702866,
+    "seen": 1795649036.9674644,
+    "ast_hash": "b6974039a72cc6decbc7c94718eae3bc",
+    "semantic_hash": "b6974039a72cc6decbc7c94718eae3bc"
+  },
+  "src/Odw.Node/Diagnostics/DoctorOptions.cs": {
+    "mtime": 1795555663.27034,
+    "seen": 1795649036.9674678,
+    "ast_hash": "fad20ee5fd9f5a5f905d49be4b6750cd",
+    "semantic_hash": "fad20ee5fd9f5a5f905d49be4b6750cd"
+  },
+  "src/Odw.Node/Diagnostics/NodeDoctor.cs": {
+    "mtime": 1795556157.9436977,
+    "seen": 1795649036.9674752,
+    "ast_hash": "a38c3f31021af97289c789b2b46194ad",
+    "semantic_hash": "a38c3f31021af97289c789b2b46194ad"
+  },
+  "src/Odw.Node/Diagnostics/OpenCodeVersion.cs": {
+    "mtime": 1795555673.5286486,
+    "seen": 1795649036.967479,
+    "ast_hash": "9f878a6d591eeb474846c8ac65950490",
+    "semantic_hash": "9f878a6d591eeb474846c8ac65950490"
+  },
+  "src/Odw.Node/Hosting/NodeBootstrap.cs": {
+    "mtime": 1795636587.288215,
+    "seen": 1795649036.967482,
+    "ast_hash": "6ab31447ee8d0000a12d3786040c820a",
+    "semantic_hash": "6ab31447ee8d0000a12d3786040c820a"
+  },
+  "src/Odw.Node/Hosting/NodeHost.cs": {
+    "mtime": 1795628679.762016,
+    "seen": 1795649036.9674885,
+    "ast_hash": "84a9dd4464d6fbdab7a2274d48506ded",
+    "semantic_hash": "84a9dd4464d6fbdab7a2274d48506ded"
+  },
+  "src/Odw.Node/Hosting/NodeHostOptions.cs": {
+    "mtime": 1795628684.559001,
+    "seen": 1795649036.9674911,
+    "ast_hash": "0492310ee2b382e2617eacf118f09551",
+    "semantic_hash": "0492310ee2b382e2617eacf118f09551"
+  },
+  "src/Odw.Node/Hosting/SandboxGuard.cs": {
+    "mtime": 1795631764.767413,
+    "seen": 1795649036.967495,
+    "ast_hash": "23cb7cb0b19ba07c00534a27cb7824d2",
+    "semantic_hash": "23cb7cb0b19ba07c00534a27cb7824d2"
+  },
+  "src/Odw.Node/Odw.Node.csproj": {
+    "mtime": 1795557968.7935052,
+    "seen": 1795649036.9675012,
+    "ast_hash": "5dffbaa73f2ceff1f75a246417be61dc",
+    "semantic_hash": "5dffbaa73f2ceff1f75a246417be61dc"
+  },
+  "src/Odw.Node/Origins/OriginPoller.cs": {
+    "mtime": 1795559767.7792008,
+    "seen": 1795649036.967505,
+    "ast_hash": "e71fd0208304f779ab06435e4e1917b7",
+    "semantic_hash": "e71fd0208304f779ab06435e4e1917b7"
+  },
+  "src/Odw.Node/Origins/OriginProposalService.cs": {
+    "mtime": 1795560545.1095967,
+    "seen": 1795649036.9675086,
+    "ast_hash": "a1993f257c6318d453d16011e712db4c",
+    "semantic_hash": "a1993f257c6318d453d16011e712db4c"
+  },
+  "src/Odw.Node/Origins/PeerApiClientFactory.cs": {
+    "mtime": 1795559739.9379134,
+    "seen": 1795649036.967515,
+    "ast_hash": "da56b882778bf370b24e7e4fca75a0b6",
+    "semantic_hash": "da56b882778bf370b24e7e4fca75a0b6"
+  },
+  "src/Odw.Node/PeerApi/PeerEndpoints.cs": {
+    "mtime": 1795559678.5689294,
+    "seen": 1795649036.9675179,
+    "ast_hash": "bf50189d95cb61abd731dc51453a74a6",
+    "semantic_hash": "bf50189d95cb61abd731dc51453a74a6"
+  },
+  "src/Odw.Node/Peers/PeerRegistry.cs": {
+    "mtime": 1795559648.0339925,
+    "seen": 1795649036.9675212,
+    "ast_hash": "734c3818deee95c07b9d3e72069c5cdb",
+    "semantic_hash": "734c3818deee95c07b9d3e72069c5cdb"
+  },
+  "src/Odw.Node/Persistence/AuditLog.cs": {
+    "mtime": 1795546558.0399714,
+    "seen": 1795649036.9675276,
+    "ast_hash": "b4d079fe667c4c98d05ce813006fc9c6",
+    "semantic_hash": "b4d079fe667c4c98d05ce813006fc9c6"
+  },
+  "src/Odw.Node/Persistence/ChainVerification.cs": {
+    "mtime": 1795546551.4787254,
+    "seen": 1795649036.967533,
+    "ast_hash": "e473d2bcdae894982dc720ea59454455",
+    "semantic_hash": "e473d2bcdae894982dc720ea59454455"
+  },
+  "src/Odw.Node/Persistence/DatabaseMigrator.cs": {
+    "mtime": 1795563574.660127,
+    "seen": 1795649036.9675374,
+    "ast_hash": "3732e1d921f9b15ea5e66e2c9b054b64",
+    "semantic_hash": "3732e1d921f9b15ea5e66e2c9b054b64"
+  },
+  "src/Odw.Node/Persistence/Migrations/0001_init.sql": {
+    "mtime": 1795546471.2953632,
+    "seen": 1795649036.967541,
+    "ast_hash": "5efec80af4ba844adbd8e344ab408386",
+    "semantic_hash": "5efec80af4ba844adbd8e344ab408386"
+  },
+  "src/Odw.Node/Persistence/Migrations/0002_approval_requests.sql": {
+    "mtime": 1795560499.2623882,
+    "seen": 1795649036.9675448,
+    "ast_hash": "8265449cb9e1ef99d04862061dcb0e15",
+    "semantic_hash": "8265449cb9e1ef99d04862061dcb0e15"
+  },
+  "src/Odw.Node/Persistence/Migrations/0003_approval_signature.sql": {
+    "mtime": 1795563571.3158484,
+    "seen": 1795649036.9675486,
+    "ast_hash": "135fd68d6b89f5feebe8398a039fb29a",
+    "semantic_hash": "135fd68d6b89f5feebe8398a039fb29a"
+  },
+  "src/Odw.Node/Persistence/Outbox/OutboxModels.cs": {
+    "mtime": 1795546572.7458518,
+    "seen": 1795649036.9675522,
+    "ast_hash": "222fb50e3b07513f527ddb35aaec97dd",
+    "semantic_hash": "222fb50e3b07513f527ddb35aaec97dd"
+  },
+  "src/Odw.Node/Persistence/Outbox/OutboxSql.cs": {
+    "mtime": 1795546577.6528244,
+    "seen": 1795649036.9675555,
+    "ast_hash": "35ce66f115e891f446e60b376390c780",
+    "semantic_hash": "35ce66f115e891f446e60b376390c780"
+  },
+  "src/Odw.Node/Persistence/Outbox/OutboxStore.cs": {
+    "mtime": 1795546593.83772,
+    "seen": 1795649036.9675596,
+    "ast_hash": "38e91c64225be75080016a3a2cb96800",
+    "semantic_hash": "38e91c64225be75080016a3a2cb96800"
+  },
+  "src/Odw.Node/Persistence/Peers/PeerStore.cs": {
+    "mtime": 1795559690.1110497,
+    "seen": 1795649036.9675674,
+    "ast_hash": "cdc29f98e564d8d0b25b757d68632cfa",
+    "semantic_hash": "cdc29f98e564d8d0b25b757d68632cfa"
+  },
+  "src/Odw.Node/Persistence/Peers/SqlitePeerDirectory.cs": {
+    "mtime": 1795555637.6111627,
+    "seen": 1795649036.9675708,
+    "ast_hash": "ee78ddba0bdfeedcf6a90a2bb96a3e9b",
+    "semantic_hash": "ee78ddba0bdfeedcf6a90a2bb96a3e9b"
+  },
+  "src/Odw.Node/Persistence/PersistenceJson.cs": {
+    "mtime": 1795546509.0793326,
+    "seen": 1795649036.9675746,
+    "ast_hash": "6f1fe431f47e86661fe78a36176061cf",
+    "semantic_hash": "6f1fe431f47e86661fe78a36176061cf"
+  },
+  "src/Odw.Node/Persistence/Queries/SqliteTaskQuery.cs": {
+    "mtime": 1795647401.964964,
+    "seen": 1795649036.9675784,
+    "ast_hash": "766c84eb26f2dde2f01c7820ac2cb33f",
+    "semantic_hash": "766c84eb26f2dde2f01c7820ac2cb33f"
+  },
+  "src/Odw.Node/Persistence/SqliteDatabase.cs": {
+    "mtime": 1795546546.4551141,
+    "seen": 1795649036.9675822,
+    "ast_hash": "573ae9e13cffba407d87966e735c65dc",
+    "semantic_hash": "573ae9e13cffba407d87966e735c65dc"
+  },
+  "src/Odw.Node/Persistence/SqliteWriter.cs": {
+    "mtime": 1795546917.9421265,
+    "seen": 1795649036.9675863,
+    "ast_hash": "a7905412598c1de9a91c96a01d4b98db",
+    "semantic_hash": "a7905412598c1de9a91c96a01d4b98db"
+  },
+  "src/Odw.Node/Persistence/StartupRecovery.cs": {
+    "mtime": 1795546640.621334,
+    "seen": 1795649036.9675899,
+    "ast_hash": "d4e02b948533c86b0d5dca9ab6bf87fd",
+    "semantic_hash": "d4e02b948533c86b0d5dca9ab6bf87fd"
+  },
+  "src/Odw.Node/Persistence/TaskEventLog.cs": {
+    "mtime": 1795546564.2143507,
+    "seen": 1795649036.9675934,
+    "ast_hash": "3d8a039ed160b1b9d9d0045467f1fef4",
+    "semantic_hash": "3d8a039ed160b1b9d9d0045467f1fef4"
+  },
+  "src/Odw.Node/Persistence/Tasks/TaskModels.cs": {
+    "mtime": 1795558743.1254368,
+    "seen": 1795649036.9675968,
+    "ast_hash": "18f02e1da280884fc1b6282e9fb3543f",
+    "semantic_hash": "18f02e1da280884fc1b6282e9fb3543f"
+  },
+  "src/Odw.Node/Persistence/Tasks/TaskStore.cs": {
+    "mtime": 1795558749.9207876,
+    "seen": 1795649036.9676006,
+    "ast_hash": "2a0fcf8044601ebc91ea67e5ad35d0d9",
+    "semantic_hash": "2a0fcf8044601ebc91ea67e5ad35d0d9"
+  },
+  "src/Odw.Node/Scheduling/ExecutionModels.cs": {
+    "mtime": 1795558933.818868,
+    "seen": 1795649036.9676046,
+    "ast_hash": "10c2a9f3976a2fd205e7d60b9d6a71c6",
+    "semantic_hash": "10c2a9f3976a2fd205e7d60b9d6a71c6"
+  },
+  "src/Odw.Node/Scheduling/ExecutionScheduler.cs": {
+    "mtime": 1795558936.7244787,
+    "seen": 1795649036.9676082,
+    "ast_hash": "2f737e919b4198fac0f4910060336b9e",
+    "semantic_hash": "2f737e919b4198fac0f4910060336b9e"
+  },
+  "src/Odw.Node/Scheduling/NetworkIsolationWatchdog.cs": {
+    "mtime": 1795633956.5535114,
+    "seen": 1795649036.9676125,
+    "ast_hash": "597344efad4de094e6467e510498e380",
+    "semantic_hash": "597344efad4de094e6467e510498e380"
+  },
+  "src/Odw.Node/Scheduling/OpenCodeTaskRunner.cs": {
+    "mtime": 1795647373.7245367,
+    "seen": 1795649036.9676163,
+    "ast_hash": "3dd4ca2d4a366ffbbe567fcbc08c198b",
+    "semantic_hash": "3dd4ca2d4a366ffbbe567fcbc08c198b"
+  },
+  "src/Odw.Node/Tasks/TaskCoordinator.cs": {
+    "mtime": 1795558605.4961035,
+    "seen": 1795649036.9676206,
+    "ast_hash": "249145c1a55e208f5429ee188e672f10",
+    "semantic_hash": "249145c1a55e208f5429ee188e672f10"
+  },
+  "src/Odw.PeerApi/Odw.PeerApi.csproj": {
+    "mtime": 1795545286.4389324,
+    "seen": 1795649036.9676242,
+    "ast_hash": "6f225cc9db94ccd7feb61ea34a5d1362",
+    "semantic_hash": "6f225cc9db94ccd7feb61ea34a5d1362"
+  },
+  "src/Odw.PeerApi/PeerApiClient.cs": {
+    "mtime": 1795559682.051823,
+    "seen": 1795649036.9676278,
+    "ast_hash": "7c407598e616a4d975e11b782c33065a",
+    "semantic_hash": "7c407598e616a4d975e11b782c33065a"
+  },
+  "src/Odw.Policy/Odw.Policy.csproj": {
+    "mtime": 1795545274.4306111,
+    "seen": 1795649036.9676313,
+    "ast_hash": "5288c43aefd08d5ca01cc8c221d06ff7",
+    "semantic_hash": "5288c43aefd08d5ca01cc8c221d06ff7"
+  },
+  "src/Odw.Policy/PolicyDocumentLoader.cs": {
+    "mtime": 1795557433.8284287,
+    "seen": 1795649036.9676352,
+    "ast_hash": "19f740d7331fb2d2acee150af8974a5f",
+    "semantic_hash": "19f740d7331fb2d2acee150af8974a5f"
+  },
+  "src/Odw.Policy/PolicyEngine.cs": {
+    "mtime": 1795557485.16055,
+    "seen": 1795649036.9676387,
+    "ast_hash": "c04a34d8c77432e27e547ed525c01021",
+    "semantic_hash": "c04a34d8c77432e27e547ed525c01021"
+  },
+  "src/Odw.Policy/PolicyModels.cs": {
+    "mtime": 1795557399.1904123,
+    "seen": 1795649036.9676423,
+    "ast_hash": "42c8bb7efcbe90584b2588b4254ffa01",
+    "semantic_hash": "42c8bb7efcbe90584b2588b4254ffa01"
+  },
+  "src/Odw.Sandbox/Network/ModelProxy.cs": {
+    "mtime": 1795630640.2139492,
+    "seen": 1795649036.9676461,
+    "ast_hash": "02ca6c1f46a60a7ece430ff69318fe92",
+    "semantic_hash": "02ca6c1f46a60a7ece430ff69318fe92"
+  },
+  "src/Odw.Sandbox/Odw.Sandbox.csproj": {
+    "mtime": 1795628224.6162786,
+    "seen": 1795649036.9676504,
+    "ast_hash": "c4881744684748000af689799b23245e",
+    "semantic_hash": "c4881744684748000af689799b23245e"
+  },
+  "src/Odw.Sandbox/Windows/AgentCredentialsStore.cs": {
+    "mtime": 1795623349.8002825,
+    "seen": 1795649036.9676535,
+    "ast_hash": "25a82f90801068de53785399e4c59e15",
+    "semantic_hash": "25a82f90801068de53785399e4c59e15"
+  },
+  "src/Odw.Sandbox/Windows/AgentRuntime.cs": {
+    "mtime": 1795647837.1131551,
+    "seen": 1795649036.9676578,
+    "ast_hash": "7b0c3a99f99d6a8680f2e4c79877b687",
+    "semantic_hash": "7b0c3a99f99d6a8680f2e4c79877b687"
+  },
+  "src/Odw.Sandbox/Windows/DpapiSecret.cs": {
+    "mtime": 1795633000.4937582,
+    "seen": 1795649036.9676616,
+    "ast_hash": "b36af1cebd114eeadc22cf0f4345bd2c",
+    "semantic_hash": "b36af1cebd114eeadc22cf0f4345bd2c"
+  },
+  "src/Odw.Sandbox/Windows/JobObject.cs": {
+    "mtime": 1795558700.2088778,
+    "seen": 1795649036.967665,
+    "ast_hash": "08d07118a703f51d4b1321316875d3b9",
+    "semantic_hash": "08d07118a703f51d4b1321316875d3b9"
+  },
+  "src/Odw.Sandbox/Windows/SandboxInspector.cs": {
+    "mtime": 1795628706.4670196,
+    "seen": 1795649036.9676688,
+    "ast_hash": "6b3b48cc942da0e15ba428eea98ed03e",
+    "semantic_hash": "6b3b48cc942da0e15ba428eea98ed03e"
+  },
+  "src/Odw.Sandbox/Windows/WfpNetworkPolicy.cs": {
+    "mtime": 1795633530.6332176,
+    "seen": 1795649036.9676723,
+    "ast_hash": "9a1ec9a234bb91982ea2e754e69f60ce",
+    "semantic_hash": "9a1ec9a234bb91982ea2e754e69f60ce"
+  },
+  "src/Odw.Sandbox/Workspaces/WorkspaceChanges.cs": {
+    "mtime": 1795647877.4922192,
+    "seen": 1795649036.9676754,
+    "ast_hash": "97865bcb862fe69860b0500ef92018f4",
+    "semantic_hash": "97865bcb862fe69860b0500ef92018f4"
+  },
+  "src/Odw.Sandbox/Workspaces/WorkspaceGuard.cs": {
+    "mtime": 1795632528.3471093,
+    "seen": 1795649036.9676793,
+    "ast_hash": "65647755c8fc495f7b663667ed0885e7",
+    "semantic_hash": "65647755c8fc495f7b663667ed0885e7"
+  },
+  "src/Odw.Sandbox/Workspaces/WorkspaceManager.cs": {
+    "mtime": 1795647824.4783497,
+    "seen": 1795649036.9676833,
+    "ast_hash": "2a620b68a717911780108b7bf3c22645",
+    "semantic_hash": "2a620b68a717911780108b7bf3c22645"
+  },
+  "src/Odw.Sandbox/Workspaces/WorkspaceModels.cs": {
+    "mtime": 1795558534.566287,
+    "seen": 1795649036.9676871,
+    "ast_hash": "d63f716eb38a12746d552eb920209d4a",
+    "semantic_hash": "d63f716eb38a12746d552eb920209d4a"
+  },
+  "src/Odw.Trust/Odw.Trust.csproj": {
+    "mtime": 1795545276.4426725,
+    "seen": 1795649036.9676907,
+    "ast_hash": "5288c43aefd08d5ca01cc8c221d06ff7",
+    "semantic_hash": "5288c43aefd08d5ca01cc8c221d06ff7"
+  },
+  "tests/Odw.Core.Tests/CanonicalJsonTests.cs": {
+    "mtime": 1795545683.9579902,
+    "seen": 1795649036.9676948,
+    "ast_hash": "b7d537e34e7c70ad6497312e05d34c36",
+    "semantic_hash": "b7d537e34e7c70ad6497312e05d34c36"
+  },
+  "tests/Odw.Core.Tests/LineageGuardTests.cs": {
+    "mtime": 1795545667.6249492,
+    "seen": 1795649036.9676993,
+    "ast_hash": "0909eff42d2ab2b4280291d06ecaf44d",
+    "semantic_hash": "0909eff42d2ab2b4280291d06ecaf44d"
+  },
+  "tests/Odw.Core.Tests/Odw.Core.Tests.csproj": {
+    "mtime": 1795545296.6868787,
+    "seen": 1795649036.9677033,
+    "ast_hash": "1f3ec6187f3706f84d8fc7fe80969def",
+    "semantic_hash": "1f3ec6187f3706f84d8fc7fe80969def"
+  },
+  "tests/Odw.Core.Tests/StateMachineTests.cs": {
+    "mtime": 1795545787.6230643,
+    "seen": 1795649036.9677072,
+    "ast_hash": "ff379e50f2a61e207e9e108556a1fcc2",
+    "semantic_hash": "ff379e50f2a61e207e9e108556a1fcc2"
+  },
+  "tests/Odw.Core.Tests/TaskHashTests.cs": {
+    "mtime": 1795545785.21324,
+    "seen": 1795649036.9677107,
+    "ast_hash": "a14938625058b79e3b66ad1470e39141",
+    "semantic_hash": "a14938625058b79e3b66ad1470e39141"
+  },
+  "tests/Odw.Core.Tests/TaskValidatorTests.cs": {
+    "mtime": 1795545649.6158364,
+    "seen": 1795649036.9677148,
+    "ast_hash": "2f1c7997c8d2789dd2db0b0dd76acde5",
+    "semantic_hash": "2f1c7997c8d2789dd2db0b0dd76acde5"
+  },
+  "tests/Odw.Core.Tests/TestTasks.cs": {
+    "mtime": 1795545594.3896296,
+    "seen": 1795649036.9677186,
+    "ast_hash": "a3a3836318b65ad5c00c828cf4253c78",
+    "semantic_hash": "a3a3836318b65ad5c00c828cf4253c78"
+  },
+  "tests/Odw.Core.Tests/UlidTests.cs": {
+    "mtime": 1795545675.5314794,
+    "seen": 1795649036.967723,
+    "ast_hash": "b9c44129a49bd05613574db7291cb2a0",
+    "semantic_hash": "b9c44129a49bd05613574db7291cb2a0"
+  },
+  "tests/Odw.Executors.OpenCode.Tests/Odw.Executors.OpenCode.Tests.csproj": {
+    "mtime": 1795556676.044259,
+    "seen": 1795649036.9677277,
+    "ast_hash": "6f75a6163fddd48f8d9b11e2d3f8c29f",
+    "semantic_hash": "6f75a6163fddd48f8d9b11e2d3f8c29f"
+  },
+  "tests/Odw.Executors.OpenCode.Tests/OpenCodeClientTests.cs": {
+    "mtime": 1795556917.8385487,
+    "seen": 1795649036.9677315,
+    "ast_hash": "1e9000c9fdaf1441cd0f88e00c009b59",
+    "semantic_hash": "1e9000c9fdaf1441cd0f88e00c009b59"
+  },
+  "tests/Odw.Executors.OpenCode.Tests/OpenCodeExecutorTests.cs": {
+    "mtime": 1795556713.5508952,
+    "seen": 1795649036.9677348,
+    "ast_hash": "32ad56df954656143282e3389072e1b3",
+    "semantic_hash": "32ad56df954656143282e3389072e1b3"
+  },
+  "tests/Odw.Executors.OpenCode.Tests/OpenCodeIntegrationTests.cs": {
+    "mtime": 1795561046.4328847,
+    "seen": 1795649036.9677386,
+    "ast_hash": "bf861673e6e0a8eb8120f2ff0ca2ab49",
+    "semantic_hash": "bf861673e6e0a8eb8120f2ff0ca2ab49"
+  },
+  "tests/Odw.Executors.OpenCode.Tests/TestInfrastructure.cs": {
+    "mtime": 1795624624.9010103,
+    "seen": 1795649036.9677427,
+    "ast_hash": "abb48c6ba7ab8431e0f458e72d16737e",
+    "semantic_hash": "abb48c6ba7ab8431e0f458e72d16737e"
+  },
+  "tests/Odw.Mcp.Tests/McpHttpTests.cs": {
+    "mtime": 1795555911.3331134,
+    "seen": 1795649036.9677463,
+    "ast_hash": "fd3ae09a9b21902f7501336b1f694b7b",
+    "semantic_hash": "fd3ae09a9b21902f7501336b1f694b7b"
+  },
+  "tests/Odw.Mcp.Tests/McpServerTests.cs": {
+    "mtime": 1795555896.208537,
+    "seen": 1795649036.9677503,
+    "ast_hash": "4ec2ea39faf21c03f34156bc795a545d",
+    "semantic_hash": "4ec2ea39faf21c03f34156bc795a545d"
+  },
+  "tests/Odw.Mcp.Tests/Odw.Mcp.Tests.csproj": {
+    "mtime": 1795555879.8893454,
+    "seen": 1795649036.9677546,
+    "ast_hash": "08e08a9d0cadcb1eb739f9886e10219a",
+    "semantic_hash": "08e08a9d0cadcb1eb739f9886e10219a"
+  },
+  "tests/Odw.Mcp.Tests/OriginToolTests.cs": {
+    "mtime": 1795559991.41018,
+    "seen": 1795649036.9677582,
+    "ast_hash": "d4f707eae55a26ee119ba7833118e05f",
+    "semantic_hash": "d4f707eae55a26ee119ba7833118e05f"
+  },
+  "tests/Odw.Mcp.Tests/SqliteFacadeTests.cs": {
+    "mtime": 1795555923.5513232,
+    "seen": 1795649036.967762,
+    "ast_hash": "607b25a7c60338fccc5b58c8aa880b22",
+    "semantic_hash": "607b25a7c60338fccc5b58c8aa880b22"
+  },
+  "tests/Odw.Mcp.Tests/TestData.cs": {
+    "mtime": 1795647734.312186,
+    "seen": 1795649036.967766,
+    "ast_hash": "d2159e742278d3d0c9b3312bea24a1d8",
+    "semantic_hash": "d2159e742278d3d0c9b3312bea24a1d8"
+  },
+  "tests/Odw.Node.Tests/ApprovalServiceTests.cs": {
+    "mtime": 1795563894.811268,
+    "seen": 1795649036.96777,
+    "ast_hash": "b782b061f38e380ef2c11869f15dffe7",
+    "semantic_hash": "b782b061f38e380ef2c11869f15dffe7"
+  },
+  "tests/Odw.Node.Tests/ContractJson.cs": {
+    "mtime": 1795558602.098842,
+    "seen": 1795649036.967774,
+    "ast_hash": "6562a24ce6e3916dbe4fd801771b7c6f",
+    "semantic_hash": "6562a24ce6e3916dbe4fd801771b7c6f"
+  },
+  "tests/Odw.Node.Tests/ContractModels.cs": {
+    "mtime": 1795558122.4385476,
+    "seen": 1795649036.967778,
+    "ast_hash": "0ac3063ec7b7b245373ea15d79fa5cf8",
+    "semantic_hash": "0ac3063ec7b7b245373ea15d79fa5cf8"
+  },
+  "tests/Odw.Node.Tests/DoctorTests.cs": {
+    "mtime": 1795555938.424473,
+    "seen": 1795649036.9677825,
+    "ast_hash": "e2ec96d6e6183b0df3eefb8eba8bceff",
+    "semantic_hash": "e2ec96d6e6183b0df3eefb8eba8bceff"
+  },
+  "tests/Odw.Node.Tests/ExecutionSchedulerTests.cs": {
+    "mtime": 1795558800.937406,
+    "seen": 1795649036.9677866,
+    "ast_hash": "8687e35ebc0c4c3fdf93b4d49e3fe775",
+    "semantic_hash": "8687e35ebc0c4c3fdf93b4d49e3fe775"
+  },
+  "tests/Odw.Node.Tests/MigrationTests.cs": {
+    "mtime": 1795563710.5111737,
+    "seen": 1795649036.9677901,
+    "ast_hash": "dd0fb48ef0847e9e3df4f8c27799d5cc",
+    "semantic_hash": "dd0fb48ef0847e9e3df4f8c27799d5cc"
+  },
+  "tests/Odw.Node.Tests/NetworkIsolationWatchdogTests.cs": {
+    "mtime": 1795633987.1169405,
+    "seen": 1795649036.967794,
+    "ast_hash": "bccfc8ff7f57cf3ae570b4bea2a5ebb8",
+    "semantic_hash": "bccfc8ff7f57cf3ae570b4bea2a5ebb8"
+  },
+  "tests/Odw.Node.Tests/NodeConfigTests.cs": {
+    "mtime": 1795561732.4715526,
+    "seen": 1795649036.9677978,
+    "ast_hash": "50871730a7e4aa50071bfef417ce1e9b",
+    "semantic_hash": "50871730a7e4aa50071bfef417ce1e9b"
+  },
+  "tests/Odw.Node.Tests/NodeHostTests.cs": {
+    "mtime": 1795560874.3538866,
+    "seen": 1795649036.9678013,
+    "ast_hash": "d722310d703556c1a4b7a1e905f3da4d",
+    "semantic_hash": "d722310d703556c1a4b7a1e905f3da4d"
+  },
+  "tests/Odw.Node.Tests/Odw.Node.Tests.csproj": {
+    "mtime": 1795546458.7342236,
+    "seen": 1795649036.9678054,
+    "ast_hash": "49e7f7fa748fa0427eff1af044c683c1",
+    "semantic_hash": "49e7f7fa748fa0427eff1af044c683c1"
+  },
+  "tests/Odw.Node.Tests/OpenCodeTaskRunnerGuardTests.cs": {
+    "mtime": 1795629030.1588235,
+    "seen": 1795649036.9678092,
+    "ast_hash": "d43f971187909ad00b252c152f785ea1",
+    "semantic_hash": "d43f971187909ad00b252c152f785ea1"
+  },
+  "tests/Odw.Node.Tests/OpenCodeTaskRunnerIntegrationTests.cs": {
+    "mtime": 1795561036.3155055,
+    "seen": 1795649036.967813,
+    "ast_hash": "4d74154f23857aef9edae22e8aea1cb9",
+    "semantic_hash": "4d74154f23857aef9edae22e8aea1cb9"
+  },
+  "tests/Odw.Node.Tests/OriginEndToEndTests.cs": {
+    "mtime": 1795560869.971984,
+    "seen": 1795649036.9678164,
+    "ast_hash": "1cfe452c248945b880580956f8d809ec",
+    "semantic_hash": "1cfe452c248945b880580956f8d809ec"
+  },
+  "tests/Odw.Node.Tests/OutboxTests.cs": {
+    "mtime": 1795546778.4397345,
+    "seen": 1795649036.9678204,
+    "ast_hash": "26d6be9ca98b7d51e3674911ade64007",
+    "semantic_hash": "26d6be9ca98b7d51e3674911ade64007"
+  },
+  "tests/Odw.Node.Tests/RecoveryTests.cs": {
+    "mtime": 1795546785.6106868,
+    "seen": 1795649036.9678242,
+    "ast_hash": "f03d44881828c04ef08459ca4c13fe69",
+    "semantic_hash": "f03d44881828c04ef08459ca4c13fe69"
+  },
+  "tests/Odw.Node.Tests/SandboxAgentTests.cs": {
+    "mtime": 1795632236.7397647,
+    "seen": 1795649036.9678283,
+    "ast_hash": "f40d4c1c7907bb26b2ec8525cd1b8c7d",
+    "semantic_hash": "f40d4c1c7907bb26b2ec8525cd1b8c7d"
+  },
+  "tests/Odw.Node.Tests/SandboxGuardTests.cs": {
+    "mtime": 1795631778.127535,
+    "seen": 1795649036.9678316,
+    "ast_hash": "8134d34ae6830e72aef118e36599fd91",
+    "semantic_hash": "8134d34ae6830e72aef118e36599fd91"
+  },
+  "tests/Odw.Node.Tests/SqliteWriterTests.cs": {
+    "mtime": 1795546753.2223637,
+    "seen": 1795649036.967835,
+    "ast_hash": "226297bfa115452baa09775fc99b37bd",
+    "semantic_hash": "226297bfa115452baa09775fc99b37bd"
+  },
+  "tests/Odw.Node.Tests/TaskContractReaderTests.cs": {
+    "mtime": 1795558115.4352553,
+    "seen": 1795649036.967839,
+    "ast_hash": "3b3f46682b6cf10181353b6c0b09e607",
+    "semantic_hash": "3b3f46682b6cf10181353b6c0b09e607"
+  },
+  "tests/Odw.Node.Tests/TaskCoordinatorTests.cs": {
+    "mtime": 1795558133.3031516,
+    "seen": 1795649036.967843,
+    "ast_hash": "298965c2d59d86cf032a2ea3823d22f7",
+    "semantic_hash": "298965c2d59d86cf032a2ea3823d22f7"
+  },
+  "tests/Odw.Node.Tests/TaskStoreTests.cs": {
+    "mtime": 1795546763.3259249,
+    "seen": 1795649036.967847,
+    "ast_hash": "130e0df9ba80a27596872cd2fb4beed5",
+    "semantic_hash": "130e0df9ba80a27596872cd2fb4beed5"
+  },
+  "tests/Odw.Node.Tests/TelegramClientTests.cs": {
+    "mtime": 1795564068.9364243,
+    "seen": 1795649036.9678504,
+    "ast_hash": "8cdef545aec670ee2ca8db8c853dd3bc",
+    "semantic_hash": "8cdef545aec670ee2ca8db8c853dd3bc"
+  },
+  "tests/Odw.Node.Tests/TestInfrastructure.cs": {
+    "mtime": 1795558118.9850996,
+    "seen": 1795649036.967854,
+    "ast_hash": "e899010b3cef730f640f8422474d40f2",
+    "semantic_hash": "e899010b3cef730f640f8422474d40f2"
+  },
+  "tests/Odw.Node.Tests/TestModels.cs": {
+    "mtime": 1795624631.8730047,
+    "seen": 1795649036.9678578,
+    "ast_hash": "8b77a91971c902caa0636a5a3f3e3d85",
+    "semantic_hash": "8b77a91971c902caa0636a5a3f3e3d85"
+  },
+  "tests/Odw.Node.Tests/TlsTests.cs": {
+    "mtime": 1795563032.2369063,
+    "seen": 1795649036.9678612,
+    "ast_hash": "bd0657e972ac16edc2c9e78b173c0ca2",
+    "semantic_hash": "bd0657e972ac16edc2c9e78b173c0ca2"
+  },
+  "tests/Odw.Policy.Tests/Odw.Policy.Tests.csproj": {
+    "mtime": 1795557468.9648862,
+    "seen": 1795649036.9678645,
+    "ast_hash": "a99646fa47b92c399ccc75767525ea3f",
+    "semantic_hash": "a99646fa47b92c399ccc75767525ea3f"
+  },
+  "tests/Odw.Policy.Tests/PolicyEngineTests.cs": {
+    "mtime": 1795557505.4178274,
+    "seen": 1795649036.9678683,
+    "ast_hash": "7d923eb2de4539cd944a886af7158430",
+    "semantic_hash": "7d923eb2de4539cd944a886af7158430"
+  },
+  "tests/Odw.Policy.Tests/PolicyFixtures.cs": {
+    "mtime": 1795557473.0084548,
+    "seen": 1795649036.967872,
+    "ast_hash": "2773bfe500c82b23b5d76cfad4eb7bdf",
+    "semantic_hash": "2773bfe500c82b23b5d76cfad4eb7bdf"
+  },
+  "tests/Odw.Sandbox.Tests/AgentRuntimeTests.cs": {
+    "mtime": 1795637342.2319832,
+    "seen": 1795649036.9678764,
+    "ast_hash": "e9442bc9b1717d77e869c2c62d72d6d5",
+    "semantic_hash": "e9442bc9b1717d77e869c2c62d72d6d5"
+  },
+  "tests/Odw.Sandbox.Tests/JobObjectTests.cs": {
+    "mtime": 1795558897.3755074,
+    "seen": 1795649036.96788,
+    "ast_hash": "e8709959598ceb7788c51cf152fa3648",
+    "semantic_hash": "e8709959598ceb7788c51cf152fa3648"
+  },
+  "tests/Odw.Sandbox.Tests/ModelProxyTests.cs": {
+    "mtime": 1795634037.927878,
+    "seen": 1795649036.9678836,
+    "ast_hash": "bc3f9c507300611e38a74d6349db08eb",
+    "semantic_hash": "bc3f9c507300611e38a74d6349db08eb"
+  },
+  "tests/Odw.Sandbox.Tests/Odw.Sandbox.Tests.csproj": {
+    "mtime": 1795558883.046175,
+    "seen": 1795649036.9678874,
+    "ast_hash": "75896c6fad8ab22e59743a4d4d62ad33",
+    "semantic_hash": "75896c6fad8ab22e59743a4d4d62ad33"
+  },
+  "tests/Odw.Sandbox.Tests/SandboxInspectorTests.cs": {
+    "mtime": 1795621369.0062754,
+    "seen": 1795649036.967896,
+    "ast_hash": "66b621e9ea62b969915c15afa10524d2",
+    "semantic_hash": "66b621e9ea62b969915c15afa10524d2"
+  },
+  "tests/Odw.Sandbox.Tests/WfpNetworkPolicyTests.cs": {
+    "mtime": 1795634051.1552153,
+    "seen": 1795649036.9678998,
+    "ast_hash": "76a96abac13e336a57b0633b86163312",
+    "semantic_hash": "76a96abac13e336a57b0633b86163312"
+  },
+  "tests/Odw.Sandbox.Tests/WorkspaceChangesTests.cs": {
+    "mtime": 1795647840.7909155,
+    "seen": 1795649036.9679034,
+    "ast_hash": "f1899364c916cf1ef4fa9f6e26716cbd",
+    "semantic_hash": "f1899364c916cf1ef4fa9f6e26716cbd"
+  },
+  "tests/Odw.Sandbox.Tests/WorkspaceGuardTests.cs": {
+    "mtime": 1795632472.2797494,
+    "seen": 1795649036.9679074,
+    "ast_hash": "32331e29d2754fc127e7e350b53f5997",
+    "semantic_hash": "32331e29d2754fc127e7e350b53f5997"
+  },
+  "tests/Odw.Sandbox.Tests/WorkspaceManagerTests.cs": {
+    "mtime": 1795621388.3988655,
+    "seen": 1795649036.967911,
+    "ast_hash": "faf99ce3e35cd535b781faeb0efea837",
+    "semantic_hash": "faf99ce3e35cd535b781faeb0efea837"
+  },
+  "tools/e2e-loopback.ps1": {
+    "mtime": 1795647940.8482997,
+    "seen": 1795649036.9679148,
+    "ast_hash": "575e4d9be071c46ef2d6f4c03ece0cff",
+    "semantic_hash": "575e4d9be071c46ef2d6f4c03ece0cff"
+  },
+  "tools/graphify-project.py": {
+    "mtime": 1795649225.0751903,
+    "seen": 1795649390.6362042,
+    "ast_hash": "37b07625a64958dd0b5734c6283644ff",
+    "semantic_hash": "37b07625a64958dd0b5734c6283644ff"
+  },
+  "tools/h0-probe.ps1": {
+    "mtime": 1795544813.1315496,
+    "seen": 1795649036.9679227,
+    "ast_hash": "59d712b27becbacb7a57994f8659e2e1",
+    "semantic_hash": "59d712b27becbacb7a57994f8659e2e1"
+  },
+  "tools/provision-sandbox.ps1": {
+    "mtime": 1795636996.165233,
+    "seen": 1795649036.967926,
+    "ast_hash": "1ac387e10d20a9a056351d4e4eaf7145",
+    "semantic_hash": "1ac387e10d20a9a056351d4e4eaf7145"
+  },
+  "ARCHITECTURE.md": {
+    "mtime": 1795649292.6407268,
+    "seen": 1795649390.6362152,
+    "ast_hash": "104a996dbeca7ef2d6d07020835c2152",
+    "semantic_hash": "104a996dbeca7ef2d6d07020835c2152"
+  },
+  "README.md": {
+    "mtime": 1795649273.083351,
+    "seen": 1795649390.636217,
+    "ast_hash": "af8f8ccc859464a5cf14847de807f308",
+    "semantic_hash": "af8f8ccc859464a5cf14847de807f308"
+  },
+  "docs/DECISIONS.md": {
+    "mtime": 1795542734.5070035,
+    "seen": 1795649036.967937,
+    "ast_hash": "dfd93561eb3c931b72f3baae84ddd736",
+    "semantic_hash": "dfd93561eb3c931b72f3baae84ddd736"
+  },
+  "docs/DOMAIN-MODEL.md": {
+    "mtime": 1795648422.6146843,
+    "seen": 1795649036.9679406,
+    "ast_hash": "3144d18631d9930b72755691e4992cac",
+    "semantic_hash": "3144d18631d9930b72755691e4992cac"
+  },
+  "docs/H0-FINDINGS.md": {
+    "mtime": 1795556849.81788,
+    "seen": 1795649036.9679446,
+    "ast_hash": "9eb58846b2505492f8a42ed21176d932",
+    "semantic_hash": "9eb58846b2505492f8a42ed21176d932"
+  },
+  "docs/IMPLEMENTATION.md": {
+    "mtime": 1795648395.9370062,
+    "seen": 1795649036.967949,
+    "ast_hash": "0d655e65d6130f5e0d209d2c36f0d0f9",
+    "semantic_hash": "0d655e65d6130f5e0d209d2c36f0d0f9"
+  },
+  "docs/MCP-FACADE.md": {
+    "mtime": 1795648411.108727,
+    "seen": 1795649036.967952,
+    "ast_hash": "8ab65775d96ea4adb59b9bed7385532a",
+    "semantic_hash": "8ab65775d96ea4adb59b9bed7385532a"
+  },
+  "docs/OPENCODE-ADAPTER.md": {
+    "mtime": 1795556870.8944356,
+    "seen": 1795649036.9679558,
+    "ast_hash": "76269b4333255b1b462de10564ed52a4",
+    "semantic_hash": "76269b4333255b1b462de10564ed52a4"
+  },
+  "docs/PERSISTENCE.md": {
+    "mtime": 1795649324.1523302,
+    "seen": 1795649390.6362343,
+    "ast_hash": "70e12c918d60b367962a46d11760ce74",
+    "semantic_hash": "70e12c918d60b367962a46d11760ce74"
+  },
+  "docs/PLANNER-POLICY.md": {
+    "mtime": 1795557591.3191407,
+    "seen": 1795649036.9679623,
+    "ast_hash": "2312769c3d518a70fca5d8c326b0da6c",
+    "semantic_hash": "2312769c3d518a70fca5d8c326b0da6c"
+  },
+  "docs/PROTOCOL.md": {
+    "mtime": 1795560296.6878605,
+    "seen": 1795649036.9679656,
+    "ast_hash": "71d79136a3d585ee271714627b9eb7e8",
+    "semantic_hash": "71d79136a3d585ee271714627b9eb7e8"
+  },
+  "docs/README.md": {
+    "mtime": 1795649207.748397,
+    "seen": 1795649390.6362402,
+    "ast_hash": "f8a796918d8136e1e12af965744d2363",
+    "semantic_hash": "f8a796918d8136e1e12af965744d2363"
+  },
+  "docs/ROADMAP.md": {
+    "mtime": 1795648224.536854,
+    "seen": 1795649036.9679718,
+    "ast_hash": "4d36262e345e5a0daab1f65e91d220a9",
+    "semantic_hash": "4d36262e345e5a0daab1f65e91d220a9"
+  },
+  "docs/SECURITY.md": {
+    "mtime": 1795637367.4939134,
+    "seen": 1795649036.9679754,
+    "ast_hash": "6005f134faeb2dec86a84872526f1fde",
+    "semantic_hash": "6005f134faeb2dec86a84872526f1fde"
+  },
+  "docs/TESTING.md": {
+    "mtime": 1795648189.8514702,
+    "seen": 1795649036.9679785,
+    "ast_hash": "b57830f10998bbc4f768be3312989fa7",
+    "semantic_hash": "b57830f10998bbc4f768be3312989fa7"
+  },
+  "AGENTS.md": {
+    "mtime": 1795649344.8522785,
+    "seen": 1795649390.6362126,
+    "ast_hash": "b0c995863a3890eb6a4b0b78915457b8",
+    "semantic_hash": "b0c995863a3890eb6a4b0b78915457b8"
+  },
+  "docs/HANDOFF.md": {
+    "mtime": 1795649157.0720987,
+    "seen": 1795649390.6362255,
+    "ast_hash": "6d647836a6f76ae458de52a3a14bb692",
+    "semantic_hash": "6d647836a6f76ae458de52a3a14bb692"
+  }
+}

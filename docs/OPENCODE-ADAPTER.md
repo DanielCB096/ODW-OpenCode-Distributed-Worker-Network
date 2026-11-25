@@ -3,10 +3,11 @@
 > Superficie verificada: OpenCode **v2.3.2**, rutas `/api/*`, esquema fijado por SHA-256.
 > Ver `docs/H0-FINDINGS.md`.
 >
-> **Estado (2026-11-24):** implementado y probado. `OpenCodeClient` (HTTP + SSE), `OpenCodeServer`
-> (arranque loopback con puerto 0) y `OpenCodeExecutor` (sesión, prompt, eventos, permisos).
-> 21 pruebas, incluida una **integración real** contra v2.3.2 (opt-in).
-> Pendiente: Job Object/usuario restringido (H3) y `StopAsync` que mate el servidor (vive en el host).
+> **Estado (2026-11-25):** implementado y probado. `OpenCodeClient` (HTTP + SSE), `OpenCodeServer`
+> (arranque loopback, `RunAs` como `odw-agent` y runtime por tarea) y `OpenCodeExecutor` (sesión,
+> prompt, eventos, permisos). **23 pruebas**, incluida una **integración real** contra v2.3.2
+> (opt-in).
+> Pendiente: mensajes/cancelación remota (H4) y artefactos descargables.
 
 ---
 
