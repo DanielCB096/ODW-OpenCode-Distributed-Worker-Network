@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (325 pruebas); falta prueba en dos PCs reales |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (325 pruebas); E2E A→B en loopback; falta prueba en dos PCs con Tailscale |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -97,13 +97,13 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ Scheduler de ejecución: workspace Git aislado, Job Objects, `QUEUED`→`RUNNING`→estado
   final, runner real de OpenCode con resultado; integración real contra 2.3.2.
 - ✅ Lado origen: cliente de pares, `odw_propose_task`, política saliente, idempotencia,
-  poller de estado/resultado y prueba real A→B→resultado.
+  poller de estado/resultado y E2E A→B en loopback con dos nodos.
 - ✅ Aprobaciones por named pipe y CLI (`list/approve/deny/expire`) vinculadas a `task_hash`,
   con expiración y un solo uso.
 - ✅ `node.json` + `peers_file` + `policy.json`, secretos por `env:`/`file:` y `odw serve` en
   primer plano.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
-- ✅ Cuenta dedicada `odw-svc`; ⬜ prueba en dos PCs reales.
+- ✅ Cuenta dedicada `odw-svc`; ⬜ prueba en dos PCs reales con Tailscale.
 - ✅ 325 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 

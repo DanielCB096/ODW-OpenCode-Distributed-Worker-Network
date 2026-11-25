@@ -247,6 +247,9 @@ Límites que siguen abiertos y se declaran:
   workspace de solo lectura. El resultado sigue siendo el resumen del modelo.
 - `odw-agent` conserva el logon interactivo local que exige `CreateProcessWithLogonW`; tiene
   denegados el logon de red y el interactivo remoto.
+- E2E loopback verificado: dos nodos `odw-svc` (`PC-A` origen, `PC-B` destino), propuesta por MCP,
+  aprobación por pipe, ejecución con sandbox y resultado `E2E-LOOPBACK`. Falta la prueba en dos
+  PCs con Tailscale.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
@@ -396,6 +399,9 @@ odw service install --config C:\ODW\node.json --exe C:\ODW\odw.exe `
 powershell -ExecutionPolicy Bypass -File tools\provision-sandbox.ps1
 odw sandbox check --agent odw-agent
 odw sandbox net install --agent odw-agent --port 7423
+
+# E2E origen→destino en un PC (dos nodos loopback como odw-svc)
+powershell -ExecutionPolicy Bypass -File tools\e2e-loopback.ps1
 
 # integración real con OpenCode (opt-in). Modelo gratuito por defecto;
 # si no está disponible, fija ODW_TEST_MODEL (fallback acordado).

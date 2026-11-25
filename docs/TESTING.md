@@ -100,6 +100,12 @@ y las ACL, y se marcan `[Trait("Category","WindowsSecurity")]`.
 | Autoaprobación | `POST /peer/v1/tasks/{id}/approve` | `404` |
 | Herramienta de aprobación | buscar `odw_approve` | no existe |
 
+## E2E loopback (un PC)
+
+`tools/e2e-loopback.ps1` levanta `PC-A` (origen) y `PC-B` (destino) como `odw-svc`, propone por
+MCP, aprueba por el pipe y comprueba el resultado. Verificado: tarea `DONE`, resumen
+`E2E-LOOPBACK`. No valida Tailscale/firewall; eso queda para la prueba en dos PCs.
+
 ---
 
 ## 7. Pruebas de extremo a extremo (dos nodos)

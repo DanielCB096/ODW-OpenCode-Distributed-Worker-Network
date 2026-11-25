@@ -10,7 +10,8 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
 
 - Diseño cerrado y verificado contra **OpenCode 2.3.2**.
 - Delegación **A→B→resultado** funcionando: propuesta, política, envío, scheduler, workspace Git,
-  Job Object, ejecutor OpenCode y poller de resultado.
+  Job Object, ejecutor OpenCode y poller de resultado. **E2E A→B verificado en un PC** con dos nodos
+  loopback; falta la prueba en dos máquinas con Tailscale.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
 - **325 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
@@ -129,6 +130,20 @@ mezclar workspaces del mismo SID.
 El repo configurado en `repos` debe ser **legible por `odw-svc`** (es quien clona). El agente lleva
 `snapshots=false` y `safe.directory=*` en su `.gitconfig` para trabajar con un workspace creado por
 otra cuenta sin intentar escribir en `.git` en modo `read_only`.
+
+## E2E local (un solo PC)
+
+Prueba el ciclo completo origen→destino sin una segunda máquina:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/e2e-loopback.ps1
+```
+
+Arranca dos nodos separados como `odw-svc` (`PC-A` origen y `PC-B` destino) en loopback, propone
+por MCP, aprueba por el pipe y espera el resultado del destino con sandbox real. Requiere el
+aprovisionamiento previo y consola elevada. Usa `-Keep` para conservar logs y configuración.
+
+No sustituye a la prueba en dos PCs: no valida Tailscale, el firewall ni la red física.
 
 ## CLI
 
