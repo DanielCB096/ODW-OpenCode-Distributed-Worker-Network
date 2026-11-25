@@ -89,9 +89,9 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
 - Los archivos de configuración de ODW (`%PROGRAMDATA%\ODW\*.json`, `odw.db`, claves) **no**
   son legibles por `odw-agent`: ACE de denegación explícita.
 - **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F y agente RX/M.
-  Verificado en la máquina: procesos lanzados como `odw-agent`, escritura denegada en `read_only`
-  y permitida en modo escritura. `opencode` **todavía corre como el servicio** (falta lanzarlo
-  con el token del agente) y la red del agente no está aislada.
+  Verificado: procesos lanzados como `odw-agent`, escritura denegada en `read_only`, permitida en
+  escritura y **`opencode serve` arrancando como `odw-agent`** con perfil propio cuando
+  `sandbox.run_as_agent` está activo. Pendiente: configuración/modelo propio del agente y red.
 
 ### 3.3 Rutas y reparse points
 

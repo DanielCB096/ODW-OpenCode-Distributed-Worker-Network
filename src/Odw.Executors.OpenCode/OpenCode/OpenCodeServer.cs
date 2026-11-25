@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 
 namespace Odw.Executors.OpenCode;
 
+public sealed record RunAsCredentials(string Account, string Password);
+
 public sealed record OpenCodeServerOptions
 {
     public required string Executable { get; init; }
@@ -15,6 +17,9 @@ public sealed record OpenCodeServerOptions
     public TimeSpan StartupTimeout { get; init; } = TimeSpan.FromSeconds(30);
 
     public IReadOnlyDictionary<string, string>? Environment { get; init; }
+
+    /// <summary>Si se indica, el servidor se lanza con estas credenciales (agente restringido).</summary>
+    public RunAsCredentials? RunAs { get; init; }
 
     /// <summary>Se invoca tras el arranque para asignar el proceso a un Job Object u otro control.</summary>
     public Func<Process, IDisposable?>? AttachProcess { get; init; }
@@ -159,6 +164,21 @@ public sealed class OpenCodeServer : IAsyncDisposable
         startInfo.Environment["OPENCODE_SERVER_PASSWORD"] = password;
         startInfo.Environment["OPENCODE_SERVER_USERNAME"] = "opencode";
 
+        if (options.RunAs is { } runAs)
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                throw new PlatformNotSupportedException("Ejecutar como otro usuario requiere Windows.");
+            }
+
+            startInfo.UserName = runAs.Account;
+            startInfo.PasswordInClearText = runAs.Password;
+            startInfo.Domain = ".";
+            startInfo.LoadUserProfile = true;
+
+            ApplyAgentEnvironment(startInfo, runAs.Account);
+        }
+
         if (options.Environment is not null)
         {
             foreach (var (key, value) in options.Environment)
@@ -177,8 +197,17 @@ public sealed class OpenCodeServer : IAsyncDisposable
             var line = await process.StandardOutput.ReadLineAsync(cancellationToken).ConfigureAwait(false);
             if (line is null)
             {
+                var error = string.Empty;
+                try
+                {
+                    error = process.StandardError.ReadToEnd().Trim();
+                }
+                catch (Exception)
+                {
+                }
+
                 throw new InvalidOperationException(
-                    $"opencode serve terminó antes de publicar la URL (código {SafeExitCode(process)}).");
+                    $"opencode serve terminó antes de publicar la URL (código {SafeExitCode(process)}). {Tail(error)}");
             }
 
             var match = Regex.Match(line, @"http://127\.0\.0\.1:\d+", RegexOptions.CultureInvariant);
@@ -265,6 +294,56 @@ public sealed class OpenCodeServer : IAsyncDisposable
         catch (InvalidOperationException)
         {
             return "desconocido";
+        }
+    }
+
+    private static string Tail(string text)
+        => text.Length <= 500 ? text : text[^500..];
+
+    private static void ApplyAgentEnvironment(ProcessStartInfo startInfo, string account)
+    {
+        var usersRoot = Directory.GetParent(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile))?.FullName;
+
+        if (usersRoot is null)
+        {
+            return;
+        }
+
+        var profile = Path.Combine(usersRoot, account);
+        var appData = Path.Combine(profile, "AppData");
+        var local = Path.Combine(appData, "Local");
+        var roaming = Path.Combine(appData, "Roaming");
+        var temp = Path.Combine(local, "Temp");
+
+        try
+        {
+            Directory.CreateDirectory(temp);
+            Directory.CreateDirectory(roaming);
+            Directory.CreateDirectory(Path.Combine(profile, ".config"));
+            Directory.CreateDirectory(Path.Combine(profile, ".local", "share"));
+        }
+        catch (IOException)
+        {
+        }
+
+        startInfo.Environment["USERPROFILE"] = profile;
+        startInfo.Environment["HOME"] = profile;
+        startInfo.Environment["APPDATA"] = roaming;
+        startInfo.Environment["LOCALAPPDATA"] = local;
+        startInfo.Environment["TEMP"] = temp;
+        startInfo.Environment["TMP"] = temp;
+        startInfo.Environment["USERNAME"] = account;
+        startInfo.Environment["USERDOMAIN"] = Environment.MachineName;
+        startInfo.Environment["XDG_CONFIG_HOME"] = Path.Combine(profile, ".config");
+        startInfo.Environment["XDG_DATA_HOME"] = Path.Combine(profile, ".local", "share");
+        startInfo.Environment["XDG_CACHE_HOME"] = Path.Combine(profile, ".cache");
+
+        var root = Path.GetPathRoot(profile);
+        if (root is not null)
+        {
+            startInfo.Environment["HOMEDRIVE"] = root.TrimEnd('\\');
+            startInfo.Environment["HOMEPATH"] = profile[root.Length..];
         }
     }
 }

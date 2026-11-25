@@ -208,19 +208,25 @@ public sealed class WorkspaceManager : IWorkspacePreparer
             : _options.ServiceAccount;
 
         var agentRights = readOnly ? "(OI)(CI)RX" : "(OI)(CI)M";
-        var args = new[]
-        {
-            workspace,
-            "/inheritance:r",
-            "/grant:r", $"{service}:(OI)(CI)F",
-            "/grant:r", $"{agent}:{agentRights}",
-            "/T",
-        };
 
-        var result = await RunToolAsync("icacls", args, cancellationToken).ConfigureAwait(false);
-        if (result.ExitCode != 0)
+        var inheritance = await RunToolAsync(
+            "icacls",
+            [workspace, "/inheritance:r"],
+            cancellationToken).ConfigureAwait(false);
+
+        if (inheritance.ExitCode != 0)
         {
-            throw new WorkspaceException($"icacls falló: {Tail(result.Error)}");
+            throw new WorkspaceException($"icacls /inheritance falló: {Tail(inheritance.Error)}");
+        }
+
+        var grant = await RunToolAsync(
+            "icacls",
+            [workspace, "/grant:r", $"{service}:(OI)(CI)F", "/grant:r", $"{agent}:{agentRights}", "/T"],
+            cancellationToken).ConfigureAwait(false);
+
+        if (grant.ExitCode != 0)
+        {
+            throw new WorkspaceException($"icacls /grant falló: {Tail(grant.Error)}");
         }
     }
 

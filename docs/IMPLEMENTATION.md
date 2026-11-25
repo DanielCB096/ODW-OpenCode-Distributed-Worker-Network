@@ -13,7 +13,7 @@
 ```
 src/
   Odw.Core/                  ← contrato, hash y estados (96 pruebas)
-  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (104 pruebas)
+  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (105 pruebas)
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
@@ -24,7 +24,7 @@ src/
   Odw.PeerApi/               ← esqueleto
 tests/
   Odw.Core.Tests/            ← 96 pruebas
-  Odw.Node.Tests/            ← 104 pruebas
+  Odw.Node.Tests/            ← 105 pruebas
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
@@ -215,11 +215,12 @@ Límites que siguen abiertos y se declaran:
 
 - `read_only` significa base detached, **no** ACL de solo lectura; el proceso aún puede escribir.
   La protección real por ACL/usuario restringido es H3.
-- Verificado en esta máquina: `odw-agent` creado, secreto DPAPI, ACLs sin herencia y ejecución de
-  procesos como el agente. Escritura **denegada** en `read_only` y **permitida** en modo escritura.
-- Pendiente: lanzar `opencode` con el token del agente (necesita su propia configuración/modelo),
-  aislar la red (el firewall por usuario no está soportado en esta versión de Windows) y el
-  escaneo de reparse points.
+- Verificado en esta máquina: `odw-agent` creado, secreto DPAPI, ACLs sin herencia, ejecución de
+  procesos como el agente y **`opencode serve` arrancando como `odw-agent`** con su perfil y
+  variables de entorno propias. Escritura denegada en `read_only` y permitida en escritura.
+- Pendiente: dar al agente su propia configuración/modelo de OpenCode (sin credenciales del
+  usuario), aislar la red (el firewall por usuario no está soportado en esta versión de Windows)
+  y el escaneo de reparse points.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El resultado no calcula todavía `changed_paths`/`commit` (quedan vacíos) y no empaqueta artefactos.
 - El runner usa `ToolPolicy.AskAll`; sin un `ToolPermissionHandler`, toda herramienta se rechaza.
@@ -307,6 +308,9 @@ Reglas de configuración:
 - `approvals.pipe_name` debe coincidir con el `--pipe` del CLI.
 - `approvals.telegram.enabled` exige `bot_token_ref`, `allowed_user_ids` y `allowed_chat_ids`.
 - `approvals.hmac_key_ref` es opcional; si falta, se genera `<data_dir>/approvals.key`.
+- `sandbox.run_as_agent` arranca `opencode serve` con las credenciales DPAPI de `agent_secret_path`;
+  el ejecutable debe ser accesible al agente (el aprovisionamiento copia `opencode.exe` a
+  `<data_dir>/opencode` con RX).
 - `peer_api.tls.enabled` exige `certificate_path` (PFX con clave privada) y permite
   `password_ref`; con TLS el listener de pares usa **HTTPS**.
 - `odw serve` usa el *host* de .NET: Ctrl+C en consola y parada del servicio Windows.
@@ -349,7 +353,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **287/287 pruebas** (96 Core + 104 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
+Estado actual: build 0 warnings, **288/288 pruebas** (96 Core + 105 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---

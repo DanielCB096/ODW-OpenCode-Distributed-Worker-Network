@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (287 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
+| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (288 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | 🟡 | ACLs de workspace y `odw sandbox check`; falta usuario/launch real y red |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -174,7 +174,7 @@ aislamiento** hasta verificarlos.
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
 - ✅ `odw sandbox check` reporta si el aislamiento está activo.
 - ✅ Policy Engine y auditoría encadenada.
-- ✅ Crear `odw-agent`, secreto DPAPI, ACLs y ejecución de procesos como el agente (verificado).\n- ⬜ Lanzar `opencode` con su token y aislar la red (firewall por usuario no soportado).
+- ✅ Crear `odw-agent`, secreto DPAPI, ACLs y ejecución de procesos como el agente (verificado).\n- ✅ Lanzar `opencode serve` como `odw-agent` (verificado con perfil propio).\n- ⬜ Configuración/modelo propio del agente y aislamiento de red (firewall por usuario no soportado).
 - ⬜ Escaneo de reparse points y pruebas hostiles automatizadas.
 
 **Entregables**

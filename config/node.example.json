@@ -21,7 +21,7 @@
   },
 
   "opencode": {
-    "executable": "C:\\ruta\\a\\opencode.cmd",
+    "executable": "%PROGRAMDATA%\\ODW\\opencode\\opencode.exe",
     "pinned_version": "2.3.2",
     "use_job_object": true
   },
@@ -43,7 +43,9 @@
 
   "sandbox": {
     "agent_account": "odw-agent",
-    "apply_acls": true
+    "apply_acls": true,
+    "run_as_agent": true,
+    "agent_secret_path": "%PROGRAMDATA%\\ODW\\agent.secret"
   },
 
   "policy": "policy.example.json",

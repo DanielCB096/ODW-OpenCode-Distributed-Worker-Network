@@ -7,6 +7,7 @@ using Odw.Node.Hosting;
 using Odw.Node.Origins;
 using Odw.Node.Scheduling;
 using Odw.Policy;
+using Odw.Sandbox.Windows;
 using Odw.Sandbox.Workspaces;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -32,6 +33,14 @@ public static class NodeBootstrap
         WorkspaceManager? workspaces = null;
         OpenCodeTaskRunner? runner = null;
 
+        RunAsCredentials? runAs = null;
+        if (config.Scheduler.Enabled && config.Sandbox.RunAsAgent)
+        {
+            var secretPath = Environment.ExpandEnvironmentVariables(config.Sandbox.AgentSecretPath);
+            var credentials = AgentCredentialsStore.Load(config.Sandbox.AgentAccount, secretPath);
+            runAs = new RunAsCredentials(credentials.Account, credentials.Password);
+        }
+
         if (config.Scheduler.Enabled)
         {
             workspaces = new WorkspaceManager(new WorkspaceOptions
@@ -52,6 +61,7 @@ public static class NodeBootstrap
                 Executable = config.OpenCode.Executable!,
                 PinnedVersion = config.OpenCode.PinnedVersion,
                 UseJobObject = config.OpenCode.UseJobObject,
+                RunAs = runAs,
                 PermissionHandlerFactory = request => BuildToolHandler(
                     policy, settings, request, capabilities),
             });

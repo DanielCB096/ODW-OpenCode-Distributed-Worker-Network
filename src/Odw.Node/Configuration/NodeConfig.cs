@@ -63,6 +63,12 @@ public sealed record SandboxConfig
 
     [JsonPropertyName("apply_acls")]
     public bool ApplyAcls { get; init; } = true;
+
+    [JsonPropertyName("run_as_agent")]
+    public bool RunAsAgent { get; init; }
+
+    [JsonPropertyName("agent_secret_path")]
+    public string AgentSecretPath { get; init; } = @"%PROGRAMDATA%\ODW\agent.secret";
 }
 
 public sealed record PeerApiConfig

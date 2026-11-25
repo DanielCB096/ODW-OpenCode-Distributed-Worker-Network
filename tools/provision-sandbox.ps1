@@ -31,6 +31,7 @@ param(
     [string]$AgentAccount = 'odw-agent',
     [string]$DataDir = (Join-Path $env:ProgramData 'ODW'),
     [string]$WorkspaceRoot,
+    [string]$OpenCodeSource,
     [switch]$SkipFirewall
 )
 
@@ -102,11 +103,33 @@ else {
 
 Write-Host "== ACLs del workspace =="
 $service = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-Invoke-Icacls @($WorkspaceRoot, '/inheritance:r',
-    '/grant:r', "$($service):(OI)(CI)F",
-    '/grant:r', "$($AgentAccount):(OI)(CI)RX",
-    '/T') | Out-Null
+Invoke-Icacls @($WorkspaceRoot, '/inheritance:r') | Out-Null
+Invoke-Icacls @($WorkspaceRoot, '/grant:r', "$($service):(OI)(CI)F",
+    '/grant:r', "$($AgentAccount):(OI)(CI)RX", '/T') | Out-Null
 Write-Host "Raíz con herencia deshabilitada: servicio F, agente RX."
+
+Write-Host "== OpenCode compartido =="
+if (-not $OpenCodeSource) {
+    $shim = Get-Command opencode.cmd -ErrorAction SilentlyContinue
+    if ($shim) {
+        $candidate = Join-Path (Split-Path $shim.Source) 'node_modules\@opencode\cli\bin\opencode.exe'
+        if (Test-Path $candidate) { $OpenCodeSource = $candidate }
+    }
+}
+
+if ($OpenCodeSource) {
+    $openDir = Join-Path $DataDir 'opencode'
+    New-Item -ItemType Directory -Force -Path $openDir | Out-Null
+    $openExe = Join-Path $openDir 'opencode.exe'
+    Copy-Item $OpenCodeSource $openExe -Force
+    Invoke-Icacls @($openExe, '/inheritance:r',
+        '/grant:r', "$($service):F",
+        '/grant:r', "$($AgentAccount):RX") | Out-Null
+    Write-Host "OpenCode para el agente: $openExe"
+}
+else {
+    Write-Warning "No se encontró opencode.exe. Copia el binario a $DataDir\opencode y ajusta opencode.executable."
+}
 
 if (-not $SkipFirewall) {
     Write-Host "== Firewall =="

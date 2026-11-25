@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Odw.Core\Odw.Core.csproj" />
   </ItemGroup>
 </Project>

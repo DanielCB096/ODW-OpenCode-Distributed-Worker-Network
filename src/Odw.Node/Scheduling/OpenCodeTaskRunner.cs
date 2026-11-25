@@ -20,6 +20,9 @@ public sealed record OpenCodeTaskRunnerOptions
 
     public ToolPermissionHandler? PermissionHandler { get; init; }
 
+    /// <summary>Credenciales del agente restringido para lanzar `opencode serve`.</summary>
+    public RunAsCredentials? RunAs { get; init; }
+
     /// <summary>Permite construir un handler por tarea (política + contexto del contrato).</summary>
     public Func<ExecutionRequest, ToolPermissionHandler?>? PermissionHandlerFactory { get; init; }
 
@@ -69,6 +72,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 WorkingDirectory = request.WorkspacePath,
                 PinnedVersion = _options.PinnedVersion,
                 StartupTimeout = _options.StartupTimeout,
+                RunAs = _options.RunAs,
                 AttachProcess = job is null
                     ? null
                     : process =>
