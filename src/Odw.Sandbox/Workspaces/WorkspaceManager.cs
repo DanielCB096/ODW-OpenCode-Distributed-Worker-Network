@@ -15,6 +15,12 @@ public sealed record WorkspaceOptions
     public bool KeepWorkspaces { get; init; }
 
     public TimeSpan GitTimeout { get; init; } = TimeSpan.FromMinutes(5);
+
+    public bool ApplyAcls { get; init; }
+
+    public string? AgentAccount { get; init; }
+
+    public string? ServiceAccount { get; init; }
 }
 
 /// <summary>
@@ -87,6 +93,11 @@ public sealed class WorkspaceManager : IWorkspacePreparer
             if (removeRemote.ExitCode != 0)
             {
                 throw new WorkspaceException($"No se pudo quitar origin: {Tail(removeRemote.Error)}");
+            }
+
+            if (_options.ApplyAcls)
+            {
+                await ApplyAclsAsync(workspace, request.ReadOnly, cancellationToken).ConfigureAwait(false);
             }
 
             return new WorkspaceLease(workspace, branch, request.ReadOnly, _options.KeepWorkspaces);
@@ -176,6 +187,73 @@ public sealed class WorkspaceManager : IWorkspacePreparer
                 $"git {string.Join(" ", arguments)} excedió {_options.GitTimeout.TotalSeconds.ToString("0", CultureInfo.InvariantCulture)}s.");
         }
 
+        return (process.ExitCode, await outputTask.ConfigureAwait(false), await errorTask.ConfigureAwait(false));
+    }
+
+    private async Task ApplyAclsAsync(string workspace, bool readOnly, CancellationToken cancellationToken)
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            throw new WorkspaceException("Las ACLs de workspace requieren Windows.");
+        }
+
+        var agent = _options.AgentAccount;
+        if (string.IsNullOrWhiteSpace(agent))
+        {
+            throw new WorkspaceException("ApplyAcls requiere AgentAccount.");
+        }
+
+        var service = string.IsNullOrWhiteSpace(_options.ServiceAccount)
+            ? System.Security.Principal.WindowsIdentity.GetCurrent().Name
+            : _options.ServiceAccount;
+
+        var agentRights = readOnly ? "(OI)(CI)RX" : "(OI)(CI)M";
+        var args = new[]
+        {
+            workspace,
+            "/inheritance:r",
+            "/grant:r", $"{service}:(OI)(CI)F",
+            "/grant:r", $"{agent}:{agentRights}",
+            "/T",
+        };
+
+        var result = await RunToolAsync("icacls", args, cancellationToken).ConfigureAwait(false);
+        if (result.ExitCode != 0)
+        {
+            throw new WorkspaceException($"icacls falló: {Tail(result.Error)}");
+        }
+    }
+
+    private async Task<(int ExitCode, string Output, string Error)> RunToolAsync(
+        string executable,
+        IReadOnlyList<string> arguments,
+        CancellationToken cancellationToken)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = executable,
+            WorkingDirectory = Directory.GetCurrentDirectory(),
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+
+        foreach (var argument in arguments)
+        {
+            startInfo.ArgumentList.Add(argument);
+        }
+
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeout.CancelAfter(_options.GitTimeout);
+
+        using var process = Process.Start(startInfo)
+            ?? throw new WorkspaceException($"No se pudo iniciar {executable}.");
+
+        var outputTask = process.StandardOutput.ReadToEndAsync(timeout.Token);
+        var errorTask = process.StandardError.ReadToEndAsync(timeout.Token);
+
+        await process.WaitForExitAsync(timeout.Token).ConfigureAwait(false);
         return (process.ExitCode, await outputTask.ConfigureAwait(false), await errorTask.ConfigureAwait(false));
     }
 

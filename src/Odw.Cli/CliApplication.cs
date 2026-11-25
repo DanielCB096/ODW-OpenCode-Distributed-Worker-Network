@@ -6,6 +6,7 @@ using Odw.Node.Configuration;
 using Odw.Node.Diagnostics;
 using Odw.Node.Hosting;
 using Odw.Node.Persistence;
+using Odw.Sandbox.Windows;
 
 namespace Odw.Cli;
 
@@ -25,6 +26,7 @@ public static class CliApplication
             "init" => await InitAsync(args[1..]).ConfigureAwait(false),
             "serve" => await ServeAsync(args[1..]).ConfigureAwait(false),
             "service" => await ServiceAsync(args[1..]).ConfigureAwait(false),
+            "sandbox" => SandboxAsync(args[1..]),
             "doctor" => await DoctorAsync(args[1..]).ConfigureAwait(false),
             "approvals" => await ApprovalsAsync(args[1..]).ConfigureAwait(false),
             _ => UsageError($"Comando desconocido: {args[0]}."),
@@ -78,6 +80,42 @@ public static class CliApplication
     {
         Console.WriteLine("Uso: odw serve --config <node.json>");
         Console.WriteLine("  --config, -c   Ruta al node.json. Requerido.");
+    }
+
+    private static int SandboxAsync(string[] args)
+    {
+        if (args.Length == 0 || args[0] is "--help" or "-h")
+        {
+            Console.WriteLine("Uso: odw sandbox check [--agent <cuenta>]");
+            return 0;
+        }
+
+        if (args[0] != "check")
+        {
+            return UsageError($"Subcomando desconocido: {args[0]}.");
+        }
+
+        var agent = "odw-agent";
+        for (var i = 1; i < args.Length; i++)
+        {
+            if (args[i] == "--agent" && i + 1 < args.Length)
+            {
+                agent = args[++i];
+            }
+            else
+            {
+                return UsageError($"Opción desconocida: {args[i]}.");
+            }
+        }
+
+        var report = SandboxInspector.Inspect(agent);
+        Console.WriteLine($"windows:      {report.IsWindows}");
+        Console.WriteLine($"admin:        {report.IsAdministrator}");
+        Console.WriteLine($"agent:        {agent} (existe: {report.AgentAccountExists})");
+        Console.WriteLine($"acls:         {report.AclsSupported}");
+        Console.WriteLine($"enforced:     {report.FullyEnforced}");
+        Console.WriteLine(report.Detail);
+        return report.FullyEnforced ? 0 : 1;
     }
 
     private static async Task<int> ServiceAsync(string[] args)
@@ -574,6 +612,7 @@ public static class CliApplication
         Console.WriteLine("  odw init --db <ruta>    Crea la base del nodo y aplica migraciones.");
         Console.WriteLine("  odw serve --config <n>  Arranca el nodo con node.json.");
         Console.WriteLine("  odw service install     Instala el nodo como servicio Windows.");
+        Console.WriteLine("  odw sandbox check       Comprueba usuario restringido y ACLs (H3).");
         Console.WriteLine("  odw doctor [opciones]   Comprueba base de datos, binds, token y OpenCode.");
         Console.WriteLine("  odw approvals <cmd>     list | approve | deny | expire (named pipe).");
         Console.WriteLine("  odw version             Muestra la versión.");

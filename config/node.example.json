@@ -41,6 +41,11 @@
 
   "peers_file": "peers.example.json",
 
+  "sandbox": {
+    "agent_account": "odw-agent",
+    "apply_acls": true
+  },
+
   "policy": "policy.example.json",
 
   "capabilities": ["git", "dotnet", "opencode"],

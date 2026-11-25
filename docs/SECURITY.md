@@ -85,10 +85,13 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
 - Herencia **deshabilitada** en la raíz del workspace (`icacls <dir> /inheritance:r`) antes de
   aplicar ACEs.
 - Las ACEs de denegación explícita ganan sobre permisos heredados.
-- En `read_only`: ACE de denegación de escritura para `odw-agent` **además** de la ausencia de
-  permiso (defensa en profundidad).
+- En `read_only` el agente recibe **RX** (sin permiso de escritura); en escritura, **M**.
 - Los archivos de configuración de ODW (`%PROGRAMDATA%\ODW\*.json`, `odw.db`, claves) **no**
   son legibles por `odw-agent`: ACE de denegación explícita.
+- **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F y agente RX/M,
+  pero `opencode` todavía corre con la identidad del servicio, así que la ACL **no protege**
+  hasta implementar el lanzamiento como `odw-agent`. `odw sandbox check` lo reporta como
+  `enforced: false`.
 
 ### 3.3 Rutas y reparse points
 

@@ -13,8 +13,8 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
   Job Object, ejecutor OpenCode y poller de resultado.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **284 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
-- TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
+- **287 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.\n- ACLs de workspace y `odw sandbox check` (aislamiento real pendiente de cuenta/permisos).
 
 Detalle: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) · Hoja de ruta:
 [`docs/ROADMAP.md`](docs/ROADMAP.md).

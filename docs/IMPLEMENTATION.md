@@ -17,7 +17,7 @@ src/
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
-  Odw.Sandbox/               ← workspace Git y Job Objects (7 pruebas)
+  Odw.Sandbox/               ← workspace Git, ACLs y Job Objects (10 pruebas)
   Odw.Cli/                   ← ejecutable: init, doctor, version
   Odw.Trust/                 ← esqueleto
   Odw.Approvals/             ← esqueleto
@@ -28,7 +28,7 @@ tests/
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
-  Odw.Sandbox.Tests/         ← 7 pruebas
+  Odw.Sandbox.Tests/         ← 10 pruebas
 ```
 
 Dependencias: `Core` no referencia nada; `Policy`/`Trust`/`Sandbox`/`Executors.OpenCode` → `Core`;
@@ -192,8 +192,9 @@ Limitaciones explícitas de este corte:
 
 | Archivo | Contenido |
 |---|---|
-| `Sandbox/Workspaces/WorkspaceManager.cs` | Clon local completo, sin remoto; rama `odw/<task>` o base detached |
+| `Sandbox/Workspaces/WorkspaceManager.cs` | Clon local completo, sin remoto; rama `odw/<task>` o base detached; ACLs opcionales |
 | `Sandbox/Windows/JobObject.cs` | Job Object: memoria, procesos, CPU y muerte en cascada |
+| `Sandbox/Windows/SandboxInspector.cs` | Comprueba Windows, admin, cuenta `odw-agent` y si el aislamiento está activo |
 | `Node/Scheduling/ExecutionScheduler.cs` | `QUEUED` → workspace → `RUNNING` → runner → estado final (CAS) |
 | `Node/Scheduling/OpenCodeTaskRunner.cs` | Servidor OpenCode bajo Job Object, stream, prompt y resultado |
 
@@ -214,6 +215,9 @@ Límites que siguen abiertos y se declaran:
 
 - `read_only` significa base detached, **no** ACL de solo lectura; el proceso aún puede escribir.
   La protección real por ACL/usuario restringido es H3.
+- Las ACLs de workspace se aplican si `sandbox.apply_acls` (servicio F, agente RX/M, sin herencia),
+  pero **todavía no hay aislamiento real** porque `opencode` corre con la identidad del servicio:
+  falta lanzarlo como `odw-agent`. `odw sandbox check` lo reporta y falla si no está activo.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El resultado no calcula todavía `changed_paths`/`commit` (quedan vacíos) y no empaqueta artefactos.
 - El runner usa `ToolPolicy.AskAll`; sin un `ToolPermissionHandler`, toda herramienta se rechaza.
@@ -343,7 +347,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **284/284 pruebas** (96 Core + 104 Node + 26 MCP + 23 OpenCode + 28 Policy + 7 Sandbox).
+Estado actual: build 0 warnings, **287/287 pruebas** (96 Core + 104 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---

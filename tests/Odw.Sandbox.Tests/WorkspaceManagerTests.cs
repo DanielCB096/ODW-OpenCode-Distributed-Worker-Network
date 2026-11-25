@@ -167,21 +167,81 @@ public class WorkspaceManagerTests
     }
 
     [Fact]
-    public async Task Existing_workspace_is_not_reused()
+    public async Task Read_only_workspace_applies_acl_for_agent()
     {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
         var repo = CreateRepo();
         var branch = CurrentBranch(repo);
         var root = CreateTemp();
-        Directory.CreateDirectory(Path.Combine(root, TaskId));
 
         var manager = new WorkspaceManager(new WorkspaceOptions
         {
             WorkspaceRoot = root,
             Repos = new Dictionary<string, string> { ["SistemaMaestro"] = repo },
+            ApplyAcls = true,
+            AgentAccount = "*S-1-5-32-546",
+            ServiceAccount = System.Security.Principal.WindowsIdentity.GetCurrent().Name,
         });
 
-        await Assert.ThrowsAsync<WorkspaceException>(() => manager.PrepareAsync(
+        await using var lease = await manager.PrepareAsync(
             new WorkspaceRequest(TaskId, "SistemaMaestro", branch, ReadOnly: true),
-            CancellationToken.None));
+            CancellationToken.None);
+
+        var acl = RunCapture("icacls", lease.Path);
+        Assert.Contains("(RX)", acl);
+    }
+
+    [Fact]
+    public async Task Write_workspace_applies_modify_acl_for_agent()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var repo = CreateRepo();
+        var branch = CurrentBranch(repo);
+        var root = CreateTemp();
+
+        var manager = new WorkspaceManager(new WorkspaceOptions
+        {
+            WorkspaceRoot = root,
+            Repos = new Dictionary<string, string> { ["SistemaMaestro"] = repo },
+            ApplyAcls = true,
+            AgentAccount = "*S-1-5-32-546",
+            ServiceAccount = System.Security.Principal.WindowsIdentity.GetCurrent().Name,
+        });
+
+        await using var lease = await manager.PrepareAsync(
+            new WorkspaceRequest(TaskId, "SistemaMaestro", branch, ReadOnly: false),
+            CancellationToken.None);
+
+        var acl = RunCapture("icacls", lease.Path);
+        Assert.Contains("(M)", acl);
+    }
+
+    private static string RunCapture(string executable, string argument)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = executable,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+        startInfo.ArgumentList.Add(argument);
+
+        using var process = Process.Start(startInfo)!;
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+
+        Assert.Equal(0, process.ExitCode);
+        return output + error;
     }
 }

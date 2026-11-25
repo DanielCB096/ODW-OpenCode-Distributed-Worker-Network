@@ -51,6 +51,18 @@ public sealed record NodeConfig
 
     [JsonPropertyName("approvals")]
     public ApprovalsConfig Approvals { get; init; } = new();
+
+    [JsonPropertyName("sandbox")]
+    public SandboxConfig Sandbox { get; init; } = new();
+}
+
+public sealed record SandboxConfig
+{
+    [JsonPropertyName("agent_account")]
+    public string AgentAccount { get; init; } = "odw-agent";
+
+    [JsonPropertyName("apply_acls")]
+    public bool ApplyAcls { get; init; } = true;
 }
 
 public sealed record PeerApiConfig

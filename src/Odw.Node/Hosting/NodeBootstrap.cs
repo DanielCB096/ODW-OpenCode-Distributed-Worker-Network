@@ -40,6 +40,11 @@ public static class NodeBootstrap
                 Repos = settings.Repos,
                 GitExecutable = config.Workspaces.Git,
                 KeepWorkspaces = config.Workspaces.Keep,
+                ApplyAcls = config.Sandbox.ApplyAcls,
+                AgentAccount = config.Sandbox.AgentAccount,
+                ServiceAccount = OperatingSystem.IsWindows()
+                    ? System.Security.Principal.WindowsIdentity.GetCurrent().Name
+                    : null,
             });
 
             runner = new OpenCodeTaskRunner(new OpenCodeTaskRunnerOptions

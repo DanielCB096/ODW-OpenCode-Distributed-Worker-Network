@@ -7,9 +7,9 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (284 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
+| H1 — Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (287 pruebas); falta cuenta dedicada y prueba en dos PCs reales |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
-| H3 — Aislamiento y políticas | ⬜ | Depende de H1; red pendiente de verificación |
+| H3 — Aislamiento y políticas | 🟡 | ACLs de workspace y `odw sandbox check`; falta usuario/launch real y red |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
 | H5 — Colaboración y aceleración | ⬜ | Depende de H4 |
 | H6 — Escalabilidad y usabilidad | ⬜ | Depende de H5 |
@@ -164,7 +164,18 @@ OpenCode completados (2026-11-24). Resto pendiente.
 
 ---
 
-## H3 — Aislamiento y políticas ⬜
+## H3 — Aislamiento y políticas 🟡
+
+**Estado:** ACLs de workspace y diagnóstico (`odw sandbox check`) implementados. El lanzamiento
+real como `odw-agent`, la cuenta de servicio y la red siguen pendientes y **no se declaran
+aislamiento** hasta verificarlos.
+
+- ✅ Job Objects (memoria, procesos, CPU, kill on close).
+- ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
+- ✅ `odw sandbox check` reporta si el aislamiento está activo.
+- ✅ Policy Engine y auditoría encadenada.
+- ⬜ Crear `odw-agent`, lanzar OpenCode con su token y regla de red.
+- ⬜ Escaneo de reparse points y pruebas hostiles reales.
 
 **Entregables**
 
