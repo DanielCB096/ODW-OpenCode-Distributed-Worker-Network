@@ -1,6 +1,6 @@
 # ODW — Continuar desde otra PC
 
-> **Último commit:** `ebdf119` · **Rama:** `main` · **Fecha:** 2026-11-25
+> **Último commit:** el último de `main` (`git log -1`) · **Rama:** `main` · **Fecha:** 2026-11-25
 >
 > **Estado:** H0, H1 (protocolo en loopback), H2 (pipe/CLI/HMAC) y H3 cerrados y verificados.
 > Quedan H1 en dos PCs con Tailscale, artefactos descargables, Telegram real y H4.
@@ -186,7 +186,7 @@ resultado. No sustituye a Tailscale/dos PCs.
 
 ```text
 328/328 pruebas · build 0 warnings
-commit ebdf119
+commit actual en `main`
 ```
 
 - E2E loopback `read_only`: `DONE` / `E2E-LOOPBACK`.
