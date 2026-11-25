@@ -215,9 +215,11 @@ Límites que siguen abiertos y se declaran:
 
 - `read_only` significa base detached, **no** ACL de solo lectura; el proceso aún puede escribir.
   La protección real por ACL/usuario restringido es H3.
-- Las ACLs de workspace se aplican si `sandbox.apply_acls` (servicio F, agente RX/M, sin herencia),
-  pero **todavía no hay aislamiento real** porque `opencode` corre con la identidad del servicio:
-  falta lanzarlo como `odw-agent`. `odw sandbox check` lo reporta y falla si no está activo.
+- Verificado en esta máquina: `odw-agent` creado, secreto DPAPI, ACLs sin herencia y ejecución de
+  procesos como el agente. Escritura **denegada** en `read_only` y **permitida** en modo escritura.
+- Pendiente: lanzar `opencode` con el token del agente (necesita su propia configuración/modelo),
+  aislar la red (el firewall por usuario no está soportado en esta versión de Windows) y el
+  escaneo de reparse points.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El resultado no calcula todavía `changed_paths`/`commit` (quedan vacíos) y no empaqueta artefactos.
 - El runner usa `ToolPolicy.AskAll`; sin un `ToolPermissionHandler`, toda herramienta se rechaza.

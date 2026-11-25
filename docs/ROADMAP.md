@@ -174,8 +174,8 @@ aislamiento** hasta verificarlos.
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
 - ✅ `odw sandbox check` reporta si el aislamiento está activo.
 - ✅ Policy Engine y auditoría encadenada.
-- ⬜ Crear `odw-agent`, lanzar OpenCode con su token y regla de red.
-- ⬜ Escaneo de reparse points y pruebas hostiles reales.
+- ✅ Crear `odw-agent`, secreto DPAPI, ACLs y ejecución de procesos como el agente (verificado).\n- ⬜ Lanzar `opencode` con su token y aislar la red (firewall por usuario no soportado).
+- ⬜ Escaneo de reparse points y pruebas hostiles automatizadas.
 
 **Entregables**
 

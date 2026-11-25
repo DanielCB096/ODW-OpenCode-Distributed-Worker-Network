@@ -40,7 +40,8 @@ public static class SandboxInspector
                 + "SeAssignPrimaryToken/SeIncreaseQuota y la regla de red.",
             (true, false) =>
                 $"Sesión elevada: falta crear '{agentAccount}' y la regla de red.",
-            _ => "Usuario y privilegios presentes; falta verificar firewall y lanzar procesos como el agente.",
+            _ => "Usuario y ACLs listos. Red sin aislar (firewall por usuario no soportado) y "
+                 + "OpenCode todavía no se lanza con el token del agente.",
         };
 
         return new SandboxReport(true, admin, exists, true, detail);

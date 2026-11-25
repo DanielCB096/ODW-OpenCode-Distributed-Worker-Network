@@ -88,10 +88,10 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
 - En `read_only` el agente recibe **RX** (sin permiso de escritura); en escritura, **M**.
 - Los archivos de configuración de ODW (`%PROGRAMDATA%\ODW\*.json`, `odw.db`, claves) **no**
   son legibles por `odw-agent`: ACE de denegación explícita.
-- **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F y agente RX/M,
-  pero `opencode` todavía corre con la identidad del servicio, así que la ACL **no protege**
-  hasta implementar el lanzamiento como `odw-agent`. `odw sandbox check` lo reporta como
-  `enforced: false`.
+- **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F y agente RX/M.
+  Verificado en la máquina: procesos lanzados como `odw-agent`, escritura denegada en `read_only`
+  y permitida en modo escritura. `opencode` **todavía corre como el servicio** (falta lanzarlo
+  con el token del agente) y la red del agente no está aislada.
 
 ### 3.3 Rutas y reparse points
 

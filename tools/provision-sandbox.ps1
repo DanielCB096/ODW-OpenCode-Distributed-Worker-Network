@@ -112,11 +112,19 @@ if (-not $SkipFirewall) {
     Write-Host "== Firewall =="
     $ruleName = 'ODW-Agent-Block-Out'
     Get-NetFirewallRule -DisplayName $ruleName -ErrorAction SilentlyContinue |
-        Remove-NetFirewallRule
-    New-NetFirewallRule -DisplayName $ruleName -Direction Out -Action Block `
-        -LocalUser $AgentAccount -Profile Any `
-        -Description 'ODW: bloquea la red del agente de sandbox' | Out-Null
-    Write-Host "Regla '$ruleName' creada (salida bloqueada para $AgentAccount)."
+        Remove-NetFirewallRule -ErrorAction SilentlyContinue
+
+    try {
+        New-NetFirewallRule -DisplayName $ruleName -Direction Out -Action Block `
+            -LocalUser $AgentAccount -Profile Any `
+            -Description 'ODW: bloquea la red del agente de sandbox' `
+            -ErrorAction Stop | Out-Null
+        Write-Host "Regla '$ruleName' creada (salida bloqueada para $AgentAccount)."
+    }
+    catch {
+        Write-Warning "Esta versión de Windows no admite firewall por usuario (-LocalUser)."
+        Write-Warning "La red del agente NO está aislada todavía; hace falta WFP o WSL/AppContainer."
+    }
 }
 
 Write-Host ""
