@@ -13,8 +13,10 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
   Job Object, ejecutor OpenCode y poller de resultado.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **288 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
-- TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.\n- ACLs de workspace, `odw-agent` con DPAPI y `opencode serve` lanzado como agente; red pendiente.
+- **289 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
+- ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente y modelo gratuito propio;
+  aislamiento de red pendiente.
 
 Detalle: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) · Hoja de ruta:
 [`docs/ROADMAP.md`](docs/ROADMAP.md).
@@ -82,17 +84,21 @@ dotnet publish src/Odw.Cli -c Release -o .\publish
 
 ## Sandbox (H3)
 
-Con una consola **elevada** (token sin filtrar), provisiona el agente y la red:
+Con una consola **elevada** (token sin filtrar), provisiona el agente:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools/provision-sandbox.ps1
 odw sandbox check
 ```
 
-El script crea `odw-agent`, guarda su secreto con DPAPI de máquina, aplica ACLs al workspace y
-bloquea la salida de red del agente. `odw sandbox check` debe mostrar `admin: True`,
-`agent: True` y `enforced: True`. El lanzamiento de `opencode` como `odw-agent` sigue pendiente:
-hasta entonces las ACLs no protegen del proceso del servicio y así se documenta.
+El script crea `odw-agent`, guarda su secreto con DPAPI de máquina, aplica ACLs al workspace,
+copia `opencode.exe` a `%PROGRAMDATA%\ODW\opencode` y escribe la configuración del agente con el
+modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del usuario). Con
+`sandbox.run_as_agent` activo, `opencode serve` se lanza como `odw-agent`; `odw sandbox check` debe
+mostrar `admin: True`, `agent: True` y `enforced: True`.
+
+El bloqueo de red por usuario **no está soportado** en todas las versiones de Windows: el script lo
+avisa y deja constancia de que la red del agente sigue sin aislar.
 
 ## CLI
 
@@ -141,5 +147,5 @@ src/Odw.Sandbox               workspace Git + Job Objects
 src/Odw.PeerApi               cliente de pares
 src/Odw.Approvals             cliente del pipe de aprobaciones
 src/Odw.Cli                   ejecutable odw
-tests/*                       279 pruebas
+tests/*                       289 pruebas
 ```

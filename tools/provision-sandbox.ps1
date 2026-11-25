@@ -8,17 +8,26 @@
       - usuario local odw-agent con contraseña aleatoria (no se imprime),
       - secreto DPAPI de máquina en <DataDir>\agent.secret (solo admins/SYSTEM),
       - ACL del workspace raíz (servicio F, agente RX, sin herencia),
-      - regla de firewall que bloquea la salida de red del agente.
+      - copia de opencode.exe accesible al agente y su opencode.json con un modelo gratuito,
+      - regla de firewall que intenta bloquear la salida de red del agente (no soportada en
+        todas las versiones de Windows).
     No lanza procesos ni modifica la base de datos.
 
 .PARAMETER AgentAccount
     Cuenta local del agente. Por defecto odw-agent.
+
+.PARAMETER AgentModel
+    Modelo por defecto del agente. Por defecto el gratuito
+    opencode/deepseek-v4.1-flash-free (no requiere credenciales del usuario).
 
 .PARAMETER DataDir
     Directorio de datos de ODW. Por defecto %PROGRAMDATA%\ODW.
 
 .PARAMETER WorkspaceRoot
     Raíz de workspaces. Por defecto <DataDir>\workspaces.
+
+.PARAMETER OpenCodeSource
+    Ruta de opencode.exe a copiar para el agente. Si falta, se busca en el PATH.
 
 .PARAMETER SkipFirewall
     No crea la regla de bloqueo de red.
@@ -32,6 +41,7 @@ param(
     [string]$DataDir = (Join-Path $env:ProgramData 'ODW'),
     [string]$WorkspaceRoot,
     [string]$OpenCodeSource,
+    [string]$AgentModel = 'opencode/deepseek-v4.1-flash-free',
     [switch]$SkipFirewall
 )
 
@@ -130,6 +140,46 @@ if ($OpenCodeSource) {
 else {
     Write-Warning "No se encontró opencode.exe. Copia el binario a $DataDir\opencode y ajusta opencode.executable."
 }
+
+Write-Host "== Configuración de OpenCode del agente =="
+Add-Type -AssemblyName System.Security
+if (-not $password) {
+    $protected = [IO.File]::ReadAllBytes($secretPath)
+    $password = [Text.Encoding]::UTF8.GetString(
+        [Security.Cryptography.ProtectedData]::Unprotect(
+            $protected, $null, [Security.Cryptography.DataProtectionScope]::LocalMachine))
+}
+$secureAgent = ConvertTo-SecureString $password -AsPlainText -Force
+$agentCredentials = [PSCredential]::new($AgentAccount, $secureAgent)
+
+# Fuerza la creación del perfil (LoadUserProfile) antes de escribir su configuración.
+Start-Service seclogon -ErrorAction SilentlyContinue
+Start-Process -FilePath 'cmd.exe' -ArgumentList '/c', 'exit' `
+    -Credential $agentCredentials -WindowStyle Hidden -Wait
+
+$agentSid = ([Security.Principal.NTAccount]::new($AgentAccount)).Translate(
+    [Security.Principal.SecurityIdentifier]).Value
+$agentProfile = Get-CimInstance Win32_UserProfile -Filter "SID='$agentSid'" |
+    Select-Object -ExpandProperty LocalPath
+if (-not $agentProfile) { $agentProfile = Join-Path $env:SystemDrive "Users\$AgentAccount" }
+
+$agentConfigDir = Join-Path $agentProfile '.config\opencode'
+New-Item -ItemType Directory -Force -Path $agentConfigDir | Out-Null
+$agentConfig = Join-Path $agentConfigDir 'opencode.json'
+
+$agentSettings = [ordered]@{
+    '$schema' = 'https://opencode.ai/config.json'
+    model     = $AgentModel
+}
+$agentJson = $agentSettings | ConvertTo-Json -Compress
+[IO.File]::WriteAllText($agentConfig, $agentJson, (New-Object Text.UTF8Encoding($false)))
+Invoke-Icacls @($agentConfigDir, '/inheritance:r',
+    '/grant:r', "$($AgentAccount):(OI)(CI)F",
+    '/grant:r', "$($service):(OI)(CI)F") | Out-Null
+Invoke-Icacls @($agentConfig, '/inheritance:r',
+    '/grant:r', "$($AgentAccount):F",
+    '/grant:r', "$($service):F") | Out-Null
+Write-Host "Agente configurado con modelo gratuito '$AgentModel' (sin credenciales del usuario)."
 
 if (-not $SkipFirewall) {
     Write-Host "== Firewall =="

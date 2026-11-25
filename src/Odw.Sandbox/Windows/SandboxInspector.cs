@@ -37,11 +37,11 @@ public static class SandboxInspector
                 + "el usuario ni aplicar el aislamiento real.",
             (false, true) =>
                 $"'{agentAccount}' existe, pero la sesión no es de administrador: faltan "
-                + "SeAssignPrimaryToken/SeIncreaseQuota y la regla de red.",
+                + "SeAssignPrimaryToken/SeIncreaseQuota para lanzar el agente.",
             (true, false) =>
-                $"Sesión elevada: falta crear '{agentAccount}' y la regla de red.",
-            _ => "Usuario y ACLs listos. Red sin aislar (firewall por usuario no soportado) y "
-                 + "OpenCode todavía no se lanza con el token del agente.",
+                $"Sesión elevada: falta crear '{agentAccount}'.",
+            _ => "Usuario y ACLs listos. Red sin aislar (firewall por usuario no soportado en esta "
+                 + "versión de Windows); el lanzamiento como agente depende de sandbox.run_as_agent.",
         };
 
         return new SandboxReport(true, admin, exists, true, detail);

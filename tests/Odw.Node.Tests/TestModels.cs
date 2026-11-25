@@ -7,5 +7,5 @@ internal static class TestModels
     /// Si no está disponible, se puede fijar ODW_TEST_MODEL (p. ej. el fallback acordado).
     /// </summary>
     public static string FreeOrFallback =>
-        Environment.GetEnvironmentVariable("ODW_TEST_MODEL") ?? "opencode-go/hungerg-free";
+        Environment.GetEnvironmentVariable("ODW_TEST_MODEL") ?? "opencode/deepseek-v4.1-flash-free";
 }

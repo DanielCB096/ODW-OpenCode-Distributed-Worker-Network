@@ -86,12 +86,15 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
   aplicar ACEs.
 - Las ACEs de denegación explícita ganan sobre permisos heredados.
 - En `read_only` el agente recibe **RX** (sin permiso de escritura); en escritura, **M**.
-- Los archivos de configuración de ODW (`%PROGRAMDATA%\ODW\*.json`, `odw.db`, claves) **no**
-  son legibles por `odw-agent`: ACE de denegación explícita.
+- El secreto del agente (`agent.secret`) tiene ACE explícita solo para administradores y SYSTEM.
+- Los demás datos de ODW (`node.json`, `odw.db`, claves) **deben** quedar fuera del alcance de
+  `odw-agent`; hoy el aprovisionamiento no les aplica una denegación explícita y heredan la
+  lectura de `Users`. Queda como pendiente de H3 antes de desplegar un nodo real.
 - **Estado real:** `WorkspaceManager` aplica `icacls /inheritance:r` con servicio F y agente RX/M.
   Verificado: procesos lanzados como `odw-agent`, escritura denegada en `read_only`, permitida en
-  escritura y **`opencode serve` arrancando como `odw-agent`** con perfil propio cuando
-  `sandbox.run_as_agent` está activo. Pendiente: configuración/modelo propio del agente y red.
+  escritura, **`opencode serve` arrancando como `odw-agent`** con perfil propio y **una tarea real
+  completada** con el modelo gratuito `opencode/deepseek-v4.1-flash-free` (sin credenciales del
+  usuario). Pendiente: aislamiento de red y ACL de los datos del nodo.
 
 ### 3.3 Rutas y reparse points
 

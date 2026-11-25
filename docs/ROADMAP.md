@@ -166,15 +166,20 @@ OpenCode completados (2026-11-24). Resto pendiente.
 
 ## H3 — Aislamiento y políticas 🟡
 
-**Estado:** ACLs de workspace y diagnóstico (`odw sandbox check`) implementados. El lanzamiento
-real como `odw-agent`, la cuenta de servicio y la red siguen pendientes y **no se declaran
-aislamiento** hasta verificarlos.
+**Estado:** ACLs de workspace, usuario `odw-agent`, lanzamiento de `opencode serve` como agente y
+modelo gratuito propio implementados y verificados. La cuenta de servicio y el aislamiento de red
+siguen pendientes y **no se declaran aislamiento** hasta verificarlos.
 
 - ✅ Job Objects (memoria, procesos, CPU, kill on close).
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
 - ✅ `odw sandbox check` reporta si el aislamiento está activo.
 - ✅ Policy Engine y auditoría encadenada.
-- ✅ Crear `odw-agent`, secreto DPAPI, ACLs y ejecución de procesos como el agente (verificado).\n- ✅ Lanzar `opencode serve` como `odw-agent` (verificado con perfil propio).\n- ⬜ Configuración/modelo propio del agente y aislamiento de red (firewall por usuario no soportado).
+- ✅ Crear `odw-agent`, secreto DPAPI, ACLs y ejecución de procesos como el agente (verificado).
+- ✅ Lanzar `opencode serve` como `odw-agent` (verificado con perfil propio).
+- ✅ Configuración y modelo propios del agente: `opencode/deepseek-v4.1-flash-free`, sin
+  credenciales del usuario (tarea real completada como `odw-agent`).
+- ⬜ Aislamiento de red (firewall por usuario no soportado en esta versión de Windows).
+- ⬜ ACE de denegación para `node.json`, `odw.db` y claves frente a `odw-agent`.
 - ⬜ Escaneo de reparse points y pruebas hostiles automatizadas.
 
 **Entregables**

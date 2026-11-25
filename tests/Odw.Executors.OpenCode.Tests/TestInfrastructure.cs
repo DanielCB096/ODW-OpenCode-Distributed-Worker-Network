@@ -167,7 +167,7 @@ internal static class EventFactory
 internal static class TestModels
 {
     public static string FreeOrFallback =>
-        Environment.GetEnvironmentVariable("ODW_TEST_MODEL") ?? "opencode-go/hungerg-free";
+        Environment.GetEnvironmentVariable("ODW_TEST_MODEL") ?? "opencode/deepseek-v4.1-flash-free";
 }
 
 internal static class TestRequests

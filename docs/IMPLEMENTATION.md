@@ -13,7 +13,7 @@
 ```
 src/
   Odw.Core/                  ← contrato, hash y estados (96 pruebas)
-  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (105 pruebas)
+  Odw.Node/                  ← persistencia, host, origen, scheduler, aprobaciones y config (106 pruebas)
   Odw.Mcp/                   ← fachada MCP de solo lectura (23 pruebas)
   Odw.Executors.OpenCode/    ← cliente V2, SSE y ejecutor (23 pruebas)
   Odw.Policy/                ← motor de reglas (28 pruebas)
@@ -24,7 +24,7 @@ src/
   Odw.PeerApi/               ← esqueleto
 tests/
   Odw.Core.Tests/            ← 96 pruebas
-  Odw.Node.Tests/            ← 105 pruebas
+  Odw.Node.Tests/            ← 106 pruebas
   Odw.Mcp.Tests/             ← 26 pruebas
   Odw.Executors.OpenCode.Tests/ ← 23 pruebas
   Odw.Policy.Tests/          ← 28 pruebas
@@ -213,13 +213,15 @@ asistente. Integración real ejecutada contra OpenCode 2.3.2 (job + workspace + 
 
 Límites que siguen abiertos y se declaran:
 
-- `read_only` significa base detached, **no** ACL de solo lectura; el proceso aún puede escribir.
-  La protección real por ACL/usuario restringido es H3.
+- `read_only` combina clon detached y ACL de solo lectura para el agente (RX). La protección
+  depende de que `sandbox.run_as_agent` esté activo; si OpenCode corre como el servicio, la ACL
+  no le afecta.
 - Verificado en esta máquina: `odw-agent` creado, secreto DPAPI, ACLs sin herencia, ejecución de
-  procesos como el agente y **`opencode serve` arrancando como `odw-agent`** con su perfil y
-  variables de entorno propias. Escritura denegada en `read_only` y permitida en escritura.
-- Pendiente: dar al agente su propia configuración/modelo de OpenCode (sin credenciales del
-  usuario), aislar la red (el firewall por usuario no está soportado en esta versión de Windows)
+  procesos como el agente, **`opencode serve` arrancando como `odw-agent`** con su perfil y
+  variables de entorno propias, y **una tarea real completada** con el modelo gratuito
+  `opencode/deepseek-v4.1-flash-free`, sin credenciales del usuario. Escritura denegada en
+  `read_only` y permitida en escritura.
+- Pendiente: aislar la red (el firewall por usuario no está soportado en esta versión de Windows)
   y el escaneo de reparse points.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El resultado no calcula todavía `changed_paths`/`commit` (quedan vacíos) y no empaqueta artefactos.
@@ -311,6 +313,10 @@ Reglas de configuración:
 - `sandbox.run_as_agent` arranca `opencode serve` con las credenciales DPAPI de `agent_secret_path`;
   el ejecutable debe ser accesible al agente (el aprovisionamiento copia `opencode.exe` a
   `<data_dir>/opencode` con RX).
+- El aprovisionamiento escribe `C:\Users\<agente>\.config\opencode\opencode.json` con el
+  modelo gratuito `opencode/deepseek-v4.1-flash-free` (parámetro `-AgentModel`). No se copian
+  credenciales ni la base de datos del usuario; los modelos `opencode-go/*` requieren su cuenta y
+  no están disponibles para el agente.
 - `peer_api.tls.enabled` exige `certificate_path` (PFX con clave privada) y permite
   `password_ref`; con TLS el listener de pares usa **HTTPS**.
 - `odw serve` usa el *host* de .NET: Ctrl+C en consola y parada del servicio Windows.
@@ -345,15 +351,19 @@ odw service install --config C:\ODW\node.json --exe C:\ODW\odw.exe
 # integración real con OpenCode (opt-in). Modelo gratuito por defecto;
 # si no está disponible, fija ODW_TEST_MODEL (fallback acordado).
 $env:ODW_OPENCODE_EXE = "C:\ruta\a\opencode.cmd"
-$env:ODW_TEST_MODEL = "opencode-go/hungerg-free"
+$env:ODW_TEST_MODEL = "opencode/deepseek-v4.1-flash-free"
 dotnet test --filter "FullyQualifiedName~OpenCodeIntegrationTests"
+
+# ejecución real como odw-agent (requiere aprovisionamiento y consola elevada)
+$env:ODW_AGENT_E2E = "1"
+dotnet test --filter "FullyQualifiedName~SandboxAgentTests"
 
 # aprobaciones por pipe (con el servicio iniciado)
 odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **288/288 pruebas** (96 Core + 105 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
+Estado actual: build 0 warnings, **289/289 pruebas** (96 Core + 106 Node + 26 MCP + 23 OpenCode + 28 Policy + 10 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---
@@ -378,7 +388,8 @@ La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no 
 - La API de pares exige `X-Odw-Node` y lo cruza con el token; un token válido de otro par no sirve.
 - `ASK` en el destino persiste `AWAITING_LOCAL_APPROVAL`; no existe autoaprobación.
 - El scheduler usa CAS: dos instancias no ejecutan la misma tarea dos veces.
-- `read_only` hoy es base detached, no ACL: se declara como pendiente de H3.
+- `read_only` combina base detached con ACL RX para el agente; si `run_as_agent` está apagado, la
+  ACL no protege porque OpenCode corre como el servicio.
 - Token de par **compartido** (bidireccional) en este MVP; la rotación/direccionalidad llega con H6.
 - `ASK` en origen no envía: la tarea queda esperando aprobación humana.
 - El poller es el único que muta el origen tras el envío; las consultas MCP siguen siendo locales.
