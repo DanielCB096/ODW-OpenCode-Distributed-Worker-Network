@@ -12,7 +12,7 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
 
 ## Estado actual (2026-11-26)
 
-- **413/413 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
+- **421/421 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
 - H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1: delegación real en dos PCs verificada; doctor PASS
   en PC-OFICINA y PC-CASA y cobertura Core 97,8 %; falta el reinicio a mitad.
 - Nodo destino `PC-CASA` preparado y verificado: servicio `OdwNode` como `.\odw-svc`, listener

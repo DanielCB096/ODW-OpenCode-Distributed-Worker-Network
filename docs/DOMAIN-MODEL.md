@@ -252,7 +252,7 @@ Enum único `TaskState`. Cada rol usa un subconjunto. Toda transición no listad
 ```csharp
 public enum TaskState {
     Proposed, WaitingApproval, Approved, Sent, Accepted, Running, Unreachable,
-    Cancelling, Done, Failed, Rejected, Cancelled, Expired,
+    Cancelling, Done, Failed, Rejected, Cancelled, Expired, Interrupted,
     Received, AwaitingLocalApproval, Queued, Completed, ReviewRequired, Interrupted
 }
 ```
@@ -274,23 +274,34 @@ public enum TaskState {
 | `Sent` | `transport.2xx` | — | `Accepted` |
 | `Sent` | `transport.4xx` | — | `Rejected` |
 | `Sent` | `transport.timeout/5xx` | reintentos agotados | `Unreachable` |
+| `Sent` | `task.interrupted` | - | `Interrupted` |
 | `Accepted` | `task.progress`/`lease` | — | `Running` |
 | `Accepted` | `task.rejected` | — | `Rejected` |
+| `Accepted` | `task.interrupted` | - | `Interrupted` |
 | `Accepted` | `lease.expired` | `now > lease_expires_at` | `Unreachable` |
 | `Running` | `task.completed` | `outcome ∈ {succeeded, review_required}` | `Done` |
 | `Running` | `task.failed` | — | `Failed` |
 | `Running` | `user.cancel` | — | `Cancelling` |
 | `Running` | `lease.expired` | — | `Unreachable` |
+| `Running` | `task.interrupted` | - | `Interrupted` |
 | `Unreachable` | `task.progress`/`lease` | — | `Running` |
 | `Unreachable` | `task.completed` | — | `Done` |
 | `Unreachable` | `task.failed` | — | `Failed` |
 | `Unreachable` | `user.cancel` | — | `Cancelling` |
 | `Unreachable` | `task.ttl.expired` | `now > expires_at + 24 h` | `Expired` |
+| `Unreachable` | `task.interrupted` | - | `Interrupted` |
+| `Interrupted` | `task.completed` | - | `Done` |
+| `Interrupted` | `task.failed` | - | `Failed` |
+| `Interrupted` | `task.rejected` | - | `Rejected` |
+| `Interrupted` | `task.cancelled` | - | `Cancelled` |
 | `Cancelling` | `task.cancelled` | — | `Cancelled` |
 | `Cancelling` | `task.completed` | carrera: ya terminó | `Done` |
 | `Cancelling` | `task.failed` | — | `Failed` |
 | `Cancelling` | `cancel.timeout` | 5 min sin confirmación | `Cancelled` (con `reason=unconfirmed`) |
-| `Done`,`Failed`,`Rejected`,`Cancelled`,`Expired` | — | terminal | — |
+| `Done`,`Failed`,`Rejected`,`Cancelled`,`Expired` | - | terminal | - |
+
+`Interrupted` no es terminal: el origen espera inspección/resultado y nunca vuelve a `Running`
+por sí solo. El poller sigue consultando el estado remoto hasta `Done`/`Failed`.
 
 `Unreachable` **no** implica fallo y **no** autoriza reejecutar. Si el origen decide reintentar,
 crea una **tarea nueva** (`task_id` nuevo), con aprobación nueva si aplica.
@@ -334,7 +345,7 @@ crea una **tarea nueva** (`task_id` nuevo), con aprobación nueva si aplica.
 | `Failed` | `Failed` |
 | `Rejected` | `Rejected` |
 | `Cancelled` | `Cancelled` |
-| `Interrupted` | `Unreachable` (lease expirado) + aviso |
+| `Interrupted` | `Interrupted` (aviso; se sondea hasta ReviewRequired/Failed) |
 
 ---
 

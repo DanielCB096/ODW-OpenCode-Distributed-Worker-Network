@@ -25,6 +25,7 @@ public sealed class OriginPoller : IAsyncDisposable
     {
         Accepted,
         Running,
+        Interrupted,
         Done,
         Failed,
         Rejected,
@@ -85,7 +86,8 @@ public sealed class OriginPoller : IAsyncDisposable
             TaskState.Sent,
             TaskState.Accepted,
             TaskState.Running,
-            TaskState.Unreachable);
+            TaskState.Unreachable,
+            TaskState.Interrupted);
 
         var processed = 0;
 
@@ -243,6 +245,7 @@ public sealed class OriginPoller : IAsyncDisposable
     {
         Goal.Accepted => TaskState.Accepted,
         Goal.Running => TaskState.Running,
+        Goal.Interrupted => TaskState.Interrupted,
         Goal.Done => TaskState.Done,
         Goal.Failed => TaskState.Failed,
         Goal.Rejected => TaskState.Rejected,
@@ -254,14 +257,18 @@ public sealed class OriginPoller : IAsyncDisposable
         switch (state)
         {
             case TaskState.Sent:
-                return goal == Goal.Rejected
-                    ? TaskTrigger.TransportRejected
-                    : TaskTrigger.TransportAccepted;
+                return goal switch
+                {
+                    Goal.Rejected => TaskTrigger.TransportRejected,
+                    Goal.Interrupted => TaskTrigger.TaskInterrupted,
+                    _ => TaskTrigger.TransportAccepted,
+                };
 
             case TaskState.Accepted:
                 return goal switch
                 {
                     Goal.Rejected => TaskTrigger.TaskRejected,
+                    Goal.Interrupted => TaskTrigger.TaskInterrupted,
                     Goal.Running or Goal.Done or Goal.Failed => TaskTrigger.TaskProgress,
                     _ => null,
                 };
@@ -271,6 +278,7 @@ public sealed class OriginPoller : IAsyncDisposable
                 {
                     Goal.Done => TaskTrigger.TaskCompleted,
                     Goal.Failed or Goal.Rejected => TaskTrigger.TaskFailed,
+                    Goal.Interrupted => TaskTrigger.TaskInterrupted,
                     Goal.Cancelled => TaskTrigger.UserCancel,
                     _ => null,
                 };
@@ -279,7 +287,17 @@ public sealed class OriginPoller : IAsyncDisposable
                 return goal switch
                 {
                     Goal.Cancelled => TaskTrigger.UserCancel,
+                    Goal.Interrupted => TaskTrigger.TaskInterrupted,
                     Goal.Running or Goal.Done or Goal.Failed or Goal.Rejected => TaskTrigger.TaskProgress,
+                    _ => null,
+                };
+
+            case TaskState.Interrupted:
+                return goal switch
+                {
+                    Goal.Done => TaskTrigger.TaskCompleted,
+                    Goal.Failed or Goal.Rejected => TaskTrigger.TaskFailed,
+                    Goal.Cancelled => TaskTrigger.TaskCancelled,
                     _ => null,
                 };
 
@@ -295,6 +313,7 @@ public sealed class OriginPoller : IAsyncDisposable
     {
         "RECEIVED" or "AWAITING_LOCAL_APPROVAL" or "QUEUED" => Goal.Accepted,
         "RUNNING" => Goal.Running,
+        "INTERRUPTED" => Goal.Interrupted,
         "COMPLETED" or "REVIEW_REQUIRED" => Goal.Done,
         "FAILED" => Goal.Failed,
         "REJECTED" => Goal.Rejected,

@@ -5,7 +5,7 @@
 > **Estado:** H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1 tiene la delegación real en dos PCs
 > verificada (2026-11-26); doctor PASS en ambos nodos y cobertura Core 97,8 %; falta el reinicio
 > a mitad. Quedan artefactos descargables, Telegram real y H4.
-> **413/413 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
+> **421/421 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
 > pruebas; el repo sigue privado y se rotará al terminar.
 
 Este documento es el punto de entrada para retomar el proyecto en otro equipo sin depender de
@@ -233,7 +233,7 @@ Verificado el 2026-11-26: OpenCode llamó a `odw_propose_task`, se aprobó la ta
 ## 7. Evidencia actual
 
 ```text
-413/413 pruebas · build 0 warnings
+421/421 pruebas · build 0 warnings
 commit actual en `main`
 ```
 
@@ -253,7 +253,7 @@ commit actual en `main`
 - Perfiles de modelo (2026-11-26): tarea `01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`,
   `MODELPROFILE-FREE`, `model_profile=free`, `model_provider=opencode`,
   `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
-- Revisión 2026-11-26: 9 scripts de `tools/` parsean, build 0 warnings, 413/413 pruebas y grafo
+- Revisión 2026-11-26: 9 scripts de `tools/` parsean, build 0 warnings, 421/421 pruebas y grafo
   regenerado.
 - `odw doctor`: 10/10 PASS en PC-OFICINA (`tools/doctor-node.ps1 -AllowLoopback`) y en PC-CASA
   (`tools/doctor-node.ps1`, 0 advertencias, esquema v3 y auditoría válida).

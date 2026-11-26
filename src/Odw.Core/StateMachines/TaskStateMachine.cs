@@ -39,14 +39,17 @@ public static class TaskStateMachine
         new(TaskRole.Origin, TaskState.Sent, TaskTrigger.TransportAccepted, TaskState.Accepted),
         new(TaskRole.Origin, TaskState.Sent, TaskTrigger.TransportRejected, TaskState.Rejected),
         new(TaskRole.Origin, TaskState.Sent, TaskTrigger.TransportFailed, TaskState.Unreachable),
+        new(TaskRole.Origin, TaskState.Sent, TaskTrigger.TaskInterrupted, TaskState.Interrupted),
 
         new(TaskRole.Origin, TaskState.Accepted, TaskTrigger.TaskProgress, TaskState.Running),
         new(TaskRole.Origin, TaskState.Accepted, TaskTrigger.TaskRejected, TaskState.Rejected),
+        new(TaskRole.Origin, TaskState.Accepted, TaskTrigger.TaskInterrupted, TaskState.Interrupted),
         new(TaskRole.Origin, TaskState.Accepted, TaskTrigger.LeaseExpired, TaskState.Unreachable,
             context => context.LeaseExpired, "lease_not_expired"),
 
         new(TaskRole.Origin, TaskState.Running, TaskTrigger.TaskCompleted, TaskState.Done),
         new(TaskRole.Origin, TaskState.Running, TaskTrigger.TaskFailed, TaskState.Failed),
+        new(TaskRole.Origin, TaskState.Running, TaskTrigger.TaskInterrupted, TaskState.Interrupted),
         new(TaskRole.Origin, TaskState.Running, TaskTrigger.UserCancel, TaskState.Cancelling),
         new(TaskRole.Origin, TaskState.Running, TaskTrigger.LeaseExpired, TaskState.Unreachable,
             context => context.LeaseExpired, "lease_not_expired"),
@@ -54,8 +57,15 @@ public static class TaskStateMachine
         new(TaskRole.Origin, TaskState.Unreachable, TaskTrigger.TaskProgress, TaskState.Running),
         new(TaskRole.Origin, TaskState.Unreachable, TaskTrigger.TaskCompleted, TaskState.Done),
         new(TaskRole.Origin, TaskState.Unreachable, TaskTrigger.TaskFailed, TaskState.Failed),
+        new(TaskRole.Origin, TaskState.Unreachable, TaskTrigger.TaskInterrupted, TaskState.Interrupted),
         new(TaskRole.Origin, TaskState.Unreachable, TaskTrigger.UserCancel, TaskState.Cancelling),
         new(TaskRole.Origin, TaskState.Unreachable, TaskTrigger.TaskExpired, TaskState.Expired),
+
+        new(TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskCompleted, TaskState.Done),
+        new(TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskFailed, TaskState.Failed),
+        new(TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskRejected, TaskState.Rejected),
+        new(TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskCancelled, TaskState.Cancelled),
+        new(TaskRole.Origin, TaskState.Interrupted, TaskTrigger.UserCancel, TaskState.Cancelled),
 
         new(TaskRole.Origin, TaskState.Cancelling, TaskTrigger.TaskCancelled, TaskState.Cancelled),
         new(TaskRole.Origin, TaskState.Cancelling, TaskTrigger.TaskCompleted, TaskState.Done),
@@ -103,6 +113,7 @@ public static class TaskStateMachine
         TaskState.Proposed, TaskState.WaitingApproval, TaskState.Approved, TaskState.Sent,
         TaskState.Accepted, TaskState.Running, TaskState.Unreachable, TaskState.Cancelling,
         TaskState.Done, TaskState.Failed, TaskState.Rejected, TaskState.Cancelled, TaskState.Expired,
+        TaskState.Interrupted,
     ];
 
     private static readonly TaskState[] TargetStateList =

@@ -29,6 +29,7 @@ public class TaskStateExtensionsTests
             TaskState.Proposed, TaskState.WaitingApproval, TaskState.Approved, TaskState.Sent,
             TaskState.Accepted, TaskState.Running, TaskState.Unreachable, TaskState.Cancelling,
             TaskState.Done, TaskState.Failed, TaskState.Rejected, TaskState.Cancelled, TaskState.Expired,
+            TaskState.Interrupted,
         };
         var target = new[]
         {

@@ -35,6 +35,7 @@ public enum TaskTrigger
     TaskFailed,
     TaskRejected,
     TaskCancelled,
+    TaskInterrupted,
 
     // Destino
     SlotAvailable,

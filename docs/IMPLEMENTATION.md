@@ -302,7 +302,7 @@ Límites que siguen abiertos y se declaran:
 |---|---|
 | `PeerApi/PeerApiClient.cs` | Cliente de pares: alta, estado, resultado y ping (Bearer + `X-Odw-Node`) |
 | `Node/Origins/OriginProposalService.cs` | Valida, aplica política saliente, persiste y envía |
-| `Node/Origins/OriginPoller.cs` | Refresca estado/resultado del par y avanza la máquina de estados |
+| `Node/Origins/OriginPoller.cs` | Refresca estado/resultado del par y avanza la máquina de estados; mapea `INTERRUPTED` a `Interrupted` en el origen |
 | `Node/Contracts/TaskContractWriter.cs` | Serializa el contrato al JSON wire |
 | `Node/Persistence/Peers/PeerStore.cs` | Sincroniza pares configurados y `last_seen_at` |
 
@@ -312,8 +312,10 @@ Flujo:
 2. `AUTO` ⇒ persiste `APPROVED`, marca `SENT`, hace `POST /tasks`; `202` ⇒ `ACCEPTED`.
 3. `ASK` ⇒ queda en `WAITING_APPROVAL` y **no se envía nada** (falta Approval Gateway).
 4. `DENY` ⇒ error `POLICY_DENIED`.
-5. El poller consulta el par, mapea estados remotos (`QUEUED`, `RUNNING`, `COMPLETED`…) y
-   recupera el resultado; `Accepted→Running→Done` con `result_json` local.
+5. El poller consulta el par, mapea estados remotos (`QUEUED`, `RUNNING`, `INTERRUPTED`,
+   `COMPLETED`…) y recupera el resultado; `Accepted→Running→Done` con `result_json` local.
+   `INTERRUPTED` pasa a `Interrupted` en el origen y el poller sigue consultando hasta un estado
+   final.
 6. Idempotencia: repetir la misma propuesta devuelve la tarea existente sin reenviar.
 
 Prueba real de dos nodos en el mismo proceso: A propone, B acepta, el scheduler de B ejecuta y A
@@ -459,7 +461,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **413/413 pruebas** (176 Core + 122 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
+Estado actual: build 0 warnings, **421/421 pruebas** (184 Core + 122 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
 Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas (1013/1036) con `coverlet.runsettings`,
 que excluye código generado. Comando: `dotnet test tests/Odw.Core.Tests/Odw.Core.Tests.csproj --collect:"XPlat Code Coverage" --settings coverlet.runsettings`.
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.

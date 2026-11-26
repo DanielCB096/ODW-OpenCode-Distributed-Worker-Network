@@ -28,9 +28,17 @@ public class StateMachineTests
         yield return [TaskRole.Origin, TaskState.Approved, TaskTrigger.ApprovalExpired, Expired, TaskState.Expired];
         yield return [TaskRole.Origin, TaskState.Sent, TaskTrigger.TransportAccepted, TransitionContext.Default, TaskState.Accepted];
         yield return [TaskRole.Origin, TaskState.Sent, TaskTrigger.TransportFailed, TransitionContext.Default, TaskState.Unreachable];
+        yield return [TaskRole.Origin, TaskState.Sent, TaskTrigger.TaskInterrupted, TransitionContext.Default, TaskState.Interrupted];
         yield return [TaskRole.Origin, TaskState.Accepted, TaskTrigger.LeaseExpired, LeaseOk, TaskState.Unreachable];
         yield return [TaskRole.Origin, TaskState.Accepted, TaskTrigger.LeaseExpired, LeaseNotExpired, null];
+        yield return [TaskRole.Origin, TaskState.Accepted, TaskTrigger.TaskInterrupted, TransitionContext.Default, TaskState.Interrupted];
         yield return [TaskRole.Origin, TaskState.Running, TaskTrigger.TaskCompleted, TransitionContext.Default, TaskState.Done];
+        yield return [TaskRole.Origin, TaskState.Running, TaskTrigger.TaskInterrupted, TransitionContext.Default, TaskState.Interrupted];
+        yield return [TaskRole.Origin, TaskState.Unreachable, TaskTrigger.TaskInterrupted, TransitionContext.Default, TaskState.Interrupted];
+        yield return [TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskCompleted, TransitionContext.Default, TaskState.Done];
+        yield return [TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskFailed, TransitionContext.Default, TaskState.Failed];
+        yield return [TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskRejected, TransitionContext.Default, TaskState.Rejected];
+        yield return [TaskRole.Origin, TaskState.Interrupted, TaskTrigger.TaskCancelled, TransitionContext.Default, TaskState.Cancelled];
         yield return [TaskRole.Origin, TaskState.Cancelling, TaskTrigger.CancelTimeout, TransitionContext.Default, TaskState.Cancelled];
         yield return [TaskRole.Origin, TaskState.Done, TaskTrigger.UserCancel, TransitionContext.Default, null];
 

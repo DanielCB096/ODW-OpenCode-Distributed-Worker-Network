@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (413 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PASS en ambos PCs y cobertura Core 97,8 %; falta el reinicio a mitad |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (421 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PASS en ambos PCs y cobertura Core 97,8 %; falta el reinicio a mitad |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -114,7 +114,7 @@ OpenCode completados (2026-11-24). Resto pendiente.
   (`01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`, `model_profile=free`, `cost_usd=0`).
 - ✅ Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas con `coverlet.runsettings` (excluye
   generados). `odw doctor` 10/10 PASS en PC-OFICINA y PC-CASA; falta el reinicio a mitad.
-- ✅ 413 pruebas verdes, build sin advertencias.
+- ✅ 421 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
 **Entregables**
