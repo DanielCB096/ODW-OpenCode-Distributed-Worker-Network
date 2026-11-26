@@ -14,7 +14,11 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
 
 - **328/328 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
 - H0, H1 (loopback), H2 (pipe/CLI/HMAC) y H3 cerrados.
-- Pendiente: prueba real en dos PCs/Tailscale, artefactos descargables, Telegram real, H4.
+- Nodo destino `PC-CASA` preparado y verificado: servicio `OdwNode` como `.\odw-svc`, listener
+  `100.94.46.95:7421`, `/peer/v1/status` autenticado OK y ensayo A→B contra la IP tailnet
+  (`E2E-REMOTE` y `E2E-REMOTE-WRITE`, origen en el mismo equipo).
+- Pendiente: salto real PC casa ↔ PC oficina (kit en `C:\ODW\kit-origen.zip`; pasos en
+  `docs/RUNBOOK-DOS-PCS.md`), artefactos descargables, Telegram real, H4.
 
 ## Antes de tocar código
 
@@ -52,6 +56,7 @@ tools/e2e-loopback.ps1 -WriteTask   # changed_paths/commit/diff
 | Contrato, estados y resultado | `docs/DOMAIN-MODEL.md` |
 | API de pares | `docs/PROTOCOL.md` |
 | Fachada MCP | `docs/MCP-FACADE.md` |
+| Prueba entre casa y oficina (dos PC) | `docs/RUNBOOK-DOS-PCS.md` |
 | Grafo del código | `graphify-out/GRAPH_REPORT.md` |
 
 ## Grafo

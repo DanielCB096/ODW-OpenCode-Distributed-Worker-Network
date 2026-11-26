@@ -250,6 +250,15 @@ Límites que siguen abiertos y se declaran:
 - E2E loopback verificado: dos nodos `odw-svc` (`PC-A` origen, `PC-B` destino), propuesta por MCP,
   aprobación por pipe, ejecución con sandbox. Casos `E2E-LOOPBACK` (read_only) y `E2E-WRITE`
   (read_write con `changed_paths`, `commit` y `diff`). Falta la prueba en dos PCs con Tailscale.
+- Nodo destino real preparado (`tools/prepare-destination-node.ps1`): servicio `OdwNode` como
+  `.\odw-svc`, dependiente de `Tailscale` y con reinicio automático; listener en la IPv4 tailnet;
+  firewall solo en la interfaz Tailscale; energía sin suspensión y Update sin reinicio automático.
+  `peer_api.address` explícito evita que el bind resuelva la IPv6 de Tailscale.
+- Ensayo A→B contra la IP tailnet con el origen en el mismo equipo
+  (`tools/h1-remote-test.ps1`): `E2E-REMOTE` (read_only) y `E2E-REMOTE-WRITE`
+  (`changed_paths=["src/remoto.txt"]`, commit y diff), con aprobación por pipe sin elevación
+  (`approvals.security_descriptor` incluye el SID del usuario). El salto entre dos PCs sigue
+  pendiente; kit y runbook en `docs/RUNBOOK-DOS-PCS.md`.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
@@ -407,6 +416,15 @@ odw sandbox net install --agent odw-agent --port 7423
 # E2E origen→destino en un PC (dos nodos loopback como odw-svc)
 powershell -ExecutionPolicy Bypass -File tools\e2e-loopback.ps1
 
+# nodo destino permanente + kit y prueba desde otra PC (ver docs/RUNBOOK-DOS-PCS.md)
+powershell -ExecutionPolicy Bypass -File tools\prepare-destination-node.ps1
+powershell -ExecutionPolicy Bypass -File tools\prepare-origin-kit.ps1
+powershell -ExecutionPolicy Bypass -File tools\h1-remote-test.ps1
+
+# derechos de logon: alta y verificación por LSA (consola elevada)
+powershell -ExecutionPolicy Bypass -File tools\grant-logon-rights.ps1 `
+  -Account odw-svc -Right SeServiceLogonRight,SeIncreaseQuotaPrivilege -QueryOnly -Verify
+
 # integración real con OpenCode (opt-in). Modelo gratuito por defecto;
 # si no está disponible, fija ODW_TEST_MODEL (fallback acordado).
 $env:ODW_OPENCODE_EXE = "C:\ruta\a\opencode.cmd"
@@ -459,7 +477,8 @@ La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no 
 
 ## 14. Siguiente
 
-1. Prueba real en dos PCs (H1): delegación A→B con el servicio `odw-svc`.
+1. Prueba real en dos PCs (H1): delegación A→B con el servicio `odw-svc`. El nodo casa está
+   preparado y el kit de origen está en `C:\ODW\kit-origen.zip`; pasos en `docs/RUNBOOK-DOS-PCS.md`.
 2. Probar Telegram con un bot real (H2); la firma HMAC ya está implementada.
 3. Empaquetar artefactos descargables (el diff ya viaja inline, truncado a 256 KiB).
 4. H4: leases, mensajes, cancelación remota y reconciliación tras reinicio.

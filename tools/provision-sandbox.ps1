@@ -211,9 +211,26 @@ else {
 
 $serviceSid = ([Security.Principal.NTAccount]::new($ServiceAccount)).Translate(
     [Security.Principal.SecurityIdentifier]).Value
-Grant-Rights @{
-    $serviceSid = @('SeServiceLogonRight', 'SeIncreaseQuotaPrivilege')
-    $agentSid   = @('SeDenyNetworkLogonRight', 'SeDenyRemoteInteractiveLogonRight')
+$rightsHelper = Join-Path $PSScriptRoot 'grant-logon-rights.ps1'
+$rightsViaLsa = $false
+if (Test-Path $rightsHelper) {
+    try {
+        & $rightsHelper -Account $ServiceAccount `
+            -Right @('SeServiceLogonRight', 'SeIncreaseQuotaPrivilege') -Quiet -Verify
+        & $rightsHelper -Account $AgentAccount `
+            -Right @('SeDenyNetworkLogonRight', 'SeDenyRemoteInteractiveLogonRight') -Quiet -Verify
+        $rightsViaLsa = $true
+    }
+    catch {
+        Write-Warning "LSA no pudo otorgar los derechos ($($_.Exception.Message)); se intenta secedit."
+    }
+}
+
+if (-not $rightsViaLsa) {
+    Grant-Rights @{
+        $serviceSid = @('SeServiceLogonRight', 'SeIncreaseQuotaPrivilege')
+        $agentSid   = @('SeDenyNetworkLogonRight', 'SeDenyRemoteInteractiveLogonRight')
+    }
 }
 Write-Host "Derechos aplicados: servicio puede iniciar sesión; agente sin red ni RDP."
 
