@@ -191,3 +191,21 @@ desmontar el nodo; no los copies a otra PC.
   con token.
 - La aprobación no existe por HTTP ni por MCP: solo por el named pipe (o Telegram si se
   configura). El agente no puede aprobar sus propias delegaciones.
+
+---
+
+## 8. Después de la prueba
+
+1. Borra el repositorio puente privado que contiene `kit-origen.zip` (o al menos la rama
+   `main`). El kit incluye el token de par.
+2. Rota el token en casa, en consola elevada:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File tools\rotate-peer-token.ps1
+   ```
+
+   Genera uno nuevo, reinicia `OdwNode`, verifica `/status` y restaura el anterior si algo
+   falla. No imprime el token.
+3. Actualiza `peer.token` en la PC origen con el archivo nuevo
+   (`%PROGRAMDATA%\ODW\secrets\peer-oficina.token`) y vuelve a ejecutar la prueba.
+4. Borra el kit y el token del USB y del equipo de la oficina.
