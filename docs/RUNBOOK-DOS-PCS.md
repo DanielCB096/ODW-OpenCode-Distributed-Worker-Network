@@ -1,8 +1,11 @@
 # Runbook — prueba H1 entre la PC de casa y la PC del trabajo
 
-> Nodo casa: **PC-CASA** · `danielcb.tailcc7521.ts.net` · `100.94.46.95` · servicio `OdwNode` (`.\odw-svc`)
-> Nodo oficina: **PC-OFICINA** · `daniel-cb.tailcc7521.ts.net` · `100.124.89.57`
+> Nodo casa: **PC-CASA** · `pc-casa.<tailnet>.ts.net` · `<IP-TAILNET-CASA>` · servicio `OdwNode` (`.\odw-svc`)
+> Nodo oficina: **PC-OFICINA** · `pc-oficina.<tailnet>.ts.net` · `<IP-TAILNET-OFICINA>`
 > Puerto de pares: **7421/tcp, solo en la interfaz Tailscale** · MCP local: 7422 · proxy del modelo: 7423
+
+> Los valores entre `<...>` son marcadores: sustitúyelos solo en tu copia local. No publiques
+> IPs, hostnames ni cuentas reales de la tailnet.
 
 El objetivo es cerrar el criterio pendiente de H1: **una sesión del nodo origen delega una tarea
 `analysis` al nodo destino, un humano la aprueba por el named pipe y el origen recupera el
@@ -13,7 +16,7 @@ resultado**, con las dos máquinas en la misma tailnet.
 ## 0. Estado verificado la noche anterior (2026-11-25)
 
 - Servicio `OdwNode` como `.\odw-svc`, dependiente de `Tailscale`, con reinicio automático.
-- Listener en `100.94.46.95:7421`. Se usa `peer_api.address` con la IPv4 explícita porque
+- Listener en `<IP-TAILNET-CASA>:7421`. Se usa `peer_api.address` con la IPv4 explícita porque
   `bind: "tailscale"` resolvía la IPv6 (`fd7a:…`) y Kestrel escuchaba solo ahí.
 - `/peer/v1/status` autenticado como `PC-OFICINA` → `status: online`.
 - Ensayo A→B con el origen en el mismo equipo, contra la IP tailnet:
@@ -26,14 +29,17 @@ resultado**, con las dos máquinas en la misma tailnet.
   `SeDenyRemoteInteractiveLogonRight` para `odw-agent`.
 - BitLocker desactivado en `C:` (un reinicio no pedirá clave).
 - El ensayo **no** sustituye el salto entre dos máquinas; eso es lo que se hace mañana.
+- **Revisión 2026-11-26 (PC-OFICINA):** `PC-CASA` estaba offline, no hay servicio `OdwNode` ni
+  listener 7421 en la oficina y el kit no está en este equipo. La prueba de dos PCs sigue
+  pendiente; antes de repetirla, rota el token y regenera el kit.
 
 ---
 
 ## 1. Antes de salir de casa
 
-- [ ] `tailscale status` muestra `DanielCB` en línea y `Daniel_CB` cuando la PC del trabajo arranque.
+- [ ] `tailscale status` muestra el nodo casa en línea y el de oficina cuando arranque.
 - [ ] `Get-Service OdwNode` → `Running`; el servicio depende de `Tailscale`.
-- [ ] `Get-NetTCPConnection -LocalPort 7421 -State Listen` → `100.94.46.95:7421`.
+- [ ] `Get-NetTCPConnection -LocalPort 7421 -State Listen` → `<IP-TAILNET-CASA>:7421`.
   (`/peer/v1/health` es solo loopback y con el bind a la IP tailnet no es alcanzable; la
   verificación autenticada se hace mañana desde el trabajo con `/peer/v1/status`.)
 - [ ] La PC **no se suspende**: `powercfg /change standby-timeout-ac 0` ya aplicado.
@@ -52,11 +58,11 @@ Deja el equipo encendido y conectado. No hace falta sesión iniciada: el servici
 
 ```powershell
 tailscale status
-tailscale ping 100.94.46.95
+tailscale ping <IP-TAILNET-CASA>
 ```
 
-Si `daniel-cb` no está en la tailnet, instala Tailscale y entra con la misma cuenta
-(`daniel.cb096@`). Sin Tailscale la prueba no es posible: el bind de pares rechaza IP LAN.
+Si `PC-OFICINA` no está en la tailnet, instala Tailscale y entra con la misma cuenta
+(`<cuenta-tailnet>`). Sin Tailscale la prueba no es posible: el bind de pares rechaza IP LAN.
 
 ### 2.2 Copiar y descomprimir el kit
 
@@ -70,6 +76,11 @@ cd C:\ODW-kit
 Contenido: `odw.exe` (autocontenido, no necesita .NET), `kit.json`, `peer.token`,
 `h1-remote-test.ps1` y este runbook. **No requiere permisos de administrador** ni Git.
 El script comprueba el destino con `GET /peer/v1/hello` autenticado antes de proponer.
+
+El kit **no se transporta por git, chat ni correo**: usa USB, Taildrop o el gestor de contraseñas.
+Si el token ha estado en un repo, USB compartido o cualquier medio temporal, rótalo antes de la
+prueba (`tools/rotate-peer-token.ps1` en el destino), verifica que el anterior da `401` y regenera
+el kit con `tools/prepare-origin-kit.ps1`. No reutilices un `kit-origen.zip` antiguo.
 
 ### 2.3 Ejecutar la prueba
 
@@ -113,7 +124,7 @@ Si quieres dejar el origen vivo para inspeccionar: `-KeepOpen`; los logs quedan 
 ```powershell
 # Estado del destino (autenticado). health es solo loopback por diseño: 404 desde la tailnet.
 $token = Get-Content C:\ODW-kit\peer.token -Raw
-Invoke-RestMethod http://100.94.46.95:7421/peer/v1/status `
+Invoke-RestMethod http://<IP-TAILNET-CASA>:7421/peer/v1/status `
   -Headers @{ Authorization = "Bearer $token"; 'X-Odw-Node' = 'PC-OFICINA' } |
   ConvertTo-Json -Depth 6
 ```
@@ -127,7 +138,7 @@ Get-WinEvent -LogName Application -MaxEvents 30 |
   Where-Object ProviderName -match 'Odw' | Select-Object TimeCreated, Message
 ```
 
-RDP (ya habilitado) por la tailnet: `mstsc /v:100.94.46.95`.
+RDP (ya habilitado) por la tailnet: `mstsc /v:<IP-TAILNET-CASA>`.
 
 ---
 
@@ -196,8 +207,9 @@ desmontar el nodo; no los copies a otra PC.
 
 ## 8. Después de la prueba
 
-1. Borra el repositorio puente privado que contiene `kit-origen.zip` (o al menos la rama
-   `main`). El kit incluye el token de par.
+1. Borra el repositorio puente privado que contiene `kit-origen.zip` **y todo su historial**.
+   Borrar solo la rama `main` no elimina el blob del token; si no puedes borrar el repo,
+   considéralo comprometido. El kit incluye el token de par.
 2. Rota el token en casa, en consola elevada:
 
    ```powershell
@@ -206,6 +218,8 @@ desmontar el nodo; no los copies a otra PC.
 
    Genera uno nuevo, reinicia `OdwNode`, verifica `/status` y restaura el anterior si algo
    falla. No imprime el token.
-3. Actualiza `peer.token` en la PC origen con el archivo nuevo
-   (`%PROGRAMDATA%\ODW\secrets\peer-oficina.token`) y vuelve a ejecutar la prueba.
-4. Borra el kit y el token del USB y del equipo de la oficina.
+3. Comprueba que el token anterior ya **no** autentica (`401` en `/peer/v1/status`). Si sigue
+   funcionando, la rotación no se aplicó: repítela antes de seguir.
+4. Actualiza `peer.token` en la PC origen con el archivo nuevo
+   (`%PROGRAMDATA%\ODW\secrets\peer-oficina.token`), regenera el kit y vuelve a ejecutar la prueba.
+5. Borra el kit y el token del USB y del equipo de la oficina.

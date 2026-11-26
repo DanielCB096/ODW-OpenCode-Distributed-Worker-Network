@@ -1,10 +1,11 @@
 # ODW — Continuar desde otra PC
 
-> **Último commit:** el último de `main` (`git log -1`) · **Rama:** `main` · **Fecha:** 2026-11-25
+> **Último commit:** el último de `main` (`git log -1`) · **Rama:** `main` · **Fecha:** 2026-11-26
 >
 > **Estado:** H0, H1 (protocolo en loopback), H2 (pipe/CLI/HMAC) y H3 cerrados y verificados.
 > Quedan H1 en dos PCs con Tailscale, artefactos descargables, Telegram real y H4.
-> **328/328 pruebas**, build sin advertencias.
+> **328/328 pruebas**, build sin advertencias. La revisión del 2026-11-26 encontró `PC-CASA`
+> offline y el kit de oficina pendiente de regenerar tras rotar el token.
 
 Este documento es el punto de entrada para retomar el proyecto en otro equipo sin depender de
 la memoria de una sesión. El diseño detallado vive en `docs/`; el grafo del código en
@@ -107,13 +108,27 @@ Nunca copies estos elementos entre PCs; son locales y contienen secretos o estad
 | `agent.secret`, `service.secret` | `%PROGRAMDATA%\ODW` | Regenerar con el script; nunca copiar |
 | `network.state` | `%PROGRAMDATA%\ODW` | Lo escribe `odw sandbox net install` |
 | Filtros WFP | BFE | Instalarlos con el script/CLI |
-| `node.json`, tokens de par/MCP | `%PROGRAMDATA%\ODW` o config | Crear y intercambiar por canal seguro |
+| `node.json`, tokens de par/MCP | `%PROGRAMDATA%\ODW` o config | Crear e intercambiar por USB, Taildrop o gestor de contraseñas |
 | `odw.db`, `approvals.key` | data dir | Se generan en el primer arranque |
 | Workspaces y runtime | `%PROGRAMDATA%\ODW` | Efímeros; no copiar |
 | `opencode.exe` | `%PROGRAMDATA%\ODW\opencode` | Lo copia el aprovisionamiento |
 
-El token de par es **compartido y bidireccional** en el MVP. Intercámbialo por Signal/gestor de
-contraseñas, nunca por chat ni en el repositorio.
+El token de par es **compartido y bidireccional** en el MVP. Intercámbialo por USB, Taildrop o
+gestor de contraseñas; nunca por chat, correo, git ni un repo puente.
+
+### Kit de prueba y repo puente (incidente 2026-11-26)
+
+El kit `kit-origen.zip` se transportó en un repo privado temporal. Ese repo **seguía existiendo**
+al revisar y contiene el `peer.token` empaquetado antes de la rotación. Mientras no se verifique:
+
+1. No uses ese kit ni su token; considera el token comprometido.
+2. Rota el token en el destino (`tools/rotate-peer-token.ps1`) y comprueba que el anterior da `401`.
+3. Regenera el kit (`tools/prepare-origin-kit.ps1`), llévalo por USB/Taildrop/gestor y borra el
+   anterior.
+4. Borra el repo puente completo (incluido su historial) y cualquier copia del zip.
+
+El repo puente no se borró el 2026-11-26 por decisión del propietario; queda como pendiente
+explícito en `docs/ROADMAP.md`.
 
 ---
 
@@ -195,6 +210,8 @@ commit actual en `main`
 - Nodo real como `odw-svc` con scheduler, `odw-agent`, WFP, proxy y runtime.
 - Aprobación por pipe, propuesta MCP y poller del origen.
 - Servicio Windows instalado/arrancado como `.\odw-svc`.
+- Revisión 2026-11-26: 7 scripts de `tools/` parsean, build 0 warnings, 328/328 pruebas y grafo
+  regenerado; `PC-CASA` offline y kit de oficina pendiente.
 
 ---
 
@@ -202,7 +219,8 @@ commit actual en `main`
 
 | Tema | Estado |
 |---|---|
-| Prueba en dos PCs con Tailscale | ⬜ pendiente (sin segunda PC) |
+| Prueba en dos PCs con Tailscale | ⬜ pendiente; `PC-CASA` offline al revisar (2026-11-26); kit pendiente de regenerar |
+| Repo puente con el kit | ⛔ pendiente de borrar; el token empaquetado es anterior a la rotación |
 | Artefactos descargables | ⬜ el diff va inline (256 KiB); el bundle/artefacto no |
 | `commit`/`branch` | ✅ se crean, pero el workspace se borra: el diff es la evidencia; el SHA es informativo |
 | `network: "allow"` | ⛔ rechazado (filtro por SID, no por tarea) |
@@ -272,11 +290,12 @@ Preguntas útiles para el grafo:
 
 ## 11. Próximos pasos recomendados
 
-1. **Artefactos descargables**: `GET /peer/v1/tasks/{id}/artifacts/{name}` + bundle/parche completo.
-2. **Prueba real en dos PCs** con Tailscale (cuando haya hardware).
-3. **Telegram** con un bot real.
-4. **H4**: mensajes, cancelación remota, leases y reconciliación tras reinicio.
-5. **H0-6**: aislamiento por directorio con instancias de OpenCode ya separadas.
+1. **Cerrar el incidente del kit**: verificar la rotación, borrar el repo puente y regenerar el kit.
+2. **Prueba real en dos PCs** con Tailscale (cuando `PC-CASA` esté en línea y el kit nuevo esté listo).
+3. **Artefactos descargables**: `GET /peer/v1/tasks/{id}/artifacts/{name}` + bundle/parche completo.
+4. **Telegram** con un bot real.
+5. **H4**: mensajes, cancelación remota, leases y reconciliación tras reinicio.
+6. **H0-6**: aislamiento por directorio con instancias de OpenCode ya separadas.
 
 ---
 

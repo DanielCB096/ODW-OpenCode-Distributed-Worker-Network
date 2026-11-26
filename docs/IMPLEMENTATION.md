@@ -249,7 +249,8 @@ Límites que siguen abiertos y se declaran:
   denegados el logon de red y el interactivo remoto.
 - E2E loopback verificado: dos nodos `odw-svc` (`PC-A` origen, `PC-B` destino), propuesta por MCP,
   aprobación por pipe, ejecución con sandbox. Casos `E2E-LOOPBACK` (read_only) y `E2E-WRITE`
-  (read_write con `changed_paths`, `commit` y `diff`). Falta la prueba en dos PCs con Tailscale.
+  (read_write con `changed_paths`, `commit` y `diff`). Falta la prueba en dos PCs con Tailscale;
+  al revisar (2026-11-26) `PC-CASA` estaba offline y el kit de oficina no estaba listo.
 - Nodo destino real preparado (`tools/prepare-destination-node.ps1`): servicio `OdwNode` como
   `.\odw-svc`, dependiente de `Tailscale` y con reinicio automático; listener en la IPv4 tailnet;
   firewall solo en la interfaz Tailscale; energía sin suspensión y Update sin reinicio automático.
@@ -258,7 +259,9 @@ Límites que siguen abiertos y se declaran:
   (`tools/h1-remote-test.ps1`): `E2E-REMOTE` (read_only) y `E2E-REMOTE-WRITE`
   (`changed_paths=["src/remoto.txt"]`, commit y diff), con aprobación por pipe sin elevación
   (`approvals.security_descriptor` incluye el SID del usuario). El salto entre dos PCs sigue
-  pendiente; kit y runbook en `docs/RUNBOOK-DOS-PCS.md`.
+  pendiente; kit y runbook en `docs/RUNBOOK-DOS-PCS.md`. El `kit-origen.zip` del repo puente se
+  empaquetó antes de la rotación del token: no debe usarse; hay que regenerarlo tras verificar la
+  rotación y borrar el repo puente.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
@@ -417,7 +420,7 @@ odw sandbox net install --agent odw-agent --port 7423
 powershell -ExecutionPolicy Bypass -File tools\e2e-loopback.ps1
 
 # nodo destino permanente + kit y prueba desde otra PC (ver docs/RUNBOOK-DOS-PCS.md)
-powershell -ExecutionPolicy Bypass -File tools\prepare-destination-node.ps1
+powershell -ExecutionPolicy Bypass -File tools\prepare-destination-node.ps1 -OriginAddress http://<IP-TAILNET-OFICINA>:7421
 powershell -ExecutionPolicy Bypass -File tools\prepare-origin-kit.ps1
 powershell -ExecutionPolicy Bypass -File tools\h1-remote-test.ps1
 

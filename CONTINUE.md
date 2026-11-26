@@ -76,6 +76,10 @@ Debe terminar en `DONE` con `E2E-LOOPBACK` y, en el caso de escritura, con
 Para dos PCs: Tailscale en ambos, tokens intercambiados por canal seguro y el bind de pares en la
 IP tailnet. Sin Tailscale, usa loopback + túnel SSH; el bind directo a una IP LAN se rechaza.
 
+El kit se pasa por USB, Taildrop o gestor de contraseñas, **nunca por git**. Si el token estuvo en
+un repo o USB compartido, rótalo (`tools/rotate-peer-token.ps1`) y regenera el kit antes de probar.
+Al revisar el 2026-11-26 el repo puente con el kit anterior seguía pendiente de borrar.
+
 ## 7. Consultar el grafo
 
 ```powershell

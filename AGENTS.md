@@ -10,15 +10,19 @@ ODW conecta PCs Windows con OpenCode: un nodo **origen** propone una tarea, un h
 por pipe/Telegram y un nodo **destino** la ejecuta como `odw-agent` en un workspace aislado.
 El resultado incluye resumen, `changed_paths`, commit y diff.
 
-## Estado actual (2026-11-25)
+## Estado actual (2026-11-26)
 
 - **328/328 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
 - H0, H1 (loopback), H2 (pipe/CLI/HMAC) y H3 cerrados.
 - Nodo destino `PC-CASA` preparado y verificado: servicio `OdwNode` como `.\odw-svc`, listener
-  `100.94.46.95:7421`, `/peer/v1/status` autenticado OK y ensayo A→B contra la IP tailnet
-  (`E2E-REMOTE` y `E2E-REMOTE-WRITE`, origen en el mismo equipo).
-- Pendiente: salto real PC casa ↔ PC oficina (kit en `C:\ODW\kit-origen.zip`; pasos en
-  `docs/RUNBOOK-DOS-PCS.md`), artefactos descargables, Telegram real, H4.
+  en la IPv4 tailnet (`<IP-TAILNET-CASA>:7421`), `/peer/v1/status` autenticado OK y ensayo A→B
+  contra la IP tailnet (`E2E-REMOTE` y `E2E-REMOTE-WRITE`, origen en el mismo equipo).
+- Pendiente: salto real PC casa ↔ PC oficina. Al revisar (2026-11-26) `PC-CASA` estaba offline, el
+  kit no estaba en la PC de oficina y debe regenerarse tras rotar el token. Pasos en
+  `docs/RUNBOOK-DOS-PCS.md`; también quedan artefactos descargables, Telegram real y H4.
+- **Repo puente del kit:** seguía existiendo un repo privado temporal con `kit-origen.zip`
+  (incluye `peer.token`). No se borró por decisión del propietario; trátalo como comprometido
+  hasta verificar la rotación, no uses ese kit y bórralo cuando se confirme.
 
 ## Antes de tocar código
 
@@ -70,6 +74,10 @@ python tools/graphify-project.py   # regenerar
 
 - Cambios pequeños, compilando y con pruebas; no declares aislamiento no verificado.
 - No copies secretos ni `node.json` entre PCs; usa `tools/provision-sandbox.ps1`.
+- No transportes el kit ni `peer.token` por git, chat ni correo: usa USB, Taildrop o gestor de
+  contraseñas. Un repo temporal con secretos se borra y el token se rota.
+- Los documentos públicos usan marcadores `<IP-TAILNET-...>`; no metas IPs, hostnames ni cuentas
+  reales de la tailnet.
 - El repo de trabajo debe ser legible por `odw-svc` (es quien clona).
 - El workspace temporal se borra: el diff inline es la evidencia del cambio.
 - Antes de cerrar, actualiza `docs/IMPLEMENTATION.md`, `docs/ROADMAP.md` y este estado.

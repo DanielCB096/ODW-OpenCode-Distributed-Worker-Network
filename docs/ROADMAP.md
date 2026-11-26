@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (328 pruebas); E2E A→B en loopback; nodo destino preparado y ensayo A→B sobre la IP tailnet; falta el salto a la PC de oficina |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (328 pruebas); E2E A→B en loopback; nodo destino preparado y ensayo A→B sobre la IP tailnet; falta el salto a la PC de oficina (al 2026-11-26, destino offline y kit pendiente de regenerar tras rotar el token) |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -104,7 +104,9 @@ OpenCode completados (2026-11-24). Resto pendiente.
   primer plano.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
 - ✅ Cuenta dedicada `odw-svc`; 🟡 nodo destino preparado y ensayo A→B sobre la IP tailnet;
-  falta el salto desde la PC de oficina (`docs/RUNBOOK-DOS-PCS.md`).
+  falta el salto desde la PC de oficina (`docs/RUNBOOK-DOS-PCS.md`). Al revisar el 2026-11-26 el
+  destino estaba offline y el kit debe regenerarse tras rotar el token; el repo puente con el kit
+  sigue pendiente de borrar.
 - ✅ 328 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
@@ -279,5 +281,6 @@ implementados y verificados. Queda la prueba real en dos PCs (H1) y el empaqueta
 8. ✅ Scheduler de ejecución con workspace Git, Job Objects y runner de OpenCode.
 9. ✅ Lado origen, `odw_propose_task`, poller y recuperación del resultado (A→B→resultado).
 10. ✅ Aprobaciones por pipe + CLI y `odw serve` con `node.json`/`policy.json`.
-11. Servicio Windows + Telegram/HMAC para cerrar H1/H2.
+11. Cerrar el incidente del kit: verificar la rotación, borrar el repo puente y regenerar el kit.
+12. Prueba real en dos PCs + Telegram/HMAC para cerrar H1/H2.
 

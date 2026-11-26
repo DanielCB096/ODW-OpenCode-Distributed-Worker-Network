@@ -29,16 +29,17 @@
     node_id del nodo origen que podra delegar tareas. Por defecto PC-OFICINA.
 
 .PARAMETER OriginAddress
-    Direccion del origen (informativa; el destino no inicia conexiones).
+    Direccion tailnet del origen, por ejemplo http://<IP-TAILNET-OFICINA>:7421. Es informativa
+    (el destino no inicia conexiones), pero se escribe en la lista de pares.
 
 .EXAMPLE
-    powershell -ExecutionPolicy Bypass -File tools/prepare-destination-node.ps1
+    powershell -ExecutionPolicy Bypass -File tools/prepare-destination-node.ps1 -OriginAddress http://<IP-TAILNET-OFICINA>:7421
 #>
 [CmdletBinding()]
 param(
     [string]$NodeId = 'PC-CASA',
     [string]$OriginNodeId = 'PC-OFICINA',
-    [string]$OriginAddress = 'http://100.124.89.57:7421',
+    [string]$OriginAddress,
     [string]$InstallDir = 'C:\ODW',
     [string]$DataDir = (Join-Path $env:ProgramData 'ODW'),
     [string]$RepoName = 'demo',
@@ -111,6 +112,10 @@ function Stop-OdwService {
 }
 
 Assert-Admin
+
+if (-not $OriginAddress) {
+    throw "Indica -OriginAddress con la direccion tailnet del nodo origen (p. ej. http://<IP-TAILNET-OFICINA>:7421)."
+}
 
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $InstallDir = [IO.Path]::GetFullPath($InstallDir)
