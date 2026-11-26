@@ -249,8 +249,9 @@ Límites que siguen abiertos y se declaran:
   denegados el logon de red y el interactivo remoto.
 - E2E loopback verificado: dos nodos `odw-svc` (`PC-A` origen, `PC-B` destino), propuesta por MCP,
   aprobación por pipe, ejecución con sandbox. Casos `E2E-LOOPBACK` (read_only) y `E2E-WRITE`
-  (read_write con `changed_paths`, `commit` y `diff`). Falta la prueba en dos PCs con Tailscale;
-  al revisar (2026-11-26) `PC-CASA` estaba offline y el kit de oficina no estaba listo.
+  (read_write con `changed_paths`, `commit` y `diff`). **Prueba real en dos PCs verificada
+  (2026-11-26):** `PC-OFICINA` → `PC-CASA` por Tailscale, con los casos `E2E-REMOTE` y
+  `E2E-REMOTE-WRITE`.
 - Nodo destino real preparado (`tools/prepare-destination-node.ps1`): servicio `OdwNode` como
   `.\odw-svc`, dependiente de `Tailscale` y con reinicio automático; listener en la IPv4 tailnet;
   firewall solo en la interfaz Tailscale; energía sin suspensión y Update sin reinicio automático.
@@ -258,15 +259,17 @@ Límites que siguen abiertos y se declaran:
 - Ensayo A→B contra la IP tailnet con el origen en el mismo equipo
   (`tools/h1-remote-test.ps1`): `E2E-REMOTE` (read_only) y `E2E-REMOTE-WRITE`
   (`changed_paths=["src/remoto.txt"]`, commit y diff), con aprobación por pipe sin elevación
-  (`approvals.security_descriptor` incluye el SID del usuario). El salto entre dos PCs sigue
-  pendiente; kit y runbook en `docs/RUNBOOK-DOS-PCS.md`. El `kit-origen.zip` del repo puente se
-  empaquetó antes de la rotación del token: no debe usarse; hay que regenerarlo tras verificar la
-  rotación y borrar el repo puente.
+  (`approvals.security_descriptor` incluye el SID del usuario). El **salto real entre dos PCs** se
+  verificó el 2026-11-26 desde `PC-OFICINA` a `PC-CASA` con el token del kit: `read_only`
+  (`01M8C901HCSFCE93QJH1P3YRYD`) y `read_write_worktree` (`01M8C90GX6903D3VZBMEGXKAD9`,
+  `changed_paths=["src/remoto.txt"]`, commit `48d36b9…`, diff `+HOLA`). El token del kit sigue
+  vivo: la rotación no se aplicó; hay que rotarlo, borrar el repo puente y borrar el kit.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
-- Pendiente: prueba real en dos PCs (H1). El resultado ya calcula `changed_paths`, `commit` y un
-  `diff` inline (256 KiB) para tareas de escritura; el empaquetado de artefactos queda pendiente.
+- Pendiente: criterios restantes de H1 (doctor en dos PCs, reinicio a mitad, cobertura). El
+  resultado ya calcula `changed_paths`, `commit` y un `diff` inline (256 KiB) para tareas de
+  escritura; el empaquetado de artefactos queda pendiente.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El runner captura los cambios antes de borrar el workspace: en `read_write_worktree` hace
   `git add`, guarda el diff, crea el commit y valida las rutas contra `allowed_paths`/`denied_paths`.

@@ -29,9 +29,12 @@ resultado**, con las dos máquinas en la misma tailnet.
   `SeDenyRemoteInteractiveLogonRight` para `odw-agent`.
 - BitLocker desactivado en `C:` (un reinicio no pedirá clave).
 - El ensayo **no** sustituye el salto entre dos máquinas; eso es lo que se hace mañana.
-- **Revisión 2026-11-26 (PC-OFICINA):** `PC-CASA` estaba offline, no hay servicio `OdwNode` ni
-  listener 7421 en la oficina y el kit no está en este equipo. La prueba de dos PCs sigue
-  pendiente; antes de repetirla, rota el token y regenera el kit.
+- **Cierre 2026-11-26 (PC-OFICINA):** `PC-CASA` estaba online y el puerto 7421 respondía. La
+  prueba real pasó con el token del kit:
+  - `read_only` → `E2E-REMOTE`, tarea `01M8C901HCSFCE93QJH1P3YRYD`.
+  - `read_write_worktree` → `E2E-REMOTE-WRITE`, tarea `01M8C90GX6903D3VZBMEGXKAD9`,
+    `changed_paths=["src/remoto.txt"]`, commit `48d36b9…` y diff `+HOLA`.
+  El token usado **sigue vivo** (la rotación no se aplicó): ejecuta la sección 8 ahora.
 
 ---
 
@@ -206,6 +209,8 @@ desmontar el nodo; no los copies a otra PC.
 ---
 
 ## 8. Después de la prueba
+
+La prueba ya se hizo el 2026-11-26; esta limpieza es obligatoria ahora, no al final de otra prueba.
 
 1. Borra el repositorio puente privado que contiene `kit-origen.zip` **y todo su historial**.
    Borrar solo la rama `main` no elimina el blob del token; si no puedes borrar el repo,

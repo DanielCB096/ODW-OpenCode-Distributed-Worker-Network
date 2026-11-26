@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (328 pruebas); E2E A→B en loopback; nodo destino preparado y ensayo A→B sobre la IP tailnet; falta el salto a la PC de oficina (al 2026-11-26, destino offline y kit pendiente de regenerar tras rotar el token) |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (328 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; quedan doctor en dos PCs, reinicio a mitad y cobertura |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -103,10 +103,10 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ `node.json` + `peers_file` + `policy.json`, secretos por `env:`/`file:` y `odw serve` en
   primer plano.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
-- ✅ Cuenta dedicada `odw-svc`; 🟡 nodo destino preparado y ensayo A→B sobre la IP tailnet;
-  falta el salto desde la PC de oficina (`docs/RUNBOOK-DOS-PCS.md`). Al revisar el 2026-11-26 el
-  destino estaba offline y el kit debe regenerarse tras rotar el token; el repo puente con el kit
-  sigue pendiente de borrar.
+- ✅ Cuenta dedicada `odw-svc`; ✅ nodo destino preparado y **salto real desde la PC de oficina
+  verificado el 2026-11-26** (`read_only` `E2E-REMOTE` y `read_write_worktree` `E2E-REMOTE-WRITE`,
+  `src/remoto.txt`, commit `48d36b9…`). Quedan los criterios 1, 4 y 7 para cerrar H1. El token del
+  kit sigue vivo y el repo puente sigue pendiente de borrar (`docs/RUNBOOK-DOS-PCS.md`).
 - ✅ 328 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
@@ -172,7 +172,8 @@ OpenCode completados (2026-11-24). Resto pendiente.
 **Estado:** ACLs de workspace, usuario `odw-agent`, lanzamiento de `opencode serve` como agente,
 modelo gratuito propio, red con WFP + proxy, cuenta `odw-svc` sin administrador, perfiles por tarea,
 escaneo de reparse points, pruebas hostiles, `changed_paths`/`commit`/diff y E2E loopback
-implementados y verificados. Queda la prueba real en dos PCs (H1) y el empaquetado de artefactos.
+implementados y verificados. La delegación real en dos PCs ya está verificada (H1); quedan los
+criterios restantes de H1 y el empaquetado de artefactos.
 
 - ✅ Job Objects (memoria, procesos, CPU, kill on close).
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
@@ -281,6 +282,6 @@ implementados y verificados. Queda la prueba real en dos PCs (H1) y el empaqueta
 8. ✅ Scheduler de ejecución con workspace Git, Job Objects y runner de OpenCode.
 9. ✅ Lado origen, `odw_propose_task`, poller y recuperación del resultado (A→B→resultado).
 10. ✅ Aprobaciones por pipe + CLI y `odw serve` con `node.json`/`policy.json`.
-11. Cerrar el incidente del kit: verificar la rotación, borrar el repo puente y regenerar el kit.
-12. Prueba real en dos PCs + Telegram/HMAC para cerrar H1/H2.
+11. Cerrar el incidente del kit: rotar el token, borrar el repo puente y borrar el kit.
+12. Completar los criterios restantes de H1 y Telegram/HMAC.
 

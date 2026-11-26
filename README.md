@@ -14,8 +14,8 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
 - Diseño cerrado y verificado contra **OpenCode 2.3.2**.
 - Delegación **A→B→resultado** funcionando: propuesta, política, envío, scheduler, workspace Git,
   Job Object, ejecutor OpenCode y poller de resultado. **E2E A→B verificado en un PC** con dos nodos
-  loopback y ensayo contra el nodo destino por tailnet; falta el salto real entre dos máquinas
-  (al 2026-11-26, destino offline y kit pendiente de regenerar tras rotar el token).
+  loopback y **salto real `PC-OFICINA` → `PC-CASA` por Tailscale verificado (2026-11-26)**, en
+  `read_only` y escritura (`src/remoto.txt`, commit y diff).
 - Resultado con `changed_paths`, `commit` y `diff` inline para tareas `read_write_worktree`; el
   workspace temporal se borra, así que el diff es la evidencia persistente.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.

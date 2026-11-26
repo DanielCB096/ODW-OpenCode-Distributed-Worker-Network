@@ -78,7 +78,8 @@ IP tailnet. Sin Tailscale, usa loopback + túnel SSH; el bind directo a una IP L
 
 El kit se pasa por USB, Taildrop o gestor de contraseñas, **nunca por git**. Si el token estuvo en
 un repo o USB compartido, rótalo (`tools/rotate-peer-token.ps1`) y regenera el kit antes de probar.
-Al revisar el 2026-11-26 el repo puente con el kit anterior seguía pendiente de borrar.
+La prueba real en dos PCs ya se hizo el 2026-11-26; el token usado sigue vivo, así que rótalo y
+borra el repo puente y el kit.
 
 ## 7. Consultar el grafo
 

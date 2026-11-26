@@ -1086,10 +1086,10 @@
     "semantic_hash": "104a996dbeca7ef2d6d07020835c2152"
   },
   "README.md": {
-    "mtime": 1795707884.2185485,
-    "seen": 1795707916.1076705,
-    "ast_hash": "edcf9cb7cb394aa28072e60daa01af2a",
-    "semantic_hash": "edcf9cb7cb394aa28072e60daa01af2a"
+    "mtime": 1795708567.0107071,
+    "seen": 1795708579.5036604,
+    "ast_hash": "458cc05d9a850bc85c8e18dc735b980b",
+    "semantic_hash": "458cc05d9a850bc85c8e18dc735b980b"
   },
   "docs/DECISIONS.md": {
     "mtime": 1795542734.5070035,
@@ -1110,10 +1110,10 @@
     "semantic_hash": "9eb58846b2505492f8a42ed21176d932"
   },
   "docs/IMPLEMENTATION.md": {
-    "mtime": 1795707871.534767,
-    "seen": 1795707916.1076887,
-    "ast_hash": "15ba9968a8d1b0821c9cbb35d1317946",
-    "semantic_hash": "15ba9968a8d1b0821c9cbb35d1317946"
+    "mtime": 1795708546.1042411,
+    "seen": 1795708579.5036676,
+    "ast_hash": "960d772a34ec1d25851333238477a9e6",
+    "semantic_hash": "960d772a34ec1d25851333238477a9e6"
   },
   "docs/MCP-FACADE.md": {
     "mtime": 1795648411.108727,
@@ -1152,10 +1152,10 @@
     "semantic_hash": "e64df01766f3007524dc2909bd11e0df"
   },
   "docs/ROADMAP.md": {
-    "mtime": 1795707871.534767,
-    "seen": 1795707916.107712,
-    "ast_hash": "f6ee276d7068c2b837eb35a3929f70fc",
-    "semantic_hash": "f6ee276d7068c2b837eb35a3929f70fc"
+    "mtime": 1795708556.3870888,
+    "seen": 1795708579.5036771,
+    "ast_hash": "eabf3ea911f204f093ae9909b1d5072a",
+    "semantic_hash": "eabf3ea911f204f093ae9909b1d5072a"
   },
   "docs/SECURITY.md": {
     "mtime": 1795637367.4939134,
@@ -1170,16 +1170,16 @@
     "semantic_hash": "b57830f10998bbc4f768be3312989fa7"
   },
   "AGENTS.md": {
-    "mtime": 1795707828.4614868,
-    "seen": 1795707916.1076608,
-    "ast_hash": "ef04295a24fc286f057825b6fbee0b90",
-    "semantic_hash": "ef04295a24fc286f057825b6fbee0b90"
+    "mtime": 1795708518.5453217,
+    "seen": 1795708579.5036561,
+    "ast_hash": "ca94f96ed9bde71c2859533ff1b3a08b",
+    "semantic_hash": "ca94f96ed9bde71c2859533ff1b3a08b"
   },
   "docs/HANDOFF.md": {
-    "mtime": 1795707857.9461,
-    "seen": 1795707916.1076853,
-    "ast_hash": "ff61f951893c76dae6c3cb20768420f2",
-    "semantic_hash": "ff61f951893c76dae6c3cb20768420f2"
+    "mtime": 1795708535.3606076,
+    "seen": 1795708579.5036662,
+    "ast_hash": "905f994a8a7b24dafe31cd695852940c",
+    "semantic_hash": "905f994a8a7b24dafe31cd695852940c"
   },
   "tools/h1-remote-test.ps1": {
     "mtime": 1795707387.452509,
@@ -1206,15 +1206,15 @@
     "semantic_hash": "209e277f507afa17a6c0a3ec5249cbd1"
   },
   "CONTINUE.md": {
-    "mtime": 1795707877.6728668,
-    "seen": 1795707916.1076674,
-    "ast_hash": "c09f4a8f22a9a8bb0269d2a86d5becfe",
-    "semantic_hash": "c09f4a8f22a9a8bb0269d2a86d5becfe"
+    "mtime": 1795708567.0107071,
+    "seen": 1795708579.5036592,
+    "ast_hash": "555e71d5d8200e0bfd63b0d0d3343337",
+    "semantic_hash": "555e71d5d8200e0bfd63b0d0d3343337"
   },
   "docs/RUNBOOK-DOS-PCS.md": {
-    "mtime": 1795707817.4780262,
-    "seen": 1795707916.1077151,
-    "ast_hash": "d2f61d853629f5a752f3ce2c1b4f9610",
-    "semantic_hash": "d2f61d853629f5a752f3ce2c1b4f9610"
+    "mtime": 1795708571.0170527,
+    "seen": 1795708579.5036783,
+    "ast_hash": "bbc83ab3cfe094dbebcc571fb1cf54d8",
+    "semantic_hash": "bbc83ab3cfe094dbebcc571fb1cf54d8"
   }
 }

@@ -13,16 +13,19 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
 ## Estado actual (2026-11-26)
 
 - **328/328 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
-- H0, H1 (loopback), H2 (pipe/CLI/HMAC) y H3 cerrados.
+- H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1: delegación real en dos PCs verificada; quedan doctor
+  en dos PCs, reinicio a mitad y cobertura para cerrar el hito.
 - Nodo destino `PC-CASA` preparado y verificado: servicio `OdwNode` como `.\odw-svc`, listener
-  en la IPv4 tailnet (`<IP-TAILNET-CASA>:7421`), `/peer/v1/status` autenticado OK y ensayo A→B
-  contra la IP tailnet (`E2E-REMOTE` y `E2E-REMOTE-WRITE`, origen en el mismo equipo).
-- Pendiente: salto real PC casa ↔ PC oficina. Al revisar (2026-11-26) `PC-CASA` estaba offline, el
-  kit no estaba en la PC de oficina y debe regenerarse tras rotar el token. Pasos en
-  `docs/RUNBOOK-DOS-PCS.md`; también quedan artefactos descargables, Telegram real y H4.
-- **Repo puente del kit:** seguía existiendo un repo privado temporal con `kit-origen.zip`
-  (incluye `peer.token`). No se borró por decisión del propietario; trátalo como comprometido
-  hasta verificar la rotación, no uses ese kit y bórralo cuando se confirme.
+  en la IPv4 tailnet (`<IP-TAILNET-CASA>:7421`), `/peer/v1/status` autenticado OK.
+- **H1 en dos PCs verificado (2026-11-26):** `PC-OFICINA` → `PC-CASA` por Tailscale.
+  `read_only` (`E2E-REMOTE`, tarea `01M8C901HCSFCE93QJH1P3YRYD`) y `read_write_worktree`
+  (`E2E-REMOTE-WRITE`, tarea `01M8C90GX6903D3VZBMEGXKAD9`, `changed_paths=["src/remoto.txt"]`,
+  commit `48d36b9…` y diff inline).
+- Pendiente: borrar el repo puente, rotar el token y borrar el kit; artefactos descargables,
+  Telegram real y H4.
+- **Repo puente del kit:** sigue existiendo un repo privado temporal con `kit-origen.zip`. Su
+  `peer.token` se verificó **vivo** el 2026-11-26 (la rotación no se aplicó) y se usó para la
+  prueba real. Bórralo y rota el token cuanto antes.
 
 ## Antes de tocar código
 
