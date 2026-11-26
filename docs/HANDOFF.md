@@ -2,9 +2,8 @@
 
 > **Último commit:** el último de `main` (`git log -1`) · **Rama:** `main` · **Fecha:** 2026-11-26
 >
-> **Estado:** H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1 tiene la delegación real en dos PCs
-> verificada (2026-11-26); doctor PASS en ambos nodos y cobertura Core 97,8 %; falta el reinicio
-> a mitad. Quedan artefactos descargables, Telegram real y H4.
+> **Estado:** H0, H1, H2 (pipe/CLI/HMAC) y H3 cerrados. Quedan artefactos descargables,
+> Telegram real y H4.
 > **421/421 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
 > pruebas; el repo sigue privado y se rotará al terminar.
 
@@ -259,6 +258,8 @@ commit actual en `main`
   (`tools/doctor-node.ps1`, 0 advertencias, esquema v3 y auditoría válida).
 - Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas (1013/1036) con `coverlet.runsettings`;
   excluye código generado.
+- Reinicio a mitad (2026-11-26): tarea `01M8CMCHY9KER613ERHDEH46TW`; `OdwNode`
+  reiniciado durante `RUNNING` → destino `INTERRUPTED` y origen `INTERRUPTED`.
 
 ---
 
@@ -267,6 +268,7 @@ commit actual en `main`
 | Tema | Estado |
 |---|---|
 | Prueba en dos PCs con Tailscale | ✅ delegación real verificada el 2026-11-26 (`read_only` + `read_write_worktree`); quedan criterios de H1 |
+| Reinicio a mitad de tarea | ✅ destino y origen `INTERRUPTED` (2026-11-26) |
 | Repo puente con el kit | ⛔ token verificado vivo; pendiente rotar y borrar el repo |
 | Artefactos descargables | ⬜ el diff va inline (256 KiB); el bundle/artefacto no |
 | `commit`/`branch` | ✅ se crean, pero el workspace se borra: el diff es la evidencia; el SHA es informativo |
@@ -338,11 +340,10 @@ Preguntas útiles para el grafo:
 ## 11. Próximos pasos recomendados
 
 1. **Al terminar la campaña de pruebas**: rotar el token y borrar el repo puente y el kit.
-2. **Completar H1**: reinicio del destino a mitad de tarea (doctor en dos PCs y cobertura ya están).
-3. **Artefactos descargables**: `GET /peer/v1/tasks/{id}/artifacts/{name}` + bundle/parche completo.
-4. **Telegram** con un bot real.
-5. **H4**: mensajes, cancelación remota, leases y reconciliación tras reinicio.
-6. **H0-6**: aislamiento por directorio con instancias de OpenCode ya separadas.
+2. **Artefactos descargables**: `GET /peer/v1/tasks/{id}/artifacts/{name}` + bundle/parche completo.
+3. **Telegram** con un bot real.
+4. **H4**: mensajes, cancelación remota, leases y reconciliación tras reinicio.
+5. **H0-6**: aislamiento por directorio con instancias de OpenCode ya separadas.
 
 ---
 

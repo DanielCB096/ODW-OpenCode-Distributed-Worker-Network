@@ -238,7 +238,8 @@ Límites que siguen abiertos y se declaran:
   `model_profile=free` → `DONE`, `MODELPROFILE-FREE`, `model_provider=opencode`,
   `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
 - `tools/doctor-node.ps1` ejecuta `odw doctor` desde `node.json` (resuelve el token sin
-  imprimirlo). En PC-OFICINA: 10/10 PASS con `-AllowLoopback`; falta ejecutarlo en PC-CASA.
+  imprimirlo). En PC-OFICINA 10/10 PASS con `-AllowLoopback`; en PC-CASA 10/10 PASS
+  (0 advertencias).
 - Perfil desechable por tarea (`AgentRuntime`): configuración, datos, caché y temporales propios;
   el perfil real del agente queda sin escritura. `sandbox.run_as_agent` exige
   `scheduler.max_concurrent=1` y `workspaces.keep=false` (`SandboxGuard`).
@@ -283,10 +284,11 @@ Límites que siguen abiertos y se declaran:
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
-- `odw doctor`: 10/10 PASS en PC-OFICINA y PC-CASA (`tools/doctor-node.ps1`, 2026-11-26); queda
-  el reinicio a mitad de tarea. Cobertura `Odw.Core` 97,8 %. El resultado ya calcula
-  `changed_paths`, `commit` y un `diff` inline (256 KiB) para tareas de escritura; el empaquetado
-  de artefactos queda pendiente.
+- `odw doctor`: 10/10 PASS en PC-OFICINA y PC-CASA (`tools/doctor-node.ps1`, 2026-11-26).
+  H1 cerrado con el reinicio a mitad verificado (tarea `01M8CMCHY9KER613ERHDEH46TW`,
+  destino y origen `INTERRUPTED`). Cobertura `Odw.Core` 97,8 %. El resultado ya
+  calcula `changed_paths`, `commit` y un `diff` inline (256 KiB) para tareas de escritura;
+  el empaquetado de artefactos queda pendiente.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El runner captura los cambios antes de borrar el workspace: en `read_write_worktree` hace
   `git add`, guarda el diff, crea el commit y valida las rutas contra `allowed_paths`/`denied_paths`.

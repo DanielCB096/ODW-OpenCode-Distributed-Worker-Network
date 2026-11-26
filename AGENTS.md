@@ -13,8 +13,8 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
 ## Estado actual (2026-11-26)
 
 - **421/421 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
-- H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1: delegación real en dos PCs verificada; doctor PASS
-  en PC-OFICINA y PC-CASA y cobertura Core 97,8 %; falta el reinicio a mitad.
+- H0, H1, H2 (pipe/CLI/HMAC) y H3 cerrados. H1: delegación real, doctor, cobertura y
+  reinicio a mitad verificados.
 - Nodo destino `PC-CASA` preparado y verificado: servicio `OdwNode` como `.\odw-svc`, listener
   en la IPv4 tailnet (`<IP-TAILNET-CASA>:7421`), `/peer/v1/status` autenticado OK.
 - **H1 en dos PCs verificado (2026-11-26):** `PC-OFICINA` → `PC-CASA` por Tailscale.
@@ -29,6 +29,8 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
   (`tools/doctor-node.ps1 -AllowLoopback`) y en PC-CASA (`tools/doctor-node.ps1`, 0
   advertencias); `Odw.Core` 97,8 % líneas / 95 % ramas (1013/1036) con `coverlet.runsettings`
   (excluye generados).
+- **H1 cerrado (2026-11-26):** tarea `01M8CMCHY9KER613ERHDEH46TW`; reinicio de
+  `OdwNode` en `PC-CASA` durante `RUNNING` → destino `INTERRUPTED` y origen `INTERRUPTED`.
 - Decisión 2026-11-26: el token y el repo puente se mantienen para la campaña de pruebas; el repo
   debe seguir privado. Al terminar: rotar el token, borrar el repo y el kit.
 - Pendiente: artefactos descargables, Telegram real y H4.

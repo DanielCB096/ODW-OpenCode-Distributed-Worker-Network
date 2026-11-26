@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (421 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PASS en ambos PCs y cobertura Core 97,8 %; falta el reinicio a mitad |
+| H1 - Nodo mínimo y delegación | ✅ | Funcional con `odw serve`, TLS opt-in y servicio Windows (421 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PASS en ambos PCs y cobertura Core 97,8 %; criterios 1-7 cumplidos; monitor/MCP de escritura pasan a H4 |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -105,17 +105,18 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
 - ✅ Cuenta dedicada `odw-svc`; ✅ nodo destino preparado y **salto real desde la PC de oficina
   verificado el 2026-11-26** (`read_only` `E2E-REMOTE` y `read_write_worktree` `E2E-REMOTE-WRITE`,
-  `src/remoto.txt`, commit `48d36b9…`). Queda el criterio 4 (reinicio a mitad); los criterios 1
-  (doctor en dos PCs) y 7 (cobertura) están cubiertos. El token del
+  `src/remoto.txt`, commit `48d36b9…`). H1 cerrado con los criterios 1-7 cumplidos. El token del
   kit sigue vivo y se mantiene para pruebas; al terminar, borrar el repo puente
   (`docs/RUNBOOK-DOS-PCS.md`).
 - ✅ Perfiles de modelo (`models.allowed`): `model_profile` por tarea, `free` por defecto y
   `paid-deepseek` definido pero deshabilitado. Verificado en dos PCs el 2026-11-26
   (`01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`, `model_profile=free`, `cost_usd=0`).
 - ✅ Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas con `coverlet.runsettings` (excluye
-  generados). `odw doctor` 10/10 PASS en PC-OFICINA y PC-CASA; falta el reinicio a mitad.
+  generados). `odw doctor` 10/10 PASS en PC-OFICINA y PC-CASA; reinicio a mitad verificado.
+- ✅ Reinicio a mitad (2026-11-26): tarea `01M8CMCHY9KER613ERHDEH46TW`; `OdwNode`
+  reiniciado durante `RUNNING` → destino `INTERRUPTED` y origen `INTERRUPTED`.
 - ✅ 421 pruebas verdes, build sin advertencias.
-- ⬜ Listeners del host, monitor y herramientas MCP de escritura.
+- ⬜ Monitor de recursos y herramientas MCP de escritura (H4); los listeners del host ya existen.
 
 **Entregables**
 
@@ -133,10 +134,10 @@ OpenCode completados (2026-11-24). Resto pendiente.
 
 1. ✅ `odw doctor` en verde en dos PCs (2026-11-26).
 2. ✅ Una sesión de OpenCode en A delega `analysis` a B y recupera el informe (2026-11-26).
-3. Repetir el `POST` no duplica la tarea (`Idempotent-Replay: true`).
-4. Reiniciar B a mitad de tarea deja la tarea en `Interrupted` y A lo ve.
-5. Bind no conforme (`0.0.0.0` o loopback en pares) impide el arranque.
-6. `/mcp` no es alcanzable desde la IP Tailscale; `/peer/v1` no desde loopback.
+3. ✅ Repetir el `POST` no duplica la tarea (`Idempotent-Replay: true`; tests de host/E2E loopback).
+4. ✅ Reiniciar B a mitad de tarea deja la tarea en `Interrupted` y A lo ve (2026-11-26, tarea `01M8CMCHY9KER613ERHDEH46TW`).
+5. ✅ Bind no conforme (`0.0.0.0` o loopback en pares) impide el arranque (tests de host/config).
+6. ✅ `/mcp` no es alcanzable desde la IP Tailscale; `/peer/v1` no desde loopback (verificado desde la tailnet: 7421 abierto; 7422/7423 cerrados; health 404; status 401).
 7. ✅ Suite unitaria verde; cobertura de `Odw.Core` ≥ 90 % (97,8 %).
 
 **Riesgos:** H0-1 (permisos bloqueantes), H0-3 (descubrimiento de puerto), GPU sin `nvidia-smi`.
@@ -290,5 +291,4 @@ criterios restantes de H1 y el empaquetado de artefactos.
 9. ✅ Lado origen, `odw_propose_task`, poller y recuperación del resultado (A→B→resultado).
 10. ✅ Aprobaciones por pipe + CLI y `odw serve` con `node.json`/`policy.json`.
 11. Al terminar la campaña de pruebas: rotar el token y borrar el repo puente y el kit.
-12. Completar los criterios restantes de H1 y Telegram/HMAC.
-
+12. H1 cerrado; Telegram/HMAC y artefactos descargables.

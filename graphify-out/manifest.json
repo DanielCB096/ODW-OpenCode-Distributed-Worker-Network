@@ -1086,10 +1086,10 @@
     "semantic_hash": "104a996dbeca7ef2d6d07020835c2152"
   },
   "README.md": {
-    "mtime": 1795719744.2132094,
-    "seen": 1795719767.9181101,
-    "ast_hash": "4ab54304ea17d2b549af9e0d5396e616",
-    "semantic_hash": "4ab54304ea17d2b549af9e0d5396e616"
+    "mtime": 1795720717.1290429,
+    "seen": 1795720765.376104,
+    "ast_hash": "10cb244f34680e08a3ca2fb5d9d3ee24",
+    "semantic_hash": "10cb244f34680e08a3ca2fb5d9d3ee24"
   },
   "docs/DECISIONS.md": {
     "mtime": 1795542734.5070035,
@@ -1110,10 +1110,10 @@
     "semantic_hash": "9eb58846b2505492f8a42ed21176d932"
   },
   "docs/IMPLEMENTATION.md": {
-    "mtime": 1795719752.8164985,
-    "seen": 1795719767.9181237,
-    "ast_hash": "4c81e990fbd55f7b1078489d13c8dcd8",
-    "semantic_hash": "4c81e990fbd55f7b1078489d13c8dcd8"
+    "mtime": 1795720706.0391083,
+    "seen": 1795720765.3761263,
+    "ast_hash": "64d201ade732043c5f2423b96f29315b",
+    "semantic_hash": "64d201ade732043c5f2423b96f29315b"
   },
   "docs/MCP-FACADE.md": {
     "mtime": 1795712591.5154498,
@@ -1152,10 +1152,10 @@
     "semantic_hash": "f4907508ae046f5e2e28fa13fd8ef1f7"
   },
   "docs/ROADMAP.md": {
-    "mtime": 1795719744.2790203,
-    "seen": 1795719767.9181435,
-    "ast_hash": "8780fd6008f7d2cf9406358147d1f590",
-    "semantic_hash": "8780fd6008f7d2cf9406358147d1f590"
+    "mtime": 1795720624.4846652,
+    "seen": 1795720765.376154,
+    "ast_hash": "bd0198a5ceb0986a28f23d6ffc3e68a2",
+    "semantic_hash": "bd0198a5ceb0986a28f23d6ffc3e68a2"
   },
   "docs/SECURITY.md": {
     "mtime": 1795712591.5258582,
@@ -1170,16 +1170,16 @@
     "semantic_hash": "d3b974573ba6f10ca9d3350ed751da59"
   },
   "AGENTS.md": {
-    "mtime": 1795719744.186421,
-    "seen": 1795719767.9181015,
-    "ast_hash": "825c7381fa905aaa5574e6bfcc1a0675",
-    "semantic_hash": "825c7381fa905aaa5574e6bfcc1a0675"
+    "mtime": 1795720537.2987487,
+    "seen": 1795720765.3760893,
+    "ast_hash": "b079b15fe51c8ad5c1df51674a993714",
+    "semantic_hash": "b079b15fe51c8ad5c1df51674a993714"
   },
   "docs/HANDOFF.md": {
-    "mtime": 1795719744.2392178,
-    "seen": 1795719767.9181216,
-    "ast_hash": "fc73b0a361f670f9d2f57a85e5dd9243",
-    "semantic_hash": "fc73b0a361f670f9d2f57a85e5dd9243"
+    "mtime": 1795720726.1105976,
+    "seen": 1795720765.3761218,
+    "ast_hash": "bc33da1185174991a086f186dc04ef51",
+    "semantic_hash": "bc33da1185174991a086f186dc04ef51"
   },
   "tools/h1-remote-test.ps1": {
     "mtime": 1795707387.452509,
