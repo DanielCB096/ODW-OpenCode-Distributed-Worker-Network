@@ -23,13 +23,13 @@ public static class NodeDoctor
         var database = CheckDatabase(options);
         checks.AddRange(database);
 
-        checks.Add(CheckBind("bind.peer", options.PeerBind, required: BindPolicy.IsTailnetBind,
-            "El bind de pares debe ser la interfaz Tailscale (o una IP/dominio tailnet)."));
+        checks.Add(CheckPeerBind(options));
 
         checks.Add(CheckBind("bind.mcp", options.McpBind, required: BindPolicy.IsLoopbackBind,
             "La fachada MCP debe escuchar solo en loopback."));
 
-        checks.Add(CheckListener("listener.peer", options.PeerPort, tailnet: true));
+        checks.Add(CheckListener(
+            "listener.peer", options.PeerPort, tailnet: true, allowLoopbackPeer: options.AllowLoopbackPeerBind));
         checks.Add(CheckListener("listener.mcp", options.McpPort, tailnet: false));
         checks.Add(CheckToken(options));
         checks.Add(await CheckOpenCodeVersionAsync(options, cancellationToken).ConfigureAwait(false));
@@ -119,6 +119,31 @@ public static class NodeDoctor
         return checks;
     }
 
+    private static DoctorCheck CheckPeerBind(DoctorOptions options)
+    {
+        var bind = options.PeerBind;
+        if (BindPolicy.IsAnyAddress(bind))
+        {
+            return new DoctorCheck("bind.peer", DoctorStatus.Fail,
+                $"Bind comodín prohibido: {bind}. El bind de pares debe ser la interfaz Tailscale.");
+        }
+
+        if (BindPolicy.IsTailnetBind(bind))
+        {
+            return new DoctorCheck("bind.peer", DoctorStatus.Pass, $"Bind admitido: {bind}.");
+        }
+
+        if (options.AllowLoopbackPeerBind && BindPolicy.IsLoopbackBind(bind))
+        {
+            return new DoctorCheck("bind.peer", DoctorStatus.Pass,
+                $"Bind loopback admitido para pruebas: {bind}.");
+        }
+
+        return new DoctorCheck("bind.peer", DoctorStatus.Fail,
+            $"Bind no admitido: {bind}. El bind de pares debe ser la interfaz Tailscale "
+            + "(o loopback con --allow-loopback para pruebas).");
+    }
+
     private static DoctorCheck CheckBind(
         string name,
         string bind,
@@ -135,7 +160,11 @@ public static class NodeDoctor
             : new DoctorCheck(name, DoctorStatus.Fail, $"Bind no admitido: {bind}. {guidance}");
     }
 
-    private static DoctorCheck CheckListener(string name, int port, bool tailnet)
+    private static DoctorCheck CheckListener(
+        string name,
+        int port,
+        bool tailnet,
+        bool allowLoopbackPeer = false)
     {
         var endpoints = IPGlobalProperties.GetIPGlobalProperties()
             .GetActiveTcpListeners()
@@ -154,7 +183,7 @@ public static class NodeDoctor
             var exposed = endpoints.Where(address =>
                 address.Equals(IPAddress.Any)
                 || address.Equals(IPAddress.IPv6Any)
-                || BindPolicy.IsLoopbackBind(address.ToString())).ToArray();
+                || (!allowLoopbackPeer && BindPolicy.IsLoopbackBind(address.ToString()))).ToArray();
 
             if (exposed.Length > 0)
             {
@@ -162,9 +191,17 @@ public static class NodeDoctor
                     $"El puerto {port} escucha en {Join(exposed)}; los pares solo deben escuchar en tailnet.");
             }
 
-            var unknown = endpoints.Where(address => !BindPolicy.IsTailnetBind(address.ToString())).ToArray();
+            var unknown = endpoints.Where(address =>
+                !BindPolicy.IsTailnetBind(address.ToString())
+                && !(allowLoopbackPeer && BindPolicy.IsLoopbackBind(address.ToString()))).ToArray();
+
             return unknown.Length == 0
-                ? new DoctorCheck(name, DoctorStatus.Pass, $"Puerto {port} en {Join(endpoints)} (tailnet).")
+                ? new DoctorCheck(
+                    name,
+                    DoctorStatus.Pass,
+                    allowLoopbackPeer && endpoints.Any(address => BindPolicy.IsLoopbackBind(address.ToString()))
+                        ? $"Puerto {port} en {Join(endpoints)} (loopback de pruebas)."
+                        : $"Puerto {port} en {Join(endpoints)} (tailnet).")
                 : new DoctorCheck(name, DoctorStatus.Warn,
                     $"Puerto {port} en direcciones no reconocidas como tailnet: {Join(unknown)}.");
         }

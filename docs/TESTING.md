@@ -162,6 +162,11 @@ Escenarios:
 La cobertura es un piso, no un objetivo: una prueba sin aserción (o con aserción trivial) se
 rechaza en revisión.
 
+Medición local (2026-11-26): `dotnet test tests/Odw.Core.Tests --collect:"XPlat Code Coverage" --settings coverlet.runsettings`
+-> `Odw.Core` 97,8 % líneas / 95 % ramas (1013/1036). El `coverlet.runsettings` excluye código
+generado (`CompilerGenerated`/`GeneratedCode` y `obj/**`); sin exclusiones el dato incluye regex
+y records generados y no es comparable.
+
 ---
 
 ## 10. Puertas de CI

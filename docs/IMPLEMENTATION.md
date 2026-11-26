@@ -237,6 +237,8 @@ Límites que siguen abiertos y se declaran:
   Verificado en dos PCs el 2026-11-26: tarea `01M8CGJSEFCR29SPN1SSJ4M7C7` con
   `model_profile=free` → `DONE`, `MODELPROFILE-FREE`, `model_provider=opencode`,
   `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
+- `tools/doctor-node.ps1` ejecuta `odw doctor` desde `node.json` (resuelve el token sin
+  imprimirlo). En PC-OFICINA: 10/10 PASS con `-AllowLoopback`; falta ejecutarlo en PC-CASA.
 - Perfil desechable por tarea (`AgentRuntime`): configuración, datos, caché y temporales propios;
   el perfil real del agente queda sin escritura. `sandbox.run_as_agent` exige
   `scheduler.max_concurrent=1` y `workspaces.keep=false` (`SandboxGuard`).
@@ -281,7 +283,7 @@ Límites que siguen abiertos y se declaran:
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
-- Pendiente: criterios restantes de H1 (doctor en dos PCs, reinicio a mitad, cobertura). El
+- Pendiente: doctor en PC-CASA y reinicio a mitad; cobertura 97,8 %. El
   resultado ya calcula `changed_paths`, `commit` y un `diff` inline (256 KiB) para tareas de
   escritura; el empaquetado de artefactos queda pendiente.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
@@ -456,7 +458,9 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **340/340 pruebas** (104 Core + 121 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
+Estado actual: build 0 warnings, **413/413 pruebas** (176 Core + 122 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
+Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas (1013/1036) con `coverlet.runsettings`,
+que excluye código generado. Comando: `dotnet test tests/Odw.Core.Tests/Odw.Core.Tests.csproj --collect:"XPlat Code Coverage" --settings coverlet.runsettings`.
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---

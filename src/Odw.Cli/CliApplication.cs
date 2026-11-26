@@ -643,6 +643,7 @@ public static class CliApplication
         string? openCodeVersion = null;
         string? spec = null;
         string? specSha = null;
+        var allowLoopback = false;
         var json = false;
 
         for (var i = 0; i < args.Length; i++)
@@ -680,6 +681,9 @@ public static class CliApplication
                 case "--spec-sha256":
                     if (!TryNext(args, ref i, out specSha)) return MissingValue(argument);
                     break;
+                case "--allow-loopback":
+                    allowLoopback = true;
+                    break;
                 case "--json":
                     json = true;
                     break;
@@ -709,6 +713,7 @@ public static class CliApplication
             PinnedOpenCodeVersion = openCodeVersion,
             SpecPath = spec,
             ExpectedSpecSha256 = specSha,
+            AllowLoopbackPeerBind = allowLoopback,
         };
 
         var report = await NodeDoctor.RunAsync(options).ConfigureAwait(false);
@@ -843,6 +848,7 @@ public static class CliApplication
         Console.WriteLine("  --opencode-version <v>   Versión fijada (ej. 2.3.2).");
         Console.WriteLine("  --spec <ruta>            Spec OpenAPI local a verificar.");
         Console.WriteLine("  --spec-sha256 <hash>     Hash esperado del spec.");
+        Console.WriteLine("  --allow-loopback         Acepta loopback en pares (origen de pruebas).");
         Console.WriteLine("  --json                   Salida JSON.");
         Console.WriteLine();
         Console.WriteLine("Códigos de salida: 0 OK/advertencias, 1 fallo, 2 uso incorrecto.");

@@ -28,6 +28,9 @@ public sealed record DoctorOptions
 
     public int PeerPort { get; init; } = 7421;
 
+    /// <summary>Solo para el origen de pruebas: acepta loopback en pares y su listener.</summary>
+    public bool AllowLoopbackPeerBind { get; init; }
+
     public string McpBind { get; init; } = "127.0.0.1";
 
     public int McpPort { get; init; } = 7422;

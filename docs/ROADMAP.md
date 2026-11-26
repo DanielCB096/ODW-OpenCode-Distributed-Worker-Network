@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (340 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; quedan doctor en dos PCs, reinicio a mitad y cobertura |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (413 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PC-OFICINA PASS y cobertura Core 97,8 %; faltan doctor PC-CASA y reinicio a mitad |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -105,13 +105,15 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
 - ✅ Cuenta dedicada `odw-svc`; ✅ nodo destino preparado y **salto real desde la PC de oficina
   verificado el 2026-11-26** (`read_only` `E2E-REMOTE` y `read_write_worktree` `E2E-REMOTE-WRITE`,
-  `src/remoto.txt`, commit `48d36b9…`). Quedan los criterios 1, 4 y 7 para cerrar H1. El token del
+  `src/remoto.txt`, commit `48d36b9…`). Quedan los criterios 1 (doctor en PC-CASA) y 4 (reinicio a mitad); el 7 (cobertura) está en 97,8 %. El token del
   kit sigue vivo y se mantiene para pruebas; al terminar, borrar el repo puente
   (`docs/RUNBOOK-DOS-PCS.md`).
 - ✅ Perfiles de modelo (`models.allowed`): `model_profile` por tarea, `free` por defecto y
   `paid-deepseek` definido pero deshabilitado. Verificado en dos PCs el 2026-11-26
   (`01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`, `model_profile=free`, `cost_usd=0`).
-- ✅ 340 pruebas verdes, build sin advertencias.
+- ✅ Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas con `coverlet.runsettings` (excluye
+  generados). `odw doctor` en PC-OFICINA 10/10 PASS; falta PC-CASA y el reinicio a mitad.
+- ✅ 413 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
 **Entregables**

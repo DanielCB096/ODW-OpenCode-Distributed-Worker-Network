@@ -48,6 +48,30 @@ public class CanonicalJsonTests
     }
 
     [Fact]
+    public void Booleans_and_empty_containers_are_serialized()
+    {
+        Assert.Equal("true", CanonicalJson.Serialize(new CanonicalBoolean(true)));
+        Assert.Equal("false", CanonicalJson.Serialize(new CanonicalBoolean(false)));
+        Assert.Equal("{}", CanonicalJson.Serialize(new CanonicalObject()));
+        Assert.Equal("[]", CanonicalJson.Serialize(new CanonicalArray()));
+    }
+
+    [Fact]
+    public void Control_characters_are_escaped()
+    {
+        Assert.Equal(
+            "\"\\b\\f\\r\"",
+            CanonicalJson.Serialize(new CanonicalString("\b\f\r")));
+    }
+
+    [Fact]
+    public void Low_surrogate_is_rejected()
+    {
+        Assert.Throws<FormatException>(
+            () => CanonicalJson.Serialize(new CanonicalString("roto\uDC00")));
+    }
+
+    [Fact]
     public void Arrays_preserve_order()
     {
         var array = new CanonicalArray();

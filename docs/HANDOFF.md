@@ -3,9 +3,9 @@
 > **Último commit:** el último de `main` (`git log -1`) · **Rama:** `main` · **Fecha:** 2026-11-26
 >
 > **Estado:** H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1 tiene la delegación real en dos PCs
-> verificada (2026-11-26); quedan doctor en dos PCs, reinicio a mitad y cobertura para cerrar el
-> hito. Quedan artefactos descargables, Telegram real y H4.
-> **340/340 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
+> verificada (2026-11-26); doctor PC-OFICINA PASS y cobertura Core 97,8 %; faltan doctor PC-CASA
+> y reinicio a mitad. Quedan artefactos descargables, Telegram real y H4.
+> **413/413 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
 > pruebas; el repo sigue privado y se rotará al terminar.
 
 Este documento es el punto de entrada para retomar el proyecto en otro equipo sin depender de
@@ -195,6 +195,9 @@ Invoke-RestMethod http://127.0.0.1:7421/peer/v1/health
 Logs: el servicio escribe en el Event Log; en consola, `odw serve` imprime el estado y los
 errores de OpenCode. El workspace y el runtime por tarea se borran al terminar.
 
+`tools/doctor-node.ps1` ejecuta `odw doctor` con los valores de `node.json` (resuelve el token
+sin imprimirlo). En el origen de pruebas añade `-AllowLoopback` y `-OpenCode <opencode.exe>`.
+
 ### E2E en un solo PC
 
 ```powershell
@@ -230,7 +233,7 @@ Verificado el 2026-11-26: OpenCode llamó a `odw_propose_task`, se aprobó la ta
 ## 7. Evidencia actual
 
 ```text
-340/340 pruebas · build 0 warnings
+413/413 pruebas · build 0 warnings
 commit actual en `main`
 ```
 
@@ -250,8 +253,11 @@ commit actual en `main`
 - Perfiles de modelo (2026-11-26): tarea `01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`,
   `MODELPROFILE-FREE`, `model_profile=free`, `model_provider=opencode`,
   `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
-- Revisión 2026-11-26: 7 scripts de `tools/` parsean, build 0 warnings, 340/340 pruebas y grafo
+- Revisión 2026-11-26: 9 scripts de `tools/` parsean, build 0 warnings, 413/413 pruebas y grafo
   regenerado.
+- `odw doctor` en PC-OFICINA: 10/10 PASS (`tools/doctor-node.ps1 -AllowLoopback`).
+- Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas (1013/1036) con `coverlet.runsettings`;
+  excluye código generado. Falta ejecutar doctor en PC-CASA.
 
 ---
 

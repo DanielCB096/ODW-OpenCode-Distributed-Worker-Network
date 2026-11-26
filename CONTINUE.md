@@ -119,6 +119,8 @@ Regenerar: `python tools/graphify-project.py` (requiere `pip install graphifyy`)
 ## 8. Antes de cerrar un cambio
 
 - `dotnet build Odw.slnx -warnaserror` y `dotnet test Odw.slnx` en verde.
+- `tools/doctor-node.ps1` para `odw doctor` (casa) o `-Config <origen> -AllowLoopback -OpenCode <exe>`.
+- Cobertura Core: `dotnet test tests/Odw.Core.Tests --collect:"XPlat Code Coverage" --settings coverlet.runsettings`.
 - No debilitar aislamiento, aprobaciones ni binds sin documentarlo.
 - Actualizar `docs/IMPLEMENTATION.md`, `docs/ROADMAP.md` y `AGENTS.md`.
 - Commit y push a `main`.

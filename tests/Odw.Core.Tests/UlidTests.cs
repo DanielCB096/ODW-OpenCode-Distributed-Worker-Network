@@ -74,6 +74,36 @@ public class UlidTests
     }
 
     [Fact]
+    public void Parse_and_valid_helpers_work()
+    {
+        var text = Ulid.New(new FixedTimeProvider(TestTasks.CreatedAt)).ToString();
+
+        Assert.True(Ulid.IsValid(text));
+        Assert.Equal(text, Ulid.Parse(text).ToString());
+        Assert.Throws<FormatException>(() => Ulid.Parse("bad"));
+        Assert.True(Ulid.Parse(new string('0', 26)).IsEmpty);
+    }
+
+    [Fact]
+    public void Equality_and_ordering_work()
+    {
+        var value = Ulid.New(new FixedTimeProvider(TestTasks.CreatedAt));
+        var same = Ulid.Parse(value.ToString());
+        var later = Ulid.New(new FixedTimeProvider(TestTasks.CreatedAt.AddSeconds(1)));
+
+        Assert.True(value == same);
+        Assert.False(value != same);
+        Assert.True(value.Equals(same));
+        Assert.False(value.Equals(null));
+        Assert.False(value.Equals("otro"));
+        Assert.Equal(value.GetHashCode(), same.GetHashCode());
+        Assert.Equal(0, value.CompareTo(same));
+        Assert.True(later > value);
+        Assert.True(value < later);
+        Assert.True(value.CompareTo(later) < 0);
+    }
+
+    [Fact]
     public void Zero_ulid_is_valid()
     {
         Assert.True(Ulid.TryParse(new string('0', 26), out var value));

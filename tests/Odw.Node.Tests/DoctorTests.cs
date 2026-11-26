@@ -84,6 +84,25 @@ public class DoctorTests
     }
 
     [Fact]
+    public async Task Loopback_peer_bind_requires_opt_in()
+    {
+        await using var fixture = TestDatabase.Create();
+        var options = Options(fixture) with { PeerBind = "127.0.0.1", PeerPort = 47431 };
+
+        var without = await NodeDoctor.RunAsync(options);
+
+        Assert.False(without.Ok);
+        Assert.Contains(without.Checks, check =>
+            check.Name == "bind.peer" && check.Status == DoctorStatus.Fail);
+
+        var with = await NodeDoctor.RunAsync(options with { AllowLoopbackPeerBind = true });
+
+        Assert.True(with.Ok);
+        Assert.Contains(with.Checks, check =>
+            check.Name == "bind.peer" && check.Status == DoctorStatus.Pass);
+    }
+
+    [Fact]
     public async Task Wildcard_peer_bind_fails()
     {
         await using var fixture = TestDatabase.Create();
