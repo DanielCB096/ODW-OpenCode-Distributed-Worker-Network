@@ -283,9 +283,10 @@ Límites que siguen abiertos y se declaran:
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.
-- Pendiente: doctor en PC-CASA y reinicio a mitad; cobertura 97,8 %. El
-  resultado ya calcula `changed_paths`, `commit` y un `diff` inline (256 KiB) para tareas de
-  escritura; el empaquetado de artefactos queda pendiente.
+- `odw doctor`: 10/10 PASS en PC-OFICINA y PC-CASA (`tools/doctor-node.ps1`, 2026-11-26); queda
+  el reinicio a mitad de tarea. Cobertura `Odw.Core` 97,8 %. El resultado ya calcula
+  `changed_paths`, `commit` y un `diff` inline (256 KiB) para tareas de escritura; el empaquetado
+  de artefactos queda pendiente.
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El runner captura los cambios antes de borrar el workspace: en `read_write_worktree` hace
   `git add`, guarda el diff, crea el commit y valida las rutas contra `allowed_paths`/`denied_paths`.

@@ -3,8 +3,8 @@
 > **Último commit:** el último de `main` (`git log -1`) · **Rama:** `main` · **Fecha:** 2026-11-26
 >
 > **Estado:** H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1 tiene la delegación real en dos PCs
-> verificada (2026-11-26); doctor PC-OFICINA PASS y cobertura Core 97,8 %; faltan doctor PC-CASA
-> y reinicio a mitad. Quedan artefactos descargables, Telegram real y H4.
+> verificada (2026-11-26); doctor PASS en ambos nodos y cobertura Core 97,8 %; falta el reinicio
+> a mitad. Quedan artefactos descargables, Telegram real y H4.
 > **413/413 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
 > pruebas; el repo sigue privado y se rotará al terminar.
 
@@ -255,9 +255,10 @@ commit actual en `main`
   `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
 - Revisión 2026-11-26: 9 scripts de `tools/` parsean, build 0 warnings, 413/413 pruebas y grafo
   regenerado.
-- `odw doctor` en PC-OFICINA: 10/10 PASS (`tools/doctor-node.ps1 -AllowLoopback`).
+- `odw doctor`: 10/10 PASS en PC-OFICINA (`tools/doctor-node.ps1 -AllowLoopback`) y en PC-CASA
+  (`tools/doctor-node.ps1`, 0 advertencias, esquema v3 y auditoría válida).
 - Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas (1013/1036) con `coverlet.runsettings`;
-  excluye código generado. Falta ejecutar doctor en PC-CASA.
+  excluye código generado.
 
 ---
 
@@ -337,7 +338,7 @@ Preguntas útiles para el grafo:
 ## 11. Próximos pasos recomendados
 
 1. **Al terminar la campaña de pruebas**: rotar el token y borrar el repo puente y el kit.
-2. **Completar H1**: `odw doctor` en dos PCs, reinicio del destino a mitad de tarea y cobertura.
+2. **Completar H1**: reinicio del destino a mitad de tarea (doctor en dos PCs y cobertura ya están).
 3. **Artefactos descargables**: `GET /peer/v1/tasks/{id}/artifacts/{name}` + bundle/parche completo.
 4. **Telegram** con un bot real.
 5. **H4**: mensajes, cancelación remota, leases y reconciliación tras reinicio.

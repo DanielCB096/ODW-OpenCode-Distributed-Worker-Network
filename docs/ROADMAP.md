@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (413 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PC-OFICINA PASS y cobertura Core 97,8 %; faltan doctor PC-CASA y reinicio a mitad |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (413 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PASS en ambos PCs y cobertura Core 97,8 %; falta el reinicio a mitad |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -105,14 +105,15 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ TLS opt-in en la API de pares y `odw service install` (sc.exe) con host de servicio .NET.
 - ✅ Cuenta dedicada `odw-svc`; ✅ nodo destino preparado y **salto real desde la PC de oficina
   verificado el 2026-11-26** (`read_only` `E2E-REMOTE` y `read_write_worktree` `E2E-REMOTE-WRITE`,
-  `src/remoto.txt`, commit `48d36b9…`). Quedan los criterios 1 (doctor en PC-CASA) y 4 (reinicio a mitad); el 7 (cobertura) está en 97,8 %. El token del
+  `src/remoto.txt`, commit `48d36b9…`). Queda el criterio 4 (reinicio a mitad); los criterios 1
+  (doctor en dos PCs) y 7 (cobertura) están cubiertos. El token del
   kit sigue vivo y se mantiene para pruebas; al terminar, borrar el repo puente
   (`docs/RUNBOOK-DOS-PCS.md`).
 - ✅ Perfiles de modelo (`models.allowed`): `model_profile` por tarea, `free` por defecto y
   `paid-deepseek` definido pero deshabilitado. Verificado en dos PCs el 2026-11-26
   (`01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`, `model_profile=free`, `cost_usd=0`).
 - ✅ Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas con `coverlet.runsettings` (excluye
-  generados). `odw doctor` en PC-OFICINA 10/10 PASS; falta PC-CASA y el reinicio a mitad.
+  generados). `odw doctor` 10/10 PASS en PC-OFICINA y PC-CASA; falta el reinicio a mitad.
 - ✅ 413 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
@@ -130,13 +131,13 @@ OpenCode completados (2026-11-24). Resto pendiente.
 
 **Criterios de aceptación**
 
-1. `odw doctor` en verde en dos PCs.
-2. Una sesión de OpenCode en A delega `analysis` a B y recupera el informe.
+1. ✅ `odw doctor` en verde en dos PCs (2026-11-26).
+2. ✅ Una sesión de OpenCode en A delega `analysis` a B y recupera el informe (2026-11-26).
 3. Repetir el `POST` no duplica la tarea (`Idempotent-Replay: true`).
 4. Reiniciar B a mitad de tarea deja la tarea en `Interrupted` y A lo ve.
 5. Bind no conforme (`0.0.0.0` o loopback en pares) impide el arranque.
 6. `/mcp` no es alcanzable desde la IP Tailscale; `/peer/v1` no desde loopback.
-7. Suite unitaria verde; cobertura de `Odw.Core` ≥ 90 %.
+7. ✅ Suite unitaria verde; cobertura de `Odw.Core` ≥ 90 % (97,8 %).
 
 **Riesgos:** H0-1 (permisos bloqueantes), H0-3 (descubrimiento de puerto), GPU sin `nvidia-smi`.
 
