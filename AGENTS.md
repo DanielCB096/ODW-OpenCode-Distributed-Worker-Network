@@ -21,11 +21,11 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
   `read_only` (`E2E-REMOTE`, tarea `01M8C901HCSFCE93QJH1P3YRYD`) y `read_write_worktree`
   (`E2E-REMOTE-WRITE`, tarea `01M8C90GX6903D3VZBMEGXKAD9`, `changed_paths=["src/remoto.txt"]`,
   commit `48d36b9…` y diff inline).
-- Pendiente: borrar el repo puente, rotar el token y borrar el kit; artefactos descargables,
-  Telegram real y H4.
-- **Repo puente del kit:** sigue existiendo un repo privado temporal con `kit-origen.zip`. Su
-  `peer.token` se verificó **vivo** el 2026-11-26 (la rotación no se aplicó) y se usó para la
-  prueba real. Bórralo y rota el token cuanto antes.
+- Decisión 2026-11-26: el token y el repo puente se mantienen para la campaña de pruebas; el repo
+  debe seguir privado. Al terminar: rotar el token, borrar el repo y el kit.
+- Pendiente: artefactos descargables, Telegram real y H4.
+- **Repo puente del kit:** su `peer.token` se verificó **vivo** y se usa para pruebas. No lo
+  publiques ni compartas el kit; al terminar la campaña, bórralo y rota el token.
 
 ## Antes de tocar código
 

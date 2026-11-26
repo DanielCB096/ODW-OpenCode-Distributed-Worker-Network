@@ -263,7 +263,8 @@ Límites que siguen abiertos y se declaran:
   verificó el 2026-11-26 desde `PC-OFICINA` a `PC-CASA` con el token del kit: `read_only`
   (`01M8C901HCSFCE93QJH1P3YRYD`) y `read_write_worktree` (`01M8C90GX6903D3VZBMEGXKAD9`,
   `changed_paths=["src/remoto.txt"]`, commit `48d36b9…`, diff `+HOLA`). El token del kit sigue
-  vivo: la rotación no se aplicó; hay que rotarlo, borrar el repo puente y borrar el kit.
+  vivo y se mantiene para la campaña de pruebas; al terminar, rotarlo y borrar el repo puente y
+  el kit.
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.

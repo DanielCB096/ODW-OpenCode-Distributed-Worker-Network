@@ -106,7 +106,8 @@ OpenCode completados (2026-11-24). Resto pendiente.
 - ✅ Cuenta dedicada `odw-svc`; ✅ nodo destino preparado y **salto real desde la PC de oficina
   verificado el 2026-11-26** (`read_only` `E2E-REMOTE` y `read_write_worktree` `E2E-REMOTE-WRITE`,
   `src/remoto.txt`, commit `48d36b9…`). Quedan los criterios 1, 4 y 7 para cerrar H1. El token del
-  kit sigue vivo y el repo puente sigue pendiente de borrar (`docs/RUNBOOK-DOS-PCS.md`).
+  kit sigue vivo y se mantiene para pruebas; al terminar, borrar el repo puente
+  (`docs/RUNBOOK-DOS-PCS.md`).
 - ✅ 328 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
@@ -282,6 +283,6 @@ criterios restantes de H1 y el empaquetado de artefactos.
 8. ✅ Scheduler de ejecución con workspace Git, Job Objects y runner de OpenCode.
 9. ✅ Lado origen, `odw_propose_task`, poller y recuperación del resultado (A→B→resultado).
 10. ✅ Aprobaciones por pipe + CLI y `odw serve` con `node.json`/`policy.json`.
-11. Cerrar el incidente del kit: rotar el token, borrar el repo puente y borrar el kit.
+11. Al terminar la campaña de pruebas: rotar el token y borrar el repo puente y el kit.
 12. Completar los criterios restantes de H1 y Telegram/HMAC.
 

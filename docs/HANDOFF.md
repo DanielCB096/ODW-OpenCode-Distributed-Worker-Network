@@ -5,8 +5,8 @@
 > **Estado:** H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1 tiene la delegación real en dos PCs
 > verificada (2026-11-26); quedan doctor en dos PCs, reinicio a mitad y cobertura para cerrar el
 > hito. Quedan artefactos descargables, Telegram real y H4.
-> **328/328 pruebas**, build sin advertencias. El token del kit se usó para la prueba y sigue vivo:
-> hay que rotarlo y borrar el repo puente.
+> **328/328 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
+> pruebas; el repo sigue privado y se rotará al terminar.
 
 Este documento es el punto de entrada para retomar el proyecto en otro equipo sin depender de
 la memoria de una sesión. El diseño detallado vive en `docs/`; el grafo del código en
@@ -121,16 +121,16 @@ gestor de contraseñas; nunca por chat, correo, git ni un repo puente.
 
 El kit `kit-origen.zip` se transportó en un repo privado temporal. Ese repo **seguía existiendo**
 al revisar. El 2026-11-26 se comprobó que su `peer.token` **seguía autenticando** (200) y se usó
-para la prueba real; la rotación no se aplicó. Ahora:
+para la prueba real; la rotación no se aplicó.
 
-1. Rota el token en el destino (`tools/rotate-peer-token.ps1`) y comprueba que el anterior da `401`.
-2. Borra el repo puente completo (incluido su historial) y cualquier copia del zip o del kit.
-3. Regenera el kit con el token nuevo solo para una prueba posterior y pásalo por
-   USB/Taildrop/gestor.
-4. No reutilices el kit actual.
+Decisión del propietario (2026-11-26): se mantiene el token y el repo puente para la campaña de
+pruebas. Condiciones:
 
-El repo puente no se borró el 2026-11-26 por decisión del propietario; queda como pendiente
-explícito en `docs/ROADMAP.md`.
+1. El repo sigue **privado**; no se comparte el kit ni el token por chat, correo o git público.
+2. Al terminar la campaña: rotar el token, borrar el repo completo (incluido su historial) y
+   borrar el kit.
+3. Si el repo deja de ser privado o el kit se comparte, se considera comprometido y se rota de
+   inmediato.
 
 ---
 
@@ -297,7 +297,7 @@ Preguntas útiles para el grafo:
 
 ## 11. Próximos pasos recomendados
 
-1. **Cerrar el incidente del kit**: rotar el token, borrar el repo puente y borrar el kit.
+1. **Al terminar la campaña de pruebas**: rotar el token y borrar el repo puente y el kit.
 2. **Completar H1**: `odw doctor` en dos PCs, reinicio del destino a mitad de tarea y cobertura.
 3. **Artefactos descargables**: `GET /peer/v1/tasks/{id}/artifacts/{name}` + bundle/parche completo.
 4. **Telegram** con un bot real.

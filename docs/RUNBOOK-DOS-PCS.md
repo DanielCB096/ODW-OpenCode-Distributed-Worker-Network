@@ -210,7 +210,8 @@ desmontar el nodo; no los copies a otra PC.
 
 ## 8. Después de la prueba
 
-La prueba ya se hizo el 2026-11-26; esta limpieza es obligatoria ahora, no al final de otra prueba.
+La prueba ya se hizo el 2026-11-26. El propietario decidió mantener el token para más pruebas; esta
+limpieza se ejecuta al terminar la campaña.
 
 1. Borra el repositorio puente privado que contiene `kit-origen.zip` **y todo su historial**.
    Borrar solo la rama `main` no elimina el blob del token; si no puedes borrar el repo,
