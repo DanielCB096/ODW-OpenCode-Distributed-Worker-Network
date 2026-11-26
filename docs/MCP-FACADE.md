@@ -57,7 +57,9 @@
 ```
 
 `oauth:false` es obligatorio para un bearer estático; `codemode:false` expone las herramientas
-directamente. Verificado en v2.3.2 (`docs/H0-FINDINGS.md` §1.2).
+directamente. Verificado en v2.3.2 (`docs/H0-FINDINGS.md` §1.2). El 2026-11-26 se repitió con
+`tools/origin-node.ps1`: OpenCode cargó las cinco herramientas y `odw_propose_task` completó una
+tarea real en `PC-CASA` tras aprobación por pipe.
 
 ### 1.2 Permisos recomendados en OpenCode
 

@@ -265,6 +265,9 @@ Límites que siguen abiertos y se declaran:
   `changed_paths=["src/remoto.txt"]`, commit `48d36b9…`, diff `+HOLA`). El token del kit sigue
   vivo y se mantiene para la campaña de pruebas; al terminar, rotarlo y borrar el repo puente y
   el kit.
+- `tools/origin-node.ps1` deja un origen persistente con MCP en `127.0.0.1:7422`; verificado
+  desde OpenCode el 2026-11-26: `odw_propose_task`, aprobación por pipe y resultado
+  `HOLA DESDE PC-CASA` (tarea `01M8CA57XKBFBGGTWPMQQVASVD`).
 - `network: "none"` pasa a significar **sin red arbitraria**: se permite únicamente el gateway del
   modelo. `network: "allow"` se rechaza mientras el aislamiento sea por SID (no hay granularidad
   por tarea); el runner falla con `NETWORK_ALLOW_UNSUPPORTED`.

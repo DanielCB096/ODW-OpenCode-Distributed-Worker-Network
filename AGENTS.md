@@ -50,6 +50,9 @@ powershell -ExecutionPolicy Bypass -File tools/provision-sandbox.ps1  # consola 
 odw sandbox check
 tools/e2e-loopback.ps1              # A→B en loopback, read_only
 tools/e2e-loopback.ps1 -WriteTask   # changed_paths/commit/diff
+
+# origen persistente para OpenCode (MCP en 127.0.0.1:7422)
+tools/origin-node.ps1 -PeerTokenFile <token> -TargetAddress http://<IP-TAILNET-CASA>:7421
 ```
 
 ## Dónde mirar

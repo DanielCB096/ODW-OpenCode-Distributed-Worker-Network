@@ -81,6 +81,29 @@ un repo o USB compartido, rótalo (`tools/rotate-peer-token.ps1`) y regenera el 
 La prueba real en dos PCs ya se hizo el 2026-11-26; el token usado se mantiene para la campaña de
 pruebas. Al terminar, rótalo y borra el repo puente y el kit.
 
+### 6.1 Nodo origen persistente + MCP en OpenCode
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/origin-node.ps1 `
+  -PeerTokenFile <ruta>\peer.token `
+  -TargetAddress http://<IP-TAILNET-CASA>:7421
+```
+
+Crea `%USERPROFILE%\ODW-origen`, arranca el nodo origen y deja el MCP en
+`http://127.0.0.1:7422/mcp`. El token MCP está en `%USERPROFILE%\ODW-origen\data\mcp.token`
+(no se imprime). Regístralo en OpenCode:
+
+```powershell
+$token = (Get-Content "$env:USERPROFILE\ODW-origen\data\mcp.token" -Raw).Trim()
+opencode mcp add odw --url http://127.0.0.1:7422/mcp `
+  --header "Authorization=Bearer $token" --global
+```
+
+Reinicia OpenCode y pide la tarea en una sesión. La propuesta queda en `WAITING_APPROVAL`;
+apruébala por el pipe con `odw approvals list --pipe odw-approvals` y
+`odw approvals approve <approval_id> --pipe odw-approvals`. Para parar el origen:
+`tools\origin-node.ps1 -Stop`.
+
 ## 7. Consultar el grafo
 
 ```powershell

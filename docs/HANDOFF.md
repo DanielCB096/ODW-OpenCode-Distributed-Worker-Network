@@ -197,6 +197,23 @@ powershell -ExecutionPolicy Bypass -File tools/e2e-loopback.ps1 -WriteTask -Keep
 El script arranca dos nodos como `odw-svc`, propone por MCP, aprueba por el pipe y comprueba el
 resultado. No sustituye a Tailscale/dos PCs.
 
+### Origen persistente + MCP en OpenCode
+
+`tools/origin-node.ps1` arranca el origen en segundo plano y expone la fachada MCP en
+`http://127.0.0.1:7422/mcp`; el token MCP queda en `%USERPROFILE%\ODW-origen\data\mcp.token`.
+Registro en OpenCode:
+
+```powershell
+$token = (Get-Content "$env:USERPROFILE\ODW-origen\data\mcp.token" -Raw).Trim()
+opencode mcp add odw --url http://127.0.0.1:7422/mcp `
+  --header "Authorization=Bearer $token" --global
+```
+
+La aprobación sigue siendo humana por el pipe. Parar: `tools\origin-node.ps1 -Stop`.
+
+Verificado el 2026-11-26: OpenCode llamó a `odw_propose_task`, se aprobó la tarea
+`01M8CA57XKBFBGGTWPMQQVASVD` por el pipe y `PC-CASA` devolvió `HOLA DESDE PC-CASA`.
+
 ---
 
 ## 7. Evidencia actual
@@ -217,6 +234,8 @@ commit actual en `main`
   - `read_write_worktree`: tarea `01M8C90GX6903D3VZBMEGXKAD9`, `DONE`, `E2E-REMOTE-WRITE`,
     `changed_paths=["src/remoto.txt"]`, commit `48d36b92039fa97ecce1e8fc0627b1dc7dd1553e`
     y diff inline (`+HOLA`).
+- Demo MCP desde OpenCode (2026-11-26): tarea `01M8CA57XKBFBGGTWPMQQVASVD`, `DONE`,
+  `HOLA DESDE PC-CASA`; origen persistente en `127.0.0.1:7422`.
 - Revisión 2026-11-26: 7 scripts de `tools/` parsean, build 0 warnings, 328/328 pruebas y grafo
   regenerado.
 
