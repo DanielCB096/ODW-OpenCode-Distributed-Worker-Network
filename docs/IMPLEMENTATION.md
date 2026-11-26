@@ -421,10 +421,6 @@ powershell -ExecutionPolicy Bypass -File tools\prepare-destination-node.ps1
 powershell -ExecutionPolicy Bypass -File tools\prepare-origin-kit.ps1
 powershell -ExecutionPolicy Bypass -File tools\h1-remote-test.ps1
 
-# derechos de logon: alta y verificación por LSA (consola elevada)
-powershell -ExecutionPolicy Bypass -File tools\grant-logon-rights.ps1 `
-  -Account odw-svc -Right SeServiceLogonRight,SeIncreaseQuotaPrivilege -QueryOnly -Verify
-
 # integración real con OpenCode (opt-in). Modelo gratuito por defecto;
 # si no está disponible, fija ODW_TEST_MODEL (fallback acordado).
 $env:ODW_OPENCODE_EXE = "C:\ruta\a\opencode.cmd"

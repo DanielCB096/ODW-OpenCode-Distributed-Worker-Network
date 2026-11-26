@@ -128,8 +128,23 @@ function Grant-Rights {
         }
 
         Set-Content -Path $inf -Value $lines -Encoding Unicode
-        & secedit /configure /db $db /cfg $inf /areas USER_RIGHTS /quiet | Out-Null
-        if ($LASTEXITCODE -ne 0) { throw "secedit /configure falló." }
+
+        # Justo despues de crear cuentas, SAM/LSA puede no estar listo y secedit falla con
+        # "estado incorrecto". Reintentar cubre esa carrera sin cambiar la politica.
+        $configured = $false
+        for ($attempt = 1; $attempt -le 3 -and -not $configured; $attempt++) {
+            $output = & secedit /configure /db $db /cfg $inf /areas USER_RIGHTS 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                $configured = $true
+            }
+            else {
+                Write-Warning "secedit /configure intento ${attempt} fallo: $($output -join ' ')"
+                Start-Sleep -Seconds 2
+            }
+        }
+        if (-not $configured) {
+            throw "secedit /configure fallo tras 3 intentos."
+        }
     }
     finally {
         Remove-Item $inf, $db, "$db.jfm" -Force -ErrorAction SilentlyContinue
@@ -211,26 +226,9 @@ else {
 
 $serviceSid = ([Security.Principal.NTAccount]::new($ServiceAccount)).Translate(
     [Security.Principal.SecurityIdentifier]).Value
-$rightsHelper = Join-Path $PSScriptRoot 'grant-logon-rights.ps1'
-$rightsViaLsa = $false
-if (Test-Path $rightsHelper) {
-    try {
-        & $rightsHelper -Account $ServiceAccount `
-            -Right @('SeServiceLogonRight', 'SeIncreaseQuotaPrivilege') -Quiet -Verify
-        & $rightsHelper -Account $AgentAccount `
-            -Right @('SeDenyNetworkLogonRight', 'SeDenyRemoteInteractiveLogonRight') -Quiet -Verify
-        $rightsViaLsa = $true
-    }
-    catch {
-        Write-Warning "LSA no pudo otorgar los derechos ($($_.Exception.Message)); se intenta secedit."
-    }
-}
-
-if (-not $rightsViaLsa) {
-    Grant-Rights @{
-        $serviceSid = @('SeServiceLogonRight', 'SeIncreaseQuotaPrivilege')
-        $agentSid   = @('SeDenyNetworkLogonRight', 'SeDenyRemoteInteractiveLogonRight')
-    }
+Grant-Rights @{
+    $serviceSid = @('SeServiceLogonRight', 'SeIncreaseQuotaPrivilege')
+    $agentSid   = @('SeDenyNetworkLogonRight', 'SeDenyRemoteInteractiveLogonRight')
 }
 Write-Host "Derechos aplicados: servicio puede iniciar sesión; agente sin red ni RDP."
 
