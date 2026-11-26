@@ -21,6 +21,9 @@ resultado**, con las dos máquinas en la misma tailnet.
   - `read_write_worktree` → `DONE`, `E2E-REMOTE-WRITE`, `changed_paths = ["src/remoto.txt"]`,
     commit `7050f45…` y diff con el archivo.
 - `odw sandbox check`: `windows`, `admin`, `agent`, `acls`, `network`, `enforced` = `True`.
+- Derechos de logon verificados en la política local: `SeServiceLogonRight` y
+  `SeIncreaseQuotaPrivilege` para `odw-svc`; `SeDenyNetworkLogonRight` y
+  `SeDenyRemoteInteractiveLogonRight` para `odw-agent`.
 - BitLocker desactivado en `C:` (un reinicio no pedirá clave).
 - El ensayo **no** sustituye el salto entre dos máquinas; eso es lo que se hace mañana.
 
