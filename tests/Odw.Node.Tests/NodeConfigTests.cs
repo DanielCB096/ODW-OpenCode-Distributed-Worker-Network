@@ -14,7 +14,12 @@ public class NodeConfigTests
         return folder;
     }
 
-    private static string Json(string mcpEnv, string peerEnv, string? peersFile = null, string policy = "null")
+    private static string Json(
+        string mcpEnv,
+        string peerEnv,
+        string? peersFile = null,
+        string policy = "null",
+        string? models = null)
         => $$"""
             {
               "node_id": "PC-A",
@@ -22,6 +27,7 @@ public class NodeConfigTests
               "peer_api": { "bind": "127.0.0.1", "port": 0, "allow_loopback": true },
               "mcp": { "bind": "127.0.0.1", "port": 0, "token_ref": "env:{{mcpEnv}}" },
               "opencode": { "executable": "opencode", "pinned_version": "2.3.2" },
+              {{(models is null ? string.Empty : models + ",")}}
               "workspaces": { "root": "workspaces" },
               "repos": [ { "name": "SistemaMaestro", "path": "repo", "base_ref": "main" } ],
               "peers": [
@@ -43,6 +49,26 @@ public class NodeConfigTests
         File.WriteAllText(path, content);
         return path;
     }
+
+    private static string Models(string defaultProfile = "free", string allowed = "\"free\"")
+        => $$"""
+            "models": {
+              "default": "{{defaultProfile}}",
+              "allowed": [{{allowed}}],
+              "profiles": {
+                "free": {
+                  "provider": "opencode",
+                  "model": "deepseek-v4.1-flash-free",
+                  "max_cost_usd": 0
+                },
+                "paid-deepseek": {
+                  "provider": "opencode-go",
+                  "model": "deepseek-v4.1-flash",
+                  "max_cost_usd": 2
+                }
+              }
+            }
+            """;
 
     [Fact]
     public void Loads_and_resolves_references()
@@ -160,6 +186,81 @@ public class NodeConfigTests
                 () => NodeConfigLoader.Load(Write(folder, content)));
 
             Assert.Contains("no-existe", exception.Message);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(mcpEnv, null);
+            Environment.SetEnvironmentVariable(peerEnv, null);
+        }
+    }
+
+    [Fact]
+    public void Models_section_exposes_only_allowed_profiles()
+    {
+        var folder = Folder();
+        var mcpEnv = "ODW_TEST_MCP_" + Guid.NewGuid().ToString("N");
+        var peerEnv = "ODW_TEST_PEER_" + Guid.NewGuid().ToString("N");
+        Environment.SetEnvironmentVariable(mcpEnv, Convert.ToBase64String(new byte[32]));
+        Environment.SetEnvironmentVariable(peerEnv, "peer-token");
+
+        try
+        {
+            var settings = NodeConfigLoader.Load(Write(folder, Json(mcpEnv, peerEnv, models: Models())));
+
+            Assert.Equal("free", settings.DefaultModelProfile);
+            Assert.True(settings.ModelProfiles.ContainsKey("free"));
+            Assert.False(settings.ModelProfiles.ContainsKey("paid-deepseek"));
+            Assert.Equal(
+                "opencode/deepseek-v4.1-flash-free",
+                settings.ModelProfiles["free"].QualifiedName);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(mcpEnv, null);
+            Environment.SetEnvironmentVariable(peerEnv, null);
+        }
+    }
+
+    [Fact]
+    public void Models_default_must_be_allowed()
+    {
+        var folder = Folder();
+        var mcpEnv = "ODW_TEST_MCP_" + Guid.NewGuid().ToString("N");
+        var peerEnv = "ODW_TEST_PEER_" + Guid.NewGuid().ToString("N");
+        Environment.SetEnvironmentVariable(mcpEnv, Convert.ToBase64String(new byte[32]));
+        Environment.SetEnvironmentVariable(peerEnv, "peer-token");
+
+        try
+        {
+            var content = Json(mcpEnv, peerEnv, models: Models(defaultProfile: "paid-deepseek"));
+            var exception = Assert.Throws<NodeConfigurationException>(
+                () => NodeConfigLoader.Load(Write(folder, content)));
+
+            Assert.Contains("models.allowed debe incluir models.default", exception.Message);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(mcpEnv, null);
+            Environment.SetEnvironmentVariable(peerEnv, null);
+        }
+    }
+
+    [Fact]
+    public void Models_allowed_must_reference_a_known_profile()
+    {
+        var folder = Folder();
+        var mcpEnv = "ODW_TEST_MCP_" + Guid.NewGuid().ToString("N");
+        var peerEnv = "ODW_TEST_PEER_" + Guid.NewGuid().ToString("N");
+        Environment.SetEnvironmentVariable(mcpEnv, Convert.ToBase64String(new byte[32]));
+        Environment.SetEnvironmentVariable(peerEnv, "peer-token");
+
+        try
+        {
+            var content = Json(mcpEnv, peerEnv, models: Models(allowed: "\"free\", \"nope\""));
+            var exception = Assert.Throws<NodeConfigurationException>(
+                () => NodeConfigLoader.Load(Write(folder, content)));
+
+            Assert.Contains("perfil desconocido", exception.Message);
         }
         finally
         {

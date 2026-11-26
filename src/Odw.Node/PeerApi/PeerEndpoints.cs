@@ -146,6 +146,20 @@ internal static class PeerEndpoints
                 return Problem(StatusFor(issue.Code), issue.Code, $"{issue.Field}: {issue.Message}");
             }
 
+            if (!ModelProfileResolver.TryResolve(
+                    request.Executor.ModelProfile,
+                    request.Executor.ModelHint,
+                    runtime.Options.DefaultModelProfile,
+                    runtime.Options.ModelProfiles,
+                    out _,
+                    out var modelCode,
+                    out var modelDetail))
+            {
+                var code = modelCode ?? "MODEL_NOT_ALLOWED";
+                var status = string.Equals(code, "CONTRACT_INVALID", StringComparison.Ordinal) ? 400 : 403;
+                return Problem(status, code, modelDetail ?? "Modelo no permitido.");
+            }
+
             if (!string.Equals(request.TargetNode, runtime.Options.NodeId, StringComparison.Ordinal))
             {
                 return Problem(400, "CONTRACT_INVALID", "target_node no es este nodo.");

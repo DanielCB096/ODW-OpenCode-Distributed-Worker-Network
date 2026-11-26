@@ -55,7 +55,7 @@
     "network": "none",               // none | allow
     "max_cost_usd": 5.0
   },
-  "executor": { "type": "opencode", "model_hint": null },
+  "executor": { "type": "opencode", "model_profile": "free", "model_hint": null },
   "created_at": "2026-11-24T18:00:00.000Z",
   "expires_at": "2026-11-24T19:00:00.000Z",
   "approval": {
@@ -88,6 +88,8 @@
 | `instructions` | 1..65 536 caracteres UTF-8, sin NUL | `CONTRACT_INVALID` |
 | `limits` | `max_minutes 1..240`, `max_memory_gb 1..1024`, `max_processes 1..512`, `max_cost_usd 0..100` | `LIMITS_INVALID` |
 | `limits.network == "allow"` | requiere regla de política `AUTO` explícita | `POLICY_DENIED` |
+| `executor.model_profile` | 1..64, `[A-Za-z0-9._-]`; si existe, debe estar en `models.allowed` | `MODEL_NOT_ALLOWED` |
+| `executor.model_hint` | legado; debe coincidir con el `provider/model` de un perfil permitido | `MODEL_NOT_ALLOWED` |
 | `expires_at` | futuro, `<= created_at + 24 h` | `CONTRACT_INVALID` |
 | `approval` | presente solo si la política lo exige; si es obligatorio y falta, o `task_hash` recalcula y no coincide | `APPROVAL_INVALID` |
 
@@ -105,8 +107,10 @@
 
 - La conversación original, el historial del agente, rutas absolutas locales, variables de
   entorno, credenciales, nombres de usuario. El destino recibe instrucciones, no contexto.
-- `executor.model_hint` es una **sugerencia**: el destino puede ignorarlo o sustituirlo y lo
-  registra en el resultado (`model_used`).
+- `executor.model_profile` es el nombre de un perfil declarado en el destino (`models.profiles`);
+  el destino solo acepta los incluidos en `models.allowed`. Si falta, usa `models.default`.
+- `executor.model_hint` es **legado**: solo se acepta si coincide exactamente con el
+  `provider/model` de un perfil permitido. El resultado registra el perfil y el modelo usados.
 
 ---
 
@@ -127,8 +131,10 @@
   "artifacts": [
     { "name": "report.md", "bytes": 8123, "sha256": "sha256:...", "content_type": "text/markdown" }
   ],
-  "usage": { "tokens_in": 120000, "tokens_out": 9000, "cost_usd": 0.42 },
-  "model_used": "anthropic/claude-sonnet-4",
+  "cost_usd": 0.0,
+  "model_profile": "free",
+  "model_provider": "opencode",
+  "model_id": "deepseek-v4.1-flash-free",
   "error": null,
   "started_at": "2026-11-24T18:02:40.000Z",
   "finished_at": "2026-11-24T18:19:02.000Z"
@@ -153,6 +159,7 @@ Se construye un objeto JSON con **exactamente** estas claves. Ninguna más, ning
 
 ```
 executor.type
+executor.model_profile   (solo si existe)
 instructions
 kind
 limits.{max_cost_usd, max_memory_gb, max_minutes, max_processes, network}
@@ -166,6 +173,8 @@ workspace.{allowed_paths, base_ref, denied_paths, mode, repo}
 
 - **Excluidos a propósito:** `approval` (se firma después), `created_at`, `expires_at`,
   `lineage.hops`, `executor.model_hint`, `workspace.strategy`, `protocol_version`.
+  `executor.model_profile` **sí** se incluye cuando existe: cambiar de perfil cambia el hash y la
+  aprobación deja de valer.
   Justificación: `hops` cambia en cada salto y una redelegación no debe invalidar la
   aprobación; `expires_at` es control operativo, no de contenido.
 - **Normalización de `instructions`:** `\r\n`→`\n`, `\r`→`\n`, recorte de espacios finales

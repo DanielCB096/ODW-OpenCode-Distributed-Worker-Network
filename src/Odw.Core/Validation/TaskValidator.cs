@@ -232,6 +232,24 @@ public static class TaskValidator
             Add(issues, ValidationCodes.ContractInvalid, "executor.model_hint", "Máximo 128 caracteres.");
         }
 
+        if (request.Executor.ModelProfile is { } profile)
+        {
+            if (profile.Length is 0 or > 64
+                || !profile.All(character => char.IsAsciiLetterOrDigit(character)
+                                             || character is '-' or '_' or '.'))
+            {
+                Add(issues, ValidationCodes.ContractInvalid, "executor.model_profile",
+                    "Nombre de perfil inválido (1-64: letras, dígitos, '-', '_' o '.').");
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Executor.ModelProfile)
+            && !string.IsNullOrWhiteSpace(request.Executor.ModelHint))
+        {
+            Add(issues, ValidationCodes.ContractInvalid, "executor.model_profile",
+                "Usa model_profile o model_hint, no ambos.");
+        }
+
         var approval = request.Approval;
         if (approval is null)
         {

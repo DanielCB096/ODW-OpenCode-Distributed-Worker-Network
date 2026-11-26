@@ -33,6 +33,7 @@ public class OriginToolTests
         ["mode"] = "read_only",
         ["repo"] = "SistemaMaestro",
         ["instructions"] = "Analizar el repositorio.",
+        ["model_profile"] = "free",
         ["allowed_paths"] = new JsonArray("src/"),
         ["limits"] = new JsonObject
         {
@@ -81,6 +82,7 @@ public class OriginToolTests
         Assert.Equal(WorkspaceMode.ReadOnly, input.Mode);
         Assert.Equal(30, input.MaxMinutes);
         Assert.Equal(2.5m, input.MaxCostUsd);
+        Assert.Equal("free", input.ModelProfile);
     }
 
     [Fact]

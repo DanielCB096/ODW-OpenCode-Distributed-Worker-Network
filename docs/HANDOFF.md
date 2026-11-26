@@ -5,7 +5,7 @@
 > **Estado:** H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1 tiene la delegación real en dos PCs
 > verificada (2026-11-26); quedan doctor en dos PCs, reinicio a mitad y cobertura para cerrar el
 > hito. Quedan artefactos descargables, Telegram real y H4.
-> **328/328 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
+> **340/340 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
 > pruebas; el repo sigue privado y se rotará al terminar.
 
 Este documento es el punto de entrada para retomar el proyecto en otro equipo sin depender de
@@ -143,6 +143,14 @@ Parte de `config/node.example.json`. Campos que importan:
   "node_id": "PC-A",
   "peer_api": { "bind": "IP_TAILNET", "port": 7421, "allow_loopback": false },
   "mcp": { "bind": "127.0.0.1", "port": 7422, "token_ref": "env:ODW_MCP_TOKEN" },
+  "models": {
+    "default": "free",
+    "allowed": ["free"],
+    "profiles": {
+      "free": { "provider": "opencode", "model": "deepseek-v4.1-flash-free", "max_cost_usd": 0 },
+      "paid-deepseek": { "provider": "opencode-go", "model": "deepseek-v4.1-flash", "max_cost_usd": 2 }
+    }
+  },
   "scheduler": { "enabled": true, "max_concurrent": 1, "poll_seconds": 2 },
   "workspaces": { "root": "%PROGRAMDATA%\\ODW\\workspaces", "keep": false },
   "repos": [ { "name": "SistemaMaestro", "path": "C:\\ruta\\repo", "base_ref": "main" } ],
@@ -163,6 +171,9 @@ Parte de `config/node.example.json`. Campos que importan:
 
 - **Repo de origen legible por `odw-svc`** (es quien clona). Si está en una carpeta privada,
   concede lectura al servicio; el agente no necesita leerlo, solo el workspace clonado.
+- `models` es la allowlist del nodo: `free` por defecto; `paid-deepseek` queda definido pero
+  deshabilitado hasta resolver la credencial (gateway) y añadirlo a `allowed`. El origen solo
+  envía `model_profile`; nunca provider/model ni credenciales.
 - Con `run_as_agent` el nodo exige `max_concurrent=1` y `keep=false`; no los cambies sin diseñar
   aislamiento por tarea.
 - El origen puede tener `scheduler.enabled=false`; el destino `true`.
@@ -219,7 +230,7 @@ Verificado el 2026-11-26: OpenCode llamó a `odw_propose_task`, se aprobó la ta
 ## 7. Evidencia actual
 
 ```text
-328/328 pruebas · build 0 warnings
+340/340 pruebas · build 0 warnings
 commit actual en `main`
 ```
 
@@ -236,7 +247,7 @@ commit actual en `main`
     y diff inline (`+HOLA`).
 - Demo MCP desde OpenCode (2026-11-26): tarea `01M8CA57XKBFBGGTWPMQQVASVD`, `DONE`,
   `HOLA DESDE PC-CASA`; origen persistente en `127.0.0.1:7422`.
-- Revisión 2026-11-26: 7 scripts de `tools/` parsean, build 0 warnings, 328/328 pruebas y grafo
+- Revisión 2026-11-26: 7 scripts de `tools/` parsean, build 0 warnings, 340/340 pruebas y grafo
   regenerado.
 
 ---

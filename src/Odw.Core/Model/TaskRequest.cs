@@ -71,6 +71,10 @@ public sealed record ExecutorSpec
 {
     public string Type { get; init; } = "opencode";
 
+    /// <summary>Perfil permitido por el nodo destino (recomendado).</summary>
+    public string? ModelProfile { get; init; }
+
+    /// <summary>Compatibilidad: provider/model directo; solo se acepta si coincide con la allowlist.</summary>
     public string? ModelHint { get; init; }
 }
 

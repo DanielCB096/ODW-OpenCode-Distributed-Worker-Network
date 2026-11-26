@@ -6,10 +6,10 @@
     "semantic_hash": "f02b684456a015a13a9367558ce9e186"
   },
   "config/node.example.json": {
-    "mtime": 1795633397.5118186,
-    "seen": 1795649036.967229,
-    "ast_hash": "3a3809abd78066142c5d89d6a100e16e",
-    "semantic_hash": "3a3809abd78066142c5d89d6a100e16e"
+    "mtime": 1795712163.7563317,
+    "seen": 1795712569.770021,
+    "ast_hash": "f6f041cf40c09d8d7984331a19a158ea",
+    "semantic_hash": "f6f041cf40c09d8d7984331a19a158ea"
   },
   "config/peers.example.json": {
     "mtime": 1795561898.9390361,
@@ -126,10 +126,10 @@
     "semantic_hash": "402005146e4d0aa80667ef847c4f1869"
   },
   "src/Odw.Core/Hashing/TaskHash.cs": {
-    "mtime": 1795545437.374673,
-    "seen": 1795649036.9673119,
-    "ast_hash": "1dfe0a93c8653008c80071bdcca09353",
-    "semantic_hash": "1dfe0a93c8653008c80071bdcca09353"
+    "mtime": 1795712069.5687823,
+    "seen": 1795712569.7700768,
+    "ast_hash": "51e1edc6ae0e59d8dc43ccb46efc8d29",
+    "semantic_hash": "51e1edc6ae0e59d8dc43ccb46efc8d29"
   },
   "src/Odw.Core/Model/EnumExtensions.cs": {
     "mtime": 1795546476.0096138,
@@ -144,10 +144,10 @@
     "semantic_hash": "e2a259e8c57240f21f3b19538e9ce209"
   },
   "src/Odw.Core/Model/TaskRequest.cs": {
-    "mtime": 1795545407.2843294,
-    "seen": 1795649036.9673245,
-    "ast_hash": "f9893dfe6c7b2b6e56fc2b5f976110c8",
-    "semantic_hash": "f9893dfe6c7b2b6e56fc2b5f976110c8"
+    "mtime": 1795712069.5687823,
+    "seen": 1795712569.7700858,
+    "ast_hash": "f1285b6a237adb5aeed7dc032f3800a1",
+    "semantic_hash": "f1285b6a237adb5aeed7dc032f3800a1"
   },
   "src/Odw.Core/Model/TaskResult.cs": {
     "mtime": 1795545410.4523294,
@@ -204,10 +204,10 @@
     "semantic_hash": "32e8953f076e3d0386e1f3a74647823d"
   },
   "src/Odw.Core/Validation/TaskValidator.cs": {
-    "mtime": 1795545548.748742,
-    "seen": 1795649036.9673605,
-    "ast_hash": "21fa9c8497b22d2b19e8ad35c3369f09",
-    "semantic_hash": "21fa9c8497b22d2b19e8ad35c3369f09"
+    "mtime": 1795712077.675476,
+    "seen": 1795712569.770111,
+    "ast_hash": "12a7dc028ce01d56f80605bb06d1bf6a",
+    "semantic_hash": "12a7dc028ce01d56f80605bb06d1bf6a"
   },
   "src/Odw.Core/Validation/ValidationResult.cs": {
     "mtime": 1795545458.2766144,
@@ -258,16 +258,16 @@
     "semantic_hash": "cc1616b9af1385aa26dbacc36d9daa5d"
   },
   "src/Odw.Mcp/Abstractions/Proposals.cs": {
-    "mtime": 1795560527.592839,
-    "seen": 1795649036.9673944,
-    "ast_hash": "02fb86bded83e4bb05f780dbabbe2c0f",
-    "semantic_hash": "02fb86bded83e4bb05f780dbabbe2c0f"
+    "mtime": 1795712087.8735027,
+    "seen": 1795712569.770133,
+    "ast_hash": "9575531a6aeaa25689040918c29d5f6f",
+    "semantic_hash": "9575531a6aeaa25689040918c29d5f6f"
   },
   "src/Odw.Mcp/Abstractions/Tasks.cs": {
-    "mtime": 1795647380.010757,
-    "seen": 1795649036.9673975,
-    "ast_hash": "946d27729b9d4bdff0a528ec6f5809e5",
-    "semantic_hash": "946d27729b9d4bdff0a528ec6f5809e5"
+    "mtime": 1795712147.857053,
+    "seen": 1795712569.7701354,
+    "ast_hash": "7691b8435e666875cef0bd472f8d9a9a",
+    "semantic_hash": "7691b8435e666875cef0bd472f8d9a9a"
   },
   "src/Odw.Mcp/JsonRpc.cs": {
     "mtime": 1795555565.372584,
@@ -306,10 +306,10 @@
     "semantic_hash": "38abe74da1b9433b15ea9b1e8315e05d"
   },
   "src/Odw.Mcp/Tools/OriginTools.cs": {
-    "mtime": 1795560547.976178,
-    "seen": 1795649036.9674225,
-    "ast_hash": "fcf2b207e005bb5f878669ce574b928e",
-    "semantic_hash": "fcf2b207e005bb5f878669ce574b928e"
+    "mtime": 1795712087.9244232,
+    "seen": 1795712569.7701604,
+    "ast_hash": "597ad722b219c495081841dd1586d1b0",
+    "semantic_hash": "597ad722b219c495081841dd1586d1b0"
   },
   "src/Odw.Mcp/Tools/PeerTools.cs": {
     "mtime": 1795555613.368995,
@@ -318,10 +318,10 @@
     "semantic_hash": "4f46b14be8fe1d6c65c0cf44f0881969"
   },
   "src/Odw.Mcp/Tools/TaskTools.cs": {
-    "mtime": 1795647693.451725,
-    "seen": 1795649036.967429,
-    "ast_hash": "0418d0b3839fb5e22ab62d71995879be",
-    "semantic_hash": "0418d0b3839fb5e22ab62d71995879be"
+    "mtime": 1795712151.4876878,
+    "seen": 1795712569.7701654,
+    "ast_hash": "7e19f8db9c27c12443b816f4851f276b",
+    "semantic_hash": "7e19f8db9c27c12443b816f4851f276b"
   },
   "src/Odw.Node/Approvals/ApprovalCoordinator.cs": {
     "mtime": 1795563666.1055155,
@@ -360,28 +360,28 @@
     "semantic_hash": "e4d07ede43df0886ce1440562de9c0da"
   },
   "src/Odw.Node/Configuration/NodeConfig.cs": {
-    "mtime": 1795633358.346972,
-    "seen": 1795649036.9674537,
-    "ast_hash": "50dd5aec4e31b50b76778dc4e5e69d2f",
-    "semantic_hash": "50dd5aec4e31b50b76778dc4e5e69d2f"
+    "mtime": 1795712093.9177372,
+    "seen": 1795712569.7701807,
+    "ast_hash": "54963eb444bcf8fba53b49eef2f5d90a",
+    "semantic_hash": "54963eb444bcf8fba53b49eef2f5d90a"
   },
   "src/Odw.Node/Configuration/NodeConfigLoader.cs": {
-    "mtime": 1795563765.403946,
-    "seen": 1795649036.9674573,
-    "ast_hash": "41bccca248d1ee7c5dabc10b66cfa889",
-    "semantic_hash": "41bccca248d1ee7c5dabc10b66cfa889"
+    "mtime": 1795712489.8997064,
+    "seen": 1795712569.7701824,
+    "ast_hash": "245151fe074fe09e43a26ec4b2863cee",
+    "semantic_hash": "245151fe074fe09e43a26ec4b2863cee"
   },
   "src/Odw.Node/Contracts/TaskContractReader.cs": {
-    "mtime": 1795558337.9279203,
-    "seen": 1795649036.9674606,
-    "ast_hash": "3b824eb5c154b2a1a11a47b19ec54979",
-    "semantic_hash": "3b824eb5c154b2a1a11a47b19ec54979"
+    "mtime": 1795712082.0254302,
+    "seen": 1795712569.7701845,
+    "ast_hash": "eaa7058609b38ba428f9889838e87908",
+    "semantic_hash": "eaa7058609b38ba428f9889838e87908"
   },
   "src/Odw.Node/Contracts/TaskContractWriter.cs": {
-    "mtime": 1795559666.4702866,
-    "seen": 1795649036.9674644,
-    "ast_hash": "b6974039a72cc6decbc7c94718eae3bc",
-    "semantic_hash": "b6974039a72cc6decbc7c94718eae3bc"
+    "mtime": 1795712082.0254302,
+    "seen": 1795712569.7701864,
+    "ast_hash": "45cfbfdca8dfc8260de8a33897e9aa27",
+    "semantic_hash": "45cfbfdca8dfc8260de8a33897e9aa27"
   },
   "src/Odw.Node/Diagnostics/DoctorOptions.cs": {
     "mtime": 1795555663.27034,
@@ -402,10 +402,10 @@
     "semantic_hash": "9f878a6d591eeb474846c8ac65950490"
   },
   "src/Odw.Node/Hosting/NodeBootstrap.cs": {
-    "mtime": 1795636587.288215,
-    "seen": 1795649036.967482,
-    "ast_hash": "6ab31447ee8d0000a12d3786040c820a",
-    "semantic_hash": "6ab31447ee8d0000a12d3786040c820a"
+    "mtime": 1795712112.5989158,
+    "seen": 1795712569.7701952,
+    "ast_hash": "3af78db605a38835afdd775f8ee3e22c",
+    "semantic_hash": "3af78db605a38835afdd775f8ee3e22c"
   },
   "src/Odw.Node/Hosting/NodeHost.cs": {
     "mtime": 1795628679.762016,
@@ -414,10 +414,10 @@
     "semantic_hash": "84a9dd4464d6fbdab7a2274d48506ded"
   },
   "src/Odw.Node/Hosting/NodeHostOptions.cs": {
-    "mtime": 1795628684.559001,
-    "seen": 1795649036.9674911,
-    "ast_hash": "0492310ee2b382e2617eacf118f09551",
-    "semantic_hash": "0492310ee2b382e2617eacf118f09551"
+    "mtime": 1795712108.3921635,
+    "seen": 1795712569.7701998,
+    "ast_hash": "a53eee5e86f55855b715c8dbdd0e93ab",
+    "semantic_hash": "a53eee5e86f55855b715c8dbdd0e93ab"
   },
   "src/Odw.Node/Hosting/SandboxGuard.cs": {
     "mtime": 1795631764.767413,
@@ -438,10 +438,10 @@
     "semantic_hash": "e71fd0208304f779ab06435e4e1917b7"
   },
   "src/Odw.Node/Origins/OriginProposalService.cs": {
-    "mtime": 1795560545.1095967,
-    "seen": 1795649036.9675086,
-    "ast_hash": "a1993f257c6318d453d16011e712db4c",
-    "semantic_hash": "a1993f257c6318d453d16011e712db4c"
+    "mtime": 1795712087.8745027,
+    "seen": 1795712569.7702098,
+    "ast_hash": "8ea5629faad706a2f052987e33deb7f2",
+    "semantic_hash": "8ea5629faad706a2f052987e33deb7f2"
   },
   "src/Odw.Node/Origins/PeerApiClientFactory.cs": {
     "mtime": 1795559739.9379134,
@@ -450,10 +450,10 @@
     "semantic_hash": "da56b882778bf370b24e7e4fca75a0b6"
   },
   "src/Odw.Node/PeerApi/PeerEndpoints.cs": {
-    "mtime": 1795559678.5689294,
-    "seen": 1795649036.9675179,
-    "ast_hash": "bf50189d95cb61abd731dc51453a74a6",
-    "semantic_hash": "bf50189d95cb61abd731dc51453a74a6"
+    "mtime": 1795712139.750007,
+    "seen": 1795712569.7702138,
+    "ast_hash": "43d518afef98f6b8660edf121c735166",
+    "semantic_hash": "43d518afef98f6b8660edf121c735166"
   },
   "src/Odw.Node/Peers/PeerRegistry.cs": {
     "mtime": 1795559648.0339925,
@@ -534,10 +534,10 @@
     "semantic_hash": "6f1fe431f47e86661fe78a36176061cf"
   },
   "src/Odw.Node/Persistence/Queries/SqliteTaskQuery.cs": {
-    "mtime": 1795647401.964964,
-    "seen": 1795649036.9675784,
-    "ast_hash": "766c84eb26f2dde2f01c7820ac2cb33f",
-    "semantic_hash": "766c84eb26f2dde2f01c7820ac2cb33f"
+    "mtime": 1795712147.9707637,
+    "seen": 1795712569.770247,
+    "ast_hash": "90069af6e4b472e8b3438545ed090dd6",
+    "semantic_hash": "90069af6e4b472e8b3438545ed090dd6"
   },
   "src/Odw.Node/Persistence/SqliteDatabase.cs": {
     "mtime": 1795546546.4551141,
@@ -594,10 +594,10 @@
     "semantic_hash": "597344efad4de094e6467e510498e380"
   },
   "src/Odw.Node/Scheduling/OpenCodeTaskRunner.cs": {
-    "mtime": 1795647373.7245367,
-    "seen": 1795649036.9676163,
-    "ast_hash": "3dd4ca2d4a366ffbbe567fcbc08c198b",
-    "semantic_hash": "3dd4ca2d4a366ffbbe567fcbc08c198b"
+    "mtime": 1795712133.09186,
+    "seen": 1795712569.770269,
+    "ast_hash": "fba16ef90a35986fb0b12296a8601d5e",
+    "semantic_hash": "fba16ef90a35986fb0b12296a8601d5e"
   },
   "src/Odw.Node/Tasks/TaskCoordinator.cs": {
     "mtime": 1795558605.4961035,
@@ -744,16 +744,16 @@
     "semantic_hash": "ff379e50f2a61e207e9e108556a1fcc2"
   },
   "tests/Odw.Core.Tests/TaskHashTests.cs": {
-    "mtime": 1795545785.21324,
-    "seen": 1795649036.9677107,
-    "ast_hash": "a14938625058b79e3b66ad1470e39141",
-    "semantic_hash": "a14938625058b79e3b66ad1470e39141"
+    "mtime": 1795712249.935751,
+    "seen": 1795712569.7703254,
+    "ast_hash": "e9dad60f1d05e6d119baa1dfea81a8bc",
+    "semantic_hash": "e9dad60f1d05e6d119baa1dfea81a8bc"
   },
   "tests/Odw.Core.Tests/TaskValidatorTests.cs": {
-    "mtime": 1795545649.6158364,
-    "seen": 1795649036.9677148,
-    "ast_hash": "2f1c7997c8d2789dd2db0b0dd76acde5",
-    "semantic_hash": "2f1c7997c8d2789dd2db0b0dd76acde5"
+    "mtime": 1795712249.9439251,
+    "seen": 1795712569.7703273,
+    "ast_hash": "c78f571822dd9cc6acde15bc437cc779",
+    "semantic_hash": "c78f571822dd9cc6acde15bc437cc779"
   },
   "tests/Odw.Core.Tests/TestTasks.cs": {
     "mtime": 1795545594.3896296,
@@ -816,22 +816,22 @@
     "semantic_hash": "08e08a9d0cadcb1eb739f9886e10219a"
   },
   "tests/Odw.Mcp.Tests/OriginToolTests.cs": {
-    "mtime": 1795559991.41018,
-    "seen": 1795649036.9677582,
-    "ast_hash": "d4f707eae55a26ee119ba7833118e05f",
-    "semantic_hash": "d4f707eae55a26ee119ba7833118e05f"
+    "mtime": 1795712272.8904254,
+    "seen": 1795712569.7703514,
+    "ast_hash": "892fb81a99b4a5b14b08a5e36f61d5e2",
+    "semantic_hash": "892fb81a99b4a5b14b08a5e36f61d5e2"
   },
   "tests/Odw.Mcp.Tests/SqliteFacadeTests.cs": {
-    "mtime": 1795555923.5513232,
-    "seen": 1795649036.967762,
-    "ast_hash": "607b25a7c60338fccc5b58c8aa880b22",
-    "semantic_hash": "607b25a7c60338fccc5b58c8aa880b22"
+    "mtime": 1795712272.8904254,
+    "seen": 1795712569.7703533,
+    "ast_hash": "f7e7d69136f9c9113c6aa589f7365abe",
+    "semantic_hash": "f7e7d69136f9c9113c6aa589f7365abe"
   },
   "tests/Odw.Mcp.Tests/TestData.cs": {
-    "mtime": 1795647734.312186,
-    "seen": 1795649036.967766,
-    "ast_hash": "d2159e742278d3d0c9b3312bea24a1d8",
-    "semantic_hash": "d2159e742278d3d0c9b3312bea24a1d8"
+    "mtime": 1795712157.153171,
+    "seen": 1795712569.7703552,
+    "ast_hash": "7ce0021eb485e77c92e1afe2bc865c47",
+    "semantic_hash": "7ce0021eb485e77c92e1afe2bc865c47"
   },
   "tests/Odw.Node.Tests/ApprovalServiceTests.cs": {
     "mtime": 1795563894.811268,
@@ -876,10 +876,10 @@
     "semantic_hash": "bccfc8ff7f57cf3ae570b4bea2a5ebb8"
   },
   "tests/Odw.Node.Tests/NodeConfigTests.cs": {
-    "mtime": 1795561732.4715526,
-    "seen": 1795649036.9677978,
-    "ast_hash": "50871730a7e4aa50071bfef417ce1e9b",
-    "semantic_hash": "50871730a7e4aa50071bfef417ce1e9b"
+    "mtime": 1795712267.6988356,
+    "seen": 1795712569.7703729,
+    "ast_hash": "dc03089ba0a529eafe892f0df79e9953",
+    "semantic_hash": "dc03089ba0a529eafe892f0df79e9953"
   },
   "tests/Odw.Node.Tests/NodeHostTests.cs": {
     "mtime": 1795560874.3538866,
@@ -942,10 +942,10 @@
     "semantic_hash": "226297bfa115452baa09775fc99b37bd"
   },
   "tests/Odw.Node.Tests/TaskContractReaderTests.cs": {
-    "mtime": 1795558115.4352553,
-    "seen": 1795649036.967839,
-    "ast_hash": "3b3f46682b6cf10181353b6c0b09e607",
-    "semantic_hash": "3b3f46682b6cf10181353b6c0b09e607"
+    "mtime": 1795712249.9439251,
+    "seen": 1795712569.7703965,
+    "ast_hash": "1e0bc7a86be4ae0efb32dd7c09fd1783",
+    "semantic_hash": "1e0bc7a86be4ae0efb32dd7c09fd1783"
   },
   "tests/Odw.Node.Tests/TaskCoordinatorTests.cs": {
     "mtime": 1795558133.3031516,
@@ -1086,10 +1086,10 @@
     "semantic_hash": "104a996dbeca7ef2d6d07020835c2152"
   },
   "README.md": {
-    "mtime": 1795708567.0107071,
-    "seen": 1795708579.5036604,
-    "ast_hash": "458cc05d9a850bc85c8e18dc735b980b",
-    "semantic_hash": "458cc05d9a850bc85c8e18dc735b980b"
+    "mtime": 1795712471.6957946,
+    "seen": 1795712569.770462,
+    "ast_hash": "432f82b45d37c3ac8b369cbbba485015",
+    "semantic_hash": "432f82b45d37c3ac8b369cbbba485015"
   },
   "docs/DECISIONS.md": {
     "mtime": 1795542734.5070035,
@@ -1098,10 +1098,10 @@
     "semantic_hash": "dfd93561eb3c931b72f3baae84ddd736"
   },
   "docs/DOMAIN-MODEL.md": {
-    "mtime": 1795648422.6146843,
-    "seen": 1795649036.9679406,
-    "ast_hash": "3144d18631d9930b72755691e4992cac",
-    "semantic_hash": "3144d18631d9930b72755691e4992cac"
+    "mtime": 1795712505.842733,
+    "seen": 1795712569.770466,
+    "ast_hash": "5984277b6a358b2b3de7768ba0b6cedf",
+    "semantic_hash": "5984277b6a358b2b3de7768ba0b6cedf"
   },
   "docs/H0-FINDINGS.md": {
     "mtime": 1795556849.81788,
@@ -1110,16 +1110,16 @@
     "semantic_hash": "9eb58846b2505492f8a42ed21176d932"
   },
   "docs/IMPLEMENTATION.md": {
-    "mtime": 1795709728.4315617,
-    "seen": 1795709764.5631628,
-    "ast_hash": "aa71942a4fe29a7a78b78abc833d1759",
-    "semantic_hash": "aa71942a4fe29a7a78b78abc833d1759"
+    "mtime": 1795712424.219608,
+    "seen": 1795712569.7704728,
+    "ast_hash": "a640140a72bd4434a9f63b3411ac03c9",
+    "semantic_hash": "a640140a72bd4434a9f63b3411ac03c9"
   },
   "docs/MCP-FACADE.md": {
-    "mtime": 1795709728.4315617,
-    "seen": 1795709764.563168,
-    "ast_hash": "c9a0f340f65156d18755a2b90103bc7e",
-    "semantic_hash": "c9a0f340f65156d18755a2b90103bc7e"
+    "mtime": 1795712453.3061945,
+    "seen": 1795712569.7704747,
+    "ast_hash": "8844c09e706f2c91b346a0e6af48d440",
+    "semantic_hash": "8844c09e706f2c91b346a0e6af48d440"
   },
   "docs/OPENCODE-ADAPTER.md": {
     "mtime": 1795649537.4851048,
@@ -1140,28 +1140,28 @@
     "semantic_hash": "2312769c3d518a70fca5d8c326b0da6c"
   },
   "docs/PROTOCOL.md": {
-    "mtime": 1795560296.6878605,
-    "seen": 1795649036.9679656,
-    "ast_hash": "71d79136a3d585ee271714627b9eb7e8",
-    "semantic_hash": "71d79136a3d585ee271714627b9eb7e8"
+    "mtime": 1795712373.205046,
+    "seen": 1795712569.7704833,
+    "ast_hash": "931c809334830b4b3e44ca20259138db",
+    "semantic_hash": "931c809334830b4b3e44ca20259138db"
   },
   "docs/README.md": {
-    "mtime": 1795650099.4381633,
-    "seen": 1795707916.107709,
-    "ast_hash": "e64df01766f3007524dc2909bd11e0df",
-    "semantic_hash": "e64df01766f3007524dc2909bd11e0df"
+    "mtime": 1795712424.204981,
+    "seen": 1795712569.770485,
+    "ast_hash": "c76016dc47ee91eb7e0c66f59d30d538",
+    "semantic_hash": "c76016dc47ee91eb7e0c66f59d30d538"
   },
   "docs/ROADMAP.md": {
-    "mtime": 1795708943.4622989,
-    "seen": 1795708964.6860566,
-    "ast_hash": "4e2613081bc4a780801b712b859551d9",
-    "semantic_hash": "4e2613081bc4a780801b712b859551d9"
+    "mtime": 1795712471.692389,
+    "seen": 1795712569.7704868,
+    "ast_hash": "5589e46985a110431713ce6854c03ebb",
+    "semantic_hash": "5589e46985a110431713ce6854c03ebb"
   },
   "docs/SECURITY.md": {
-    "mtime": 1795637367.4939134,
-    "seen": 1795649036.9679754,
-    "ast_hash": "6005f134faeb2dec86a84872526f1fde",
-    "semantic_hash": "6005f134faeb2dec86a84872526f1fde"
+    "mtime": 1795712472.0504956,
+    "seen": 1795712569.7704906,
+    "ast_hash": "7998167d399a5ae607c3bc848e79b7fd",
+    "semantic_hash": "7998167d399a5ae607c3bc848e79b7fd"
   },
   "docs/TESTING.md": {
     "mtime": 1795648189.8514702,
@@ -1170,16 +1170,16 @@
     "semantic_hash": "b57830f10998bbc4f768be3312989fa7"
   },
   "AGENTS.md": {
-    "mtime": 1795709728.4315617,
-    "seen": 1795709764.5631196,
-    "ast_hash": "c4e55500919ca18cb7c77041556aef11",
-    "semantic_hash": "c4e55500919ca18cb7c77041556aef11"
+    "mtime": 1795712471.692389,
+    "seen": 1795712569.7704558,
+    "ast_hash": "75efca150659c4b58d82ffed5fb6dc79",
+    "semantic_hash": "75efca150659c4b58d82ffed5fb6dc79"
   },
   "docs/HANDOFF.md": {
-    "mtime": 1795709741.8106089,
-    "seen": 1795709764.563158,
-    "ast_hash": "9ef7fe3320351937e9bcdf8b45b22d03",
-    "semantic_hash": "9ef7fe3320351937e9bcdf8b45b22d03"
+    "mtime": 1795712463.393079,
+    "seen": 1795712569.7704704,
+    "ast_hash": "67f565147634665cd5128eea410568da",
+    "semantic_hash": "67f565147634665cd5128eea410568da"
   },
   "tools/h1-remote-test.ps1": {
     "mtime": 1795707387.452509,
@@ -1188,10 +1188,10 @@
     "semantic_hash": "c5a9ccf4b32d3629224902f2f4e0d5ba"
   },
   "tools/prepare-destination-node.ps1": {
-    "mtime": 1795707781.725627,
-    "seen": 1795707916.1076465,
-    "ast_hash": "3648da441363a97c3462052a537f5099",
-    "semantic_hash": "3648da441363a97c3462052a537f5099"
+    "mtime": 1795712483.7262473,
+    "seen": 1795712569.7704477,
+    "ast_hash": "d5dab4d02d042a3cde4839c90c7efe27",
+    "semantic_hash": "d5dab4d02d042a3cde4839c90c7efe27"
   },
   "tools/prepare-origin-kit.ps1": {
     "mtime": 1795707387.455507,
@@ -1206,10 +1206,10 @@
     "semantic_hash": "209e277f507afa17a6c0a3ec5249cbd1"
   },
   "CONTINUE.md": {
-    "mtime": 1795709728.4315617,
-    "seen": 1795709764.5631309,
-    "ast_hash": "710b5b08825ec06f33b80874b0dbf97f",
-    "semantic_hash": "710b5b08825ec06f33b80874b0dbf97f"
+    "mtime": 1795712463.351295,
+    "seen": 1795712569.7704604,
+    "ast_hash": "d3ca40bee851d44ba0068b432583cb22",
+    "semantic_hash": "d3ca40bee851d44ba0068b432583cb22"
   },
   "docs/RUNBOOK-DOS-PCS.md": {
     "mtime": 1795708943.412035,
@@ -1222,5 +1222,17 @@
     "seen": 1795710007.074421,
     "ast_hash": "15e840de256be3523ae75f9860366b55",
     "semantic_hash": "15e840de256be3523ae75f9860366b55"
+  },
+  "src/Odw.Core/Model/ModelProfile.cs": {
+    "mtime": 1795712069.5626912,
+    "seen": 1795712569.7700837,
+    "ast_hash": "370ee05a2c4752e00402276e5671e0db",
+    "semantic_hash": "370ee05a2c4752e00402276e5671e0db"
+  },
+  "tests/Odw.Core.Tests/ModelProfileResolverTests.cs": {
+    "mtime": 1795712249.9296916,
+    "seen": 1795712569.7703185,
+    "ast_hash": "1166eec7c131d9a7e70c50e901b12fea",
+    "semantic_hash": "1166eec7c131d9a7e70c50e901b12fea"
   }
 }

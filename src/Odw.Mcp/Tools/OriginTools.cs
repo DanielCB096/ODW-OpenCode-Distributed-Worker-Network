@@ -25,6 +25,7 @@ public static class OriginTools
                     "repo": { "type": "string", "minLength": 1, "maxLength": 64 },
                     "base_ref": { "type": "string", "default": "main" },
                     "instructions": { "type": "string", "minLength": 1, "maxLength": 65536 },
+                    "model_profile": { "type": "string", "minLength": 1, "maxLength": 64 },
                     "allowed_paths": {
                       "type": "array", "minItems": 1, "maxItems": 64,
                       "items": { "type": "string" }
@@ -101,7 +102,8 @@ public static class OriginTools
             network.Value,
             JsonTools.GetDecimal(limits, "max_cost_usd") ?? 5m,
             JsonTools.GetInt(arguments, "expires_in_minutes") ?? 60,
-            JsonTools.GetString(arguments, "task_id"));
+            JsonTools.GetString(arguments, "task_id"),
+            JsonTools.GetString(arguments, "model_profile"));
 
         var outcome = await proposals.ProposeAsync(input, cancellationToken).ConfigureAwait(false);
 

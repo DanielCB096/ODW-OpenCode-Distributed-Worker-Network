@@ -239,6 +239,22 @@ $nodeConfig = [ordered]@{
         pinned_version = '2.3.2'
         use_job_object = $true
     }
+    models     = [ordered]@{
+        default  = 'free'
+        allowed  = @('free')
+        profiles = [ordered]@{
+            free          = [ordered]@{
+                provider     = 'opencode'
+                model        = 'deepseek-v4.1-flash-free'
+                max_cost_usd = 0
+            }
+            'paid-deepseek' = [ordered]@{
+                provider     = 'opencode-go'
+                model        = 'deepseek-v4.1-flash'
+                max_cost_usd = 2
+            }
+        }
+    }
     workspaces = [ordered]@{
         root = (Join-Path $DataDir 'workspaces')
         keep = $false

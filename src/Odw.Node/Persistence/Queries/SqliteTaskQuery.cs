@@ -82,7 +82,11 @@ public sealed class SqliteTaskQuery : ITaskQuery
             available,
             details.Diff,
             details.DiffTruncated,
-            events);
+            events,
+            details.ModelProfile,
+            details.ModelProvider,
+            details.ModelId,
+            details.CostUsd);
 
         return Task.FromResult<TaskResultView?>(view);
     }
@@ -144,11 +148,15 @@ public sealed class SqliteTaskQuery : ITaskQuery
         IReadOnlyList<string> Artifacts,
         string? Diff,
         bool DiffTruncated,
-        bool RequiresReview);
+        bool RequiresReview,
+        string? ModelProfile,
+        string? ModelProvider,
+        string? ModelId,
+        decimal? CostUsd);
 
     private static ResultDetails ParseResult(string? json)
     {
-        var empty = new ResultDetails(null, null, [], null, null, [], null, false, false);
+        var empty = new ResultDetails(null, null, [], null, null, [], null, false, false, null, null, null, null);
         if (string.IsNullOrWhiteSpace(json))
         {
             return empty;
@@ -184,7 +192,24 @@ public sealed class SqliteTaskQuery : ITaskQuery
                 && truncated.GetBoolean(),
                 root.TryGetProperty("requires_review", out var review)
                 && review.ValueKind is JsonValueKind.True or JsonValueKind.False
-                && review.GetBoolean());
+                && review.GetBoolean(),
+                root.TryGetProperty("model_profile", out var modelProfile)
+                && modelProfile.ValueKind == JsonValueKind.String
+                    ? modelProfile.GetString()
+                    : null,
+                root.TryGetProperty("model_provider", out var modelProvider)
+                && modelProvider.ValueKind == JsonValueKind.String
+                    ? modelProvider.GetString()
+                    : null,
+                root.TryGetProperty("model_id", out var modelId)
+                && modelId.ValueKind == JsonValueKind.String
+                    ? modelId.GetString()
+                    : null,
+                root.TryGetProperty("cost_usd", out var costUsd)
+                && costUsd.ValueKind == JsonValueKind.Number
+                && costUsd.TryGetDecimal(out var cost)
+                    ? cost
+                    : null);
         }
         catch (JsonException)
         {

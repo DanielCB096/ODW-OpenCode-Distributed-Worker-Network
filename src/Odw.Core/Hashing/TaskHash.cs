@@ -51,6 +51,11 @@ public static class TaskHash
 
         var executor = new CanonicalObject();
         executor.Add("type", new CanonicalString(request.Executor.Type));
+        if (request.Executor.ModelProfile is not null)
+        {
+            // El perfil forma parte de la aprobacion: cambiarlo cambia el hash.
+            executor.Add("model_profile", new CanonicalString(request.Executor.ModelProfile));
+        }
 
         var projection = new CanonicalObject();
         projection.Add("executor", executor);

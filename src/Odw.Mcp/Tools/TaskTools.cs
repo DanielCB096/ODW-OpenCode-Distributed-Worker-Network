@@ -147,6 +147,14 @@ public static class TaskTools
             result.Branch is null ? null : JsonValue.Create(result.Branch));
         JsonTools.AddIfNotNull(json, "commit",
             result.Commit is null ? null : JsonValue.Create(result.Commit));
+        JsonTools.AddIfNotNull(json, "model_profile",
+            result.ModelProfile is null ? null : JsonValue.Create(result.ModelProfile));
+        JsonTools.AddIfNotNull(json, "model_provider",
+            result.ModelProvider is null ? null : JsonValue.Create(result.ModelProvider));
+        JsonTools.AddIfNotNull(json, "model_id",
+            result.ModelId is null ? null : JsonValue.Create(result.ModelId));
+        JsonTools.AddIfNotNull(json, "cost_usd",
+            result.CostUsd is null ? null : JsonValue.Create(result.CostUsd.Value));
 
         if (includeDiff)
         {

@@ -23,6 +23,33 @@ public class TaskValidatorTests
     }
 
     [Fact]
+    public void Model_profile_is_validated()
+    {
+        var valid = TestTasks.Valid() with
+        {
+            Executor = new ExecutorSpec { Type = "opencode", ModelProfile = "free" },
+        };
+        Assert.True(TaskValidator.Validate(valid).IsValid);
+
+        var invalid = TestTasks.Valid() with
+        {
+            Executor = new ExecutorSpec { Type = "opencode", ModelProfile = "free/../x" },
+        };
+        Assert.Contains(ValidationCodes.ContractInvalid, TaskValidator.Validate(invalid).Codes);
+
+        var both = TestTasks.Valid() with
+        {
+            Executor = new ExecutorSpec
+            {
+                Type = "opencode",
+                ModelProfile = "free",
+                ModelHint = "opencode/deepseek-v4.1-flash-free",
+            },
+        };
+        Assert.Contains(ValidationCodes.ContractInvalid, TaskValidator.Validate(both).Codes);
+    }
+
+    [Fact]
     public void Code_change_requires_write_mode()
     {
         var request = TestTasks.Valid() with { Kind = TaskKind.CodeChange };

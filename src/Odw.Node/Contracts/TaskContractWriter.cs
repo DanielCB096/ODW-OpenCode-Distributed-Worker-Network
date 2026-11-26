@@ -42,6 +42,11 @@ public static class TaskContractWriter
             ["model_hint"] = request.Executor.ModelHint,
         };
 
+        if (request.Executor.ModelProfile is not null)
+        {
+            executor["model_profile"] = request.Executor.ModelProfile;
+        }
+
         JsonNode? approval = null;
         if (request.Approval is { } evidence)
         {

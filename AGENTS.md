@@ -12,7 +12,7 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
 
 ## Estado actual (2026-11-26)
 
-- **328/328 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
+- **340/340 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
 - H0, H2 (pipe/CLI/HMAC) y H3 cerrados. H1: delegación real en dos PCs verificada; quedan doctor
   en dos PCs, reinicio a mitad y cobertura para cerrar el hito.
 - Nodo destino `PC-CASA` preparado y verificado: servicio `OdwNode` como `.\odw-svc`, listener
@@ -84,6 +84,8 @@ python tools/graphify-project.py   # regenerar
   contraseñas. Un repo temporal con secretos se borra y el token se rota.
 - Los documentos públicos usan marcadores `<IP-TAILNET-...>`; no metas IPs, hostnames ni cuentas
   reales de la tailnet.
+- El origen solo pide `model_profile`; el destino valida contra `models.allowed`. No copies
+  credenciales de modelo al perfil del agente.
 - El repo de trabajo debe ser legible por `odw-svc` (es quien clona).
 - El workspace temporal se borra: el diff inline es la evidencia del cambio.
 - Antes de cerrar, actualiza `docs/IMPLEMENTATION.md`, `docs/ROADMAP.md` y este estado.

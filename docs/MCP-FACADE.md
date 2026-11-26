@@ -155,6 +155,7 @@ Error si el par no existe (`PEER_UNKNOWN`) o está offline (`PEER_OFFLINE`, sin 
   "repo": "SistemaMaestro",
   "base_ref": "main",
   "instructions": "Analizar el módulo de pagos y ejecutar las pruebas.",
+  "model_profile": "free",
   "allowed_paths": ["src/", "tests/"],
   "denied_paths": [".env"],
   "limits": { "max_minutes": 45, "max_memory_gb": 12, "max_processes": 64,
@@ -175,7 +176,10 @@ Error si el par no existe (`PEER_UNKNOWN`) o está offline (`PEER_OFFLINE`, sin 
   contenido, `TASK_ID_CONFLICT`.
 - `task_hash` se devuelve para que el humano pueda verificarlo en Telegram (8 primeros hex).
 - `repo` debe existir en la configuración local; el agente no elige rutas.
-- Errores: `POLICY_DENIED` (regla explícita), `CONTRACT_INVALID`, `PEER_OFFLINE`, `REPO_UNKNOWN`.
+- `model_profile` es un **nombre de perfil** del destino, no un provider/model ni una
+  credencial. Si se omite, se usa `models.default`; `model_hint` solo se acepta si
+  coincide con un perfil permitido.
+- Errores: `POLICY_DENIED` (regla explícita), `CONTRACT_INVALID`, `PEER_OFFLINE`, `REPO_UNKNOWN`. También `MODEL_NOT_ALLOWED` si el perfil no está en `models.allowed`.
 
 ### 2.5 `odw_get_task_status`
 
@@ -204,6 +208,8 @@ Error si el par no existe (`PEER_UNKNOWN`) o está offline (`PEER_OFFLINE`, sin 
   "tests": [{ "name": "dotnet test", "status": "passed" }],
   "artifacts": [{ "name": "report.md", "bytes": 8123 }],
   "diff": "diff --git ...",           // truncado a 256 KiB; el resto queda pendiente
+  "model_profile": "free", "model_provider": "opencode",
+  "model_id": "deepseek-v4.1-flash-free", "cost_usd": 0.0,
   "requires_review": false }
 ```
 

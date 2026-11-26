@@ -54,6 +54,8 @@ Parte de [`config/node.example.json`](config/node.example.json):
 - `mcp` solo en `127.0.0.1`;
 - `scheduler.max_concurrent=1` y `workspaces.keep=false` con `run_as_agent`;
 - `sandbox.network_isolation=true`, `network_proxy_port=7423`;
+- `models.default=free` y `models.allowed` solo con perfiles provisionados; `paid-deepseek` queda
+  definido pero deshabilitado hasta resolver su credencial;
 - pares con token por canal seguro; sin secretos literales en el JSON.
 
 ```powershell

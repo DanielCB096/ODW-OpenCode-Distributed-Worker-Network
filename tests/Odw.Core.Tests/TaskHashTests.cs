@@ -63,6 +63,17 @@ public class TaskHashTests
     }
 
     [Fact]
+    public void Model_profile_is_security_relevant()
+    {
+        var request = TestTasks.Valid() with
+        {
+            Executor = new ExecutorSpec { Type = "opencode", ModelProfile = "paid-deepseek" },
+        };
+
+        Assert.NotEqual(TaskHash.Compute(TestTasks.Valid()), TaskHash.Compute(request));
+    }
+
+    [Fact]
     public void Approval_metadata_is_excluded()
     {
         var request = TestTasks.Valid();

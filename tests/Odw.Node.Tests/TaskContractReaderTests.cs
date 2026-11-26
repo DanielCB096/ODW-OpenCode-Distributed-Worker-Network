@@ -61,6 +61,24 @@ public class TaskContractReaderTests
             TaskHash.Compute(request));
     }
 
+    [Fact]
+    public void Reads_and_writes_model_profile()
+    {
+        var body = Body.Replace(
+            "\"executor\": { \"type\": \"opencode\", \"model_hint\": null }",
+            "\"executor\": { \"type\": \"opencode\", \"model_profile\": \"free\", \"model_hint\": null }");
+
+        using var document = JsonDocument.Parse(body);
+        var request = TaskContractReader.Read(document.RootElement);
+
+        Assert.Equal("free", request.Executor.ModelProfile);
+
+        using var written = JsonDocument.Parse(TaskContractWriter.Write(request));
+        Assert.Equal(
+            "free",
+            written.RootElement.GetProperty("executor").GetProperty("model_profile").GetString());
+    }
+
     [Theory]
     [InlineData("""{"task_id":"01JAZ5Z8Q4XK3V9C2M1N7P6R8T","origin_node":"PC-A","target_node":"PC-B","kind":"otro","instructions":"x","workspace":{"repo":"r","mode":"read_only","allowed_paths":["src"]},"limits":{"max_minutes":1,"max_memory_gb":1,"max_processes":1,"network":"none"},"created_at":"2026-11-24T18:00:00Z","expires_at":"2026-11-24T19:00:00Z"}""", "$.kind")]
     [InlineData("""{"task_id":"01JAZ5Z8Q4XK3V9C2M1N7P6R8T","origin_node":"PC-A","target_node":"PC-B","kind":"analysis","instructions":"x","limits":{"max_minutes":1,"max_memory_gb":1,"max_processes":1,"network":"none"},"created_at":"2026-11-24T18:00:00Z","expires_at":"2026-11-24T19:00:00Z"}""", "$.workspace")]

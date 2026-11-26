@@ -20,10 +20,11 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
   workspace temporal se borra, así que el diff es la evidencia persistente.
 - Aprobaciones humanas por **named pipe + CLI + Telegram**, con firma HMAC y un solo uso.
 - Nodo arrancable con `odw serve --config node.json`.
-- **328 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
+- **340 pruebas**; build sin advertencias. Integración real de OpenCode con modelo gratuito.
 - TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
 - ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente, modelo gratuito propio,
   red aislada con WFP + proxy, `odw-svc` sin admin y perfiles por tarea.
+- Perfiles de modelo con allowlist; `model_profile` por tarea y `free` por defecto.
 
 Detalle: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) · Hoja de ruta:
 [`docs/ROADMAP.md`](docs/ROADMAP.md).
@@ -205,5 +206,5 @@ src/Odw.Sandbox               workspace Git + Job Objects
 src/Odw.PeerApi               cliente de pares
 src/Odw.Approvals             cliente del pipe de aprobaciones
 src/Odw.Cli                   ejecutable odw
-tests/*                       328 pruebas
+tests/*                       340 pruebas
 ```

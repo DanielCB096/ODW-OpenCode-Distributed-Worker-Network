@@ -63,6 +63,7 @@
 | `UNAUTHORIZED` | 401 | no | Token inválido |
 | `PEER_UNKNOWN` | 403 | no | `X-Odw-Node` no es un par conocido |
 | `POLICY_DENIED` | 403 | no | Política del destino deniega |
+| `MODEL_NOT_ALLOWED` | 403 | no | `model_profile`/`model_hint` fuera de `models.allowed` |
 | `SELF_DELEGATION` | 400 | no | `origin_node == target_node` |
 | `LINEAGE_LOOP` | 409 | no | Ciclo o profundidad excedida |
 | `TASK_ID_CONFLICT` | 409 | no | Mismo `task_id`, distinto `task_hash` |

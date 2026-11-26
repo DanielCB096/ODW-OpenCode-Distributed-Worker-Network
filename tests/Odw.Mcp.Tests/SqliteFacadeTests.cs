@@ -128,7 +128,8 @@ public class SqliteFacadeTests
             """
             {"outcome":"succeeded","summary_md":"Todo verde.","changed_paths":["src/Foo.cs"],
              "branch":"odw/x","commit":"9f1c2ab","artifacts":[{"name":"report.md"}],
-             "requires_review":false}
+             "requires_review":false,"model_profile":"free","model_provider":"opencode",
+             "model_id":"deepseek-v4.1-flash-free","cost_usd":0.0}
             """;
 
         var transition = await store.TransitionAsync(new TransitionTaskRequest
@@ -160,6 +161,10 @@ public class SqliteFacadeTests
         Assert.Equal("Todo verde.", result.SummaryMarkdown);
         Assert.Contains("src/Foo.cs", result.ChangedPaths);
         Assert.Contains("report.md", result.Artifacts);
+        Assert.Equal("free", result.ModelProfile);
+        Assert.Equal("opencode", result.ModelProvider);
+        Assert.Equal("deepseek-v4.1-flash-free", result.ModelId);
+        Assert.Equal(0m, result.CostUsd);
         Assert.Equal(2, result.Events.Count);
     }
 

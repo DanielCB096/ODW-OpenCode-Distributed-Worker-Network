@@ -78,7 +78,11 @@ internal static class McpTestData
         available,
         null,
         false,
-        [new TaskEventView(1, "task.completed", DateTimeOffset.UnixEpoch, "{}")]);
+        [new TaskEventView(1, "task.completed", DateTimeOffset.UnixEpoch, "{}")],
+        "free",
+        "opencode",
+        "deepseek-v4.1-flash-free",
+        0m);
 
     public static JsonObject Request(string method, JsonNode? id, JsonObject? parameters = null)
     {

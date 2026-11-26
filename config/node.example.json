@@ -26,6 +26,23 @@
     "use_job_object": true
   },
 
+  "models": {
+    "default": "free",
+    "allowed": ["free"],
+    "profiles": {
+      "free": {
+        "provider": "opencode",
+        "model": "deepseek-v4.1-flash-free",
+        "max_cost_usd": 0
+      },
+      "paid-deepseek": {
+        "provider": "opencode-go",
+        "model": "deepseek-v4.1-flash",
+        "max_cost_usd": 2
+      }
+    }
+  },
+
   "workspaces": {
     "root": "%PROGRAMDATA%\\ODW\\workspaces",
     "keep": false

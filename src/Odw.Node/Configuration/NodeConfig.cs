@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Odw.Core.Model;
 
 namespace Odw.Node.Configuration;
 
@@ -21,6 +22,9 @@ public sealed record NodeConfig
 
     [JsonPropertyName("opencode")]
     public OpenCodeConfig OpenCode { get; init; } = new();
+
+    [JsonPropertyName("models")]
+    public ModelsConfig Models { get; init; } = new();
 
     [JsonPropertyName("workspaces")]
     public WorkspacesConfig Workspaces { get; init; } = new();
@@ -147,6 +151,42 @@ public sealed record OpenCodeConfig
 
     [JsonPropertyName("use_job_object")]
     public bool UseJobObject { get; init; } = true;
+}
+
+/// <summary>
+/// Allowlist de modelos del nodo. Solo los perfiles de <c>allowed</c> se exponen al runner;
+/// los demás pueden existir en el archivo pero quedan deshabilitados.
+/// </summary>
+public sealed record ModelsConfig
+{
+    [JsonPropertyName("default")]
+    public string Default { get; init; } = ModelCatalog.DefaultProfileName;
+
+    [JsonPropertyName("allowed")]
+    public List<string> Allowed { get; init; } = [ModelCatalog.DefaultProfileName];
+
+    [JsonPropertyName("profiles")]
+    public Dictionary<string, ModelProfileConfig> Profiles { get; init; } = new(StringComparer.Ordinal)
+    {
+        [ModelCatalog.DefaultProfileName] = new ModelProfileConfig
+        {
+            Provider = ModelCatalog.Free.Provider,
+            Model = ModelCatalog.Free.Model,
+            MaxCostUsd = ModelCatalog.Free.MaxCostUsd,
+        },
+    };
+}
+
+public sealed record ModelProfileConfig
+{
+    [JsonPropertyName("provider")]
+    public string Provider { get; init; } = string.Empty;
+
+    [JsonPropertyName("model")]
+    public string Model { get; init; } = string.Empty;
+
+    [JsonPropertyName("max_cost_usd")]
+    public decimal MaxCostUsd { get; init; }
 }
 
 public sealed record WorkspacesConfig

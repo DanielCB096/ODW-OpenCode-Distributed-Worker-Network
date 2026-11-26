@@ -1,142 +1,144 @@
 # Graph Report - ODW — OpenCode Distributed Worker Network  (2026-11-26)
 
 ## Corpus Check
-- 204 files · ~168,677 words
+- 206 files · ~170,897 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 4 file(s) not represented in the graph (top: (none) 2, .props 2)
 
 ## Summary
-- 2569 nodes · 7509 edges · 131 communities (111 shown, 20 thin omitted)
-- Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 986 edges (avg confidence: 0.85)
+- 2609 nodes · 7627 edges · 131 communities (106 shown, 25 thin omitted)
+- Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 992 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- Task / ExecutionScheduler
-- OpenCodeClientTests.Create() / PeerApiClient
+- CancellationToken / ExecutionScheduler
+- ApprovalPipeServer / ValueTask
+- DoctorOptions / NodeDoctor.RunAsync()
 - Odw.slnx / Odw.Node.csproj
 - IntPtr / WfpNetworkPolicy
-- JsonElement / TaskContractReader
-- FakeOpenCodeClient / OpenCodeExecutor.StreamAsync()
 - Odw.Core.Model / Odw.Node.Persistence.Tasks
-- SqliteWriter.WriteAsync() / SqliteDatabase
-- TaskHash.BuildCanonicalJson() / CanonicalJson.cs
-- CreateTaskRequest / TaskKind
-- NodeHostOptions / TelegramApprovalOptions
-- OpenCodeTaskRunner.RunAsync() / OpenCodeExecutor
-- system_text / Odw.Core.Primitives
+- system_text / system_text_json
+- ModelProxy / ModelProxyOptions
 - JsonObject / OriginTools.ProposeAsync()
-- AgentRuntime / AgentRuntimeOptions
-- DateTimeOffset / SqliteConnection
-- OpenCodeClient.SendAsync() / OpenCodeDtos.cs
-- Ulid / Ulid.New()
-- Fact / TaskValidator.Validate()
+- TaskHash.BuildCanonicalJson() / CanonicalJson.cs
 - TaskRole / TaskCoordinator.TransitionAsync()
-- NodeConfig / NodeConfig.cs
-- CancellationToken / WorkspaceManager.PrepareAsync()
-- TaskRequest / WorkspaceSpec
 - Odw.Node.Persistence / Odw.Node.Tests
-- SqliteTaskQuery / SqliteTaskQuery.GetResultAsync()
-- TaskStore / TestDatabase.Create()
-- NodeHost.cs / system_text_json_nodes
-- TaskState / TaskStateExtensions
-- ApprovalService / ApprovalService.DecideAsync()
-- OpenCodeServer / OpenCodeServerOptions
-- CliApplication / CliApplication.DoctorAsync()
-- NodeRuntime / PeerEndpoints.CreateAsync()
-- JobObject / JobLimits
-- OutboxStore / NewPendingAction
-- DatabaseMigrator.Migrate() / MigrationTests.Failed_migration
-- IReadOnlyList / OpenCodeTaskRunner
-- PolicyEngine.FromJson() / PolicyEngine.Evaluate()
-- TaskTrigger / TaskTrigger.cs
-- List / TaskValidator
-- McpServer / McpServer.HandleAsync()
-- TaskResult / TaskResult.cs
-- OriginProposalService / OriginProposalService.ProposeAsync()
-- SandboxConfig / SandboxGuard.Validate()
-- WorkspaceOptions / WorkspaceRequest
-- PolicyWhen / PolicyModels.cs
-- xunit / Odw.Sandbox.Windows
-- TransitionContext / TaskStateMachine.TryTransition()
-- OpenCodeTaskRunnerOptions / ToolPermissionHandler
-- ModelProxyOptions / ModelProxyTests
+- SqliteWriter.WriteAsync() / SqliteDatabase
 - McpServerTests / McpServerTests.CreateServer()
-- WorkspaceGuard.EnsureNoReparsePoints() / WorkspaceGuardTests
-- Lineage / LineageGuard.Evaluate()
-- ModelProxy / ModelProxy.HandleAsync()
-- NodeConfigLoader.Load() / NodeConfigurationException
-- NodeDoctor / DoctorCheck
-- NodeHost / NodeHost.BuildMcp()
+- Ulid / TimeProvider
+- Fact / TestTasks.Valid()
+- TaskStore / TestDatabase.Create()
+- NodeConfig / NodeConfig.cs
+- McpServer / McpServer.HandleAsync()
+- FakeOpenCodeClient / OpenCodeExecutor.StreamAsync()
+- NodeHost.StartAsync() / ApprovalService
+- DateTimeOffset / SqliteConnection
+- NodeHostOptions / Accepts
+- TaskState / TaskStateExtensions
+- OpenCodeServer / OpenCodeServer.StartAsync()
 - OpenCodeClient / IOpenCodeClient
-- TaskLimits / OpenCodeTaskRunnerGuardTests.CreateAsync()
+- NodeHost.cs / system_text_json_nodes
+- CreateTaskRequest / TaskKind
+- TaskResult / TaskResult.cs
+- OutboxStore / NewPendingAction
+- CliApplication / CliApplication.DoctorAsync()
 - Odw.Core.Contracts / NodeBootstrap.cs
-- ApprovalPipeServer / ApprovalPipeServer.DispatchAsync()
-- TimeSpan / ExecutorOutcomeKind
-- WorkspaceChanges.CaptureAsync() / WorkspaceChanges
+- JobObject / JobLimits
+- OpenCodeIntegrationTests.Real_server_completes_a_read_only_p
+- DatabaseMigrator.Migrate() / MigrationTests.Failed_migration
+- NodeBootstrap.StartAsync() / NodeConfigLoader.Load()
+- TaskRequest / TaskValidator
+- PolicyWhen / PolicyModels.cs
+- TaskTrigger / TaskTrigger.cs
+- SandboxConfig / SandboxGuard.Validate()
+- NodeHost / NodeHost.BuildPeer()
+- SqliteTaskQuery / SqliteTaskQuery.GetResultAsync()
+- OpenCodeDtos.cs / OpenCodeSession
+- OpenCodeServerOptions / SandboxAgentTests.OpenCode_reaches_t
+- List / Func
+- JsonElement / TaskContractReader
+- OpenCodeTaskRunner.RunAsync() / TaskLimits
+- OpenCodeTaskRunnerOptions / ToolPermissionHandler
+- PolicyEngine.FromJson() / PolicyEngine.Evaluate()
+- AgentRuntime / AgentRuntimeOptions
+- Task / Fixture.StartAsync()
+- PeerApiClient / PeerApiClient.PostTaskAsync()
+- OriginProposalService / OriginProposalService.ProposeAsync()
+- WorkspaceGuard.EnsureNoReparsePoints() / WorkspaceGuardTests
+- IReadOnlyList / OpenCodeClient.GetMessagesAsync()
+- Lineage / LineageGuard.Evaluate()
+- TransitionContext / TaskStateMachine.TryTransition()
+- McpHttpTests / McpHttpFixture
+- TaskAggregate / TaskStateMachine
+- WorkspaceSpec / WorkspaceMode
+- ModelProfile / ModelProfileResolver.TryResolve()
+- PeerEndpoints.CreateAsync() / PeerEndpoints
+- TelegramClient / StubHandler
 - Odw.Node.Hosting / CliApplication.cs
-- McpHttpFixture.InitializeAsync() / TaskStatusView
+- ContractFormat / Regex
 - WhenDto / LimitsDto
-- TaskAggregate / TaskAggregate.Create()
+- OpenCodeExecutor / IOpenCodeClient.ReplyPermissionAsync()
+- PolicyEngine / PolicyRequest
 - TransitionTaskRequest / CancelRequested
+- OriginEndToEndTests / OriginEndToEndTests.StartAsync()
 - TaskRequest contract / Approval binding to task_id, task_has
-- NodeHost.StartAsync() / TelegramApprovalService
-- IAsyncDisposable / TestDatabase
-- Theory / InlineData
-- Enums.cs / NetworkAccess
+- xunit / Odw.Core.Tests
+- OpenCodeClientTests.Create() / OpenCodeClientTests
+- NodeConfigTests / NodeConfigTests.Folder()
 - Threat model T1-T10 / Dedicated identities odw-svc and odw-a
+- SqlitePeerDirectory / SqlitePeerDirectory.ParseDetails()
 - OriginPoller / OriginPoller.RefreshOnceAsync()
+- TimeSpan / ExecutorOutcomeKind
 - ApprovalsConfig / TelegramConfig
 - Peer protocol v1 / ODW — OpenCode Distributed Worker Network
 - Origin state machine / SQLite schema (tasks, peers, events, 
-- Func / PolicyDocumentLoader.Load()
-- PolicyDocumentLoader / PolicyDocumentLoader.MapWhen()
-- IEnumerable / JsonTools.ToArray()
-- PolicyEngine / PolicyEngine.Matches()
-- IOpenCodeClient.ReplyPermissionAsync() / OpenCodePermissionR
-- DoctorOptions / DatabasePath
+- IApprovalChannel.cs / ApprovalDecisionKind
+- ApprovalEvidence / ExecutorSpec
 - Milestone plan D0 through H6 / Lineage and anti-cycle guard
-- ApprovalPipeServer.cs / Odw.Node.Approvals
 - ExecutorEventKind / Completed
+- NodeRuntime / Coordinator
 - OpenCode v2.3.2 V2 surface under /api (143 routes) / OpenCod
 - PeerRegistry / PeerIdentity
 - InvalidStateTransitionException / TaskAggregate.Apply()
+- Enums.cs / OpenCodeExecutor.SendAsync()
+- PeerStatusSnapshot / IPeerDirectory
 - PeerApiConfig / PeerTlsConfig
-- NodeDoctor.RunAsync() / DoctorTests
 - SandboxInspector.Inspect() / SandboxReport
-- NodeConfigTests / NodeConfigTests.Bootstrap_starts_a_host_fr
 - ODW Node service (one per PC) / Task Manager (state machine,
-- NodeHostedService / ServeHost.RunAsync()
-- IApprovalChannel.cs / ApprovalDecisionKind
-- NodeBootstrap.StartAsync() / NodeSettings
-- NetworkIsolationWatchdog / NetworkIsolationWatchdogTests.Sto
+- ModelsConfig / Dictionary
+- Fixture / HttpClient
+- TelegramApprovalService / TelegramClient.GetUpdatesAsync()
 - h0-probe.ps1 / Assert-True()
+- Exception / PeerApiClientFactory.Create()
 - JsonSerializerOptions / StringOrArrayConverter
+- PolicyEffect / PolicyDecision
 - ValidationResult / ValidationResult.cs
 - ConfiguredPeer / PeerFile
+- PeerRegistration / TlsTests.Peer_api_uses_https_when_a_certi
 - Secret references and DPAPI storage / Stateless Streamable H
 - ExecutionScheduler / H1 — Minimal node and basic delegation
+- StubHandler / StubHandler.SendAsync()
 - ApprovalDecisionStatus / AlreadyDecided
 - Goal / Accepted
-- TaskModels.cs / TransitionResult
 - RuleDto / WhenDto
+- WorkspaceChangesTests / WorkspaceChangesTests.Commits_and_re
 - permission.asked event blocks the prompt indefinitely / Fina
 - LimitsDto / RangeDto
 - DocumentDto / RuleDto
-- PolicyEffect / PolicyRule
+- TelegramApprovalOptions / AllowedChatIds
+- TaskContractWriter.Write() / TaskContractWriter
+- TransitionResult / TransitionStatus
 - origin-node.ps1 / Get-OriginProcesses()
 - policy.example.json / default
-- ApprovalRequest / ApprovalScope
-- DoctorReport / DoctorReport.DoctorReport()
 - TimeWindowDto / Days
-- PolicyDecision / IsAllowed
-- DoctorStatus / Fail
+- ApprovalOptions / OriginProposalService.OriginProposalServic
 - RangeDto / Gte
 - WfpNetworkPolicyTests.Agent_is_blocked_from_internet_but_can
 
 ## God Nodes (most connected - your core abstractions)
-1. `Odw.Core.Model` - 66 edges
-2. `TaskState` - 57 edges
-3. `NodeHostOptions` - 54 edges
+1. `Odw.Core.Model` - 71 edges
+2. `NodeHostOptions` - 58 edges
+3. `TaskState` - 57 edges
 4. `TaskStore` - 50 edges
 5. `TaskRequest` - 49 edges
 6. `TaskRole` - 44 edges
@@ -165,345 +167,333 @@
 - **ODW node internal modules** — architecture_odw_node, architecture_mcp_facade, architecture_peer_api, architecture_policy_engine, architecture_task_manager, architecture_planner, architecture_resource_monitor, architecture_sandbox, architecture_approval_gateway, architecture_audit_log, architecture_identity_trust [EXTRACTED 1.00]
 - **Out-of-band human approval flow** — architecture_approval_gateway, docs_security_approval_binding, docs_security_approval_channels, docs_decisions_adr_009, docs_implementation_approval_service, docs_domain_model_task_hash [EXTRACTED 1.00]
 
-## Communities (131 total, 20 thin omitted)
+## Communities (131 total, 25 thin omitted)
 
-### Community 0 - "Task / ExecutionScheduler"
+### Community 0 - "CancellationToken / ExecutionScheduler"
 Cohesion: 0.06
-Nodes (27): PeerRegistration, ExecutionResult, ExecutionSchedulerOptions, MaxConcurrentTasks, PollInterval, ITaskExecutionRunner, ExecutionScheduler, TransitionOptions (+19 more)
+Nodes (42): ExecutionResult, ExecutionSchedulerOptions, MaxConcurrentTasks, PollInterval, ITaskExecutionRunner, ExecutionScheduler, TransitionOptions, CancelRequested (+34 more)
 
-### Community 1 - "OpenCodeClientTests.Create() / PeerApiClient"
+### Community 1 - "ApprovalPipeServer / ValueTask"
+Cohesion: 0.05
+Nodes (17): NodeHostedService, ServeHost, ServeOptions, ApprovalPipeOptions, Name, SecurityDescriptor, ApprovalPipeServer, PipeName (+9 more)
+
+### Community 2 - "DoctorOptions / NodeDoctor.RunAsync()"
 Cohesion: 0.06
-Nodes (19): TelegramCallback, TelegramClient, OriginException, PeerApiClient, BaseAddress, PeerConnection, PeerPostResult, Accepted (+11 more)
+Nodes (24): BindPolicy, DoctorCheck, DoctorOptions, DatabasePath, ExpectedSpecSha256, McpBind, McpPort, McpToken (+16 more)
 
-### Community 2 - "Odw.slnx / Odw.Node.csproj"
+### Community 3 - "Odw.slnx / Odw.Node.csproj"
 Cohesion: 0.06
 Nodes (38): Microsoft.Data.Sqlite, Microsoft.Extensions.Hosting, Microsoft.Extensions.Hosting.WindowsServices, System.Security.Cryptography.ProtectedData, Microsoft.NET.Sdk, Microsoft.NET.Sdk, Microsoft.NET.Sdk, Microsoft.NET.Sdk (+30 more)
 
-### Community 3 - "IntPtr / WfpNetworkPolicy"
+### Community 4 - "IntPtr / WfpNetworkPolicy"
 Cohesion: 0.12
 Nodes (11): WfpNetworkPolicy, DefaultStatePath, FwpAction0, FwpByteBlob, FwpConditionValue0, FwpmDisplayData0, FwpmFilter0, FwpmFilterCondition0 (+3 more)
 
-### Community 4 - "JsonElement / TaskContractReader"
+### Community 5 - "Odw.Core.Model / Odw.Node.Persistence.Tasks"
+Cohesion: 0.12
+Nodes (14): Odw.Core.Validation, Odw.Node.Scheduling, Odw.PeerApi, Odw.Node.Contracts, Odw.Core.Hashing, Odw.Node.Origins, Odw.Core.Delegation, Odw.Node.Tasks (+6 more)
+
+### Community 6 - "system_text / system_text_json"
+Cohesion: 0.08
+Nodes (6): Odw.Approvals, Odw.Node.Approvals, Odw.Node.Diagnostics, Odw.Node.Persistence.Queries, TestModels, FreeOrFallback
+
+### Community 7 - "ModelProxy / ModelProxyOptions"
+Cohesion: 0.09
+Nodes (15): ModelProxy, Port, Token, Url, ModelProxyOptions, AddressFilter, AllowedHosts, AllowedPorts (+7 more)
+
+### Community 8 - "JsonObject / OriginTools.ProposeAsync()"
 Cohesion: 0.13
-Nodes (7): PeerStatusSnapshot, IsOnline, TaskContractException, Field, TaskContractReader, SqlitePeerDirectory, Details
+Nodes (7): ITaskQuery, McpTool, McpToolResult, JsonTools, OriginTools, PeerTools, TaskTools
 
-### Community 5 - "FakeOpenCodeClient / OpenCodeExecutor.StreamAsync()"
-Cohesion: 0.10
-Nodes (15): ExecutorEvent, OpenCodeEvent, OpenCodeExecutorTests, EventFactory, FakeOpenCodeClient, BaseAddress, BlockAfterEvents, Events (+7 more)
-
-### Community 6 - "Odw.Core.Model / Odw.Node.Persistence.Tasks"
-Cohesion: 0.11
-Nodes (12): Odw.Core.Validation, Odw.Node.Scheduling, Odw.PeerApi, Odw.Node.Contracts, Odw.Core.Hashing, Odw.Core.Tests, Odw.Node.Origins, Odw.Core.Delegation (+4 more)
-
-### Community 7 - "SqliteWriter.WriteAsync() / SqliteDatabase"
-Cohesion: 0.07
-Nodes (23): SqliteDatabase, Path, Writer, SqliteDatabaseOptions, AppVersion, MigrationBackupDirectory, Pooling, TimeProvider (+15 more)
-
-### Community 8 - "TaskHash.BuildCanonicalJson() / CanonicalJson.cs"
+### Community 9 - "TaskHash.BuildCanonicalJson() / CanonicalJson.cs"
 Cohesion: 0.11
 Nodes (17): CanonicalArray, Count, this[], CanonicalBoolean, Value, CanonicalJson, CanonicalNode, CanonicalNull (+9 more)
 
-### Community 9 - "CreateTaskRequest / TaskKind"
-Cohesion: 0.06
-Nodes (28): TaskKind, Analysis, CodeChange, TestRun, WorkspaceMode, ReadOnly, ReadWriteWorktree, OutboxSql (+20 more)
+### Community 10 - "TaskRole / TaskCoordinator.TransitionAsync()"
+Cohesion: 0.12
+Nodes (12): ApprovalRequest, TaskRole, Origin, Target, TaskStateChange, TaskEventLog, TaskEventRecord, TaskSnapshot (+4 more)
 
-### Community 10 - "NodeHostOptions / TelegramApprovalOptions"
-Cohesion: 0.05
-Nodes (37): TelegramApprovalOptions, AllowedChatIds, AllowedUserIds, BotToken, NotifyInterval, PollTimeoutSeconds, NodeHostOptions, Accepts (+29 more)
-
-### Community 11 - "OpenCodeTaskRunner.RunAsync() / OpenCodeExecutor"
-Cohesion: 0.11
-Nodes (19): ExecutorLimits, ExecutorSession, ExecutorSnapshot, ExecutorStartRequest, IExecutor, ToolEffect, Allow, Ask (+11 more)
-
-### Community 12 - "system_text / Odw.Core.Primitives"
-Cohesion: 0.11
-Nodes (5): Odw.Node.Diagnostics, Odw.Node.Peers, Odw.Core.Primitives, TestModels, FreeOrFallback
-
-### Community 13 - "JsonObject / OriginTools.ProposeAsync()"
-Cohesion: 0.15
-Nodes (8): IPeerDirectory, ITaskQuery, McpTool, McpToolResult, JsonTools, OriginTools, PeerTools, TaskTools
-
-### Community 14 - "AgentRuntime / AgentRuntimeOptions"
+### Community 11 - "Odw.Node.Persistence / Odw.Node.Tests"
 Cohesion: 0.09
-Nodes (13): RunAsCredentials, AgentCredentials, AgentCredentialsStore, AgentRuntime, Path, AgentRuntimeOptions, AgentAccount, ApplyAcls (+5 more)
+Nodes (10): Odw.Node.Tests, Odw.Node.Persistence.Peers, Odw.Node.Persistence.Outbox, Odw.Node.Persistence, ApprovalStatus, OutboxActions, OutboxStatus, ContractJson (+2 more)
 
-### Community 15 - "DateTimeOffset / SqliteConnection"
-Cohesion: 0.16
-Nodes (8): AuditLog, ChainHash, ChainVerification, Valid, PersistenceJson, Options, RecoveryResult, TaskEventLog
+### Community 12 - "SqliteWriter.WriteAsync() / SqliteDatabase"
+Cohesion: 0.07
+Nodes (22): SqliteDatabase, Path, Writer, SqliteDatabaseOptions, AppVersion, MigrationBackupDirectory, Pooling, TimeProvider (+14 more)
 
-### Community 16 - "OpenCodeClient.SendAsync() / OpenCodeDtos.cs"
-Cohesion: 0.10
-Nodes (15): OpenCodeApiException, Body, Method, Path, StatusCode, OpenCodePermissionEffect, Allow, Ask (+7 more)
+### Community 13 - "McpServerTests / McpServerTests.CreateServer()"
+Cohesion: 0.13
+Nodes (10): TaskEventView, TaskResultView, TaskStatusView, McpServerTests, FakePeers, Peers, FakeTasks, Results (+2 more)
 
-### Community 17 - "Ulid / Ulid.New()"
+### Community 14 - "Ulid / TimeProvider"
 Cohesion: 0.10
 Nodes (6): Ulid, IsEmpty, MonotonicState, Timestamp, UlidTests, FixedTimeProvider
 
-### Community 18 - "Fact / TaskValidator.Validate()"
+### Community 15 - "Fact / TestTasks.Valid()"
 Cohesion: 0.18
-Nodes (4): TaskHashTests, TaskValidatorTests, TestTasks, TaskContractReaderTests
+Nodes (3): TaskHashTests, TaskValidatorTests, TestTasks
 
-### Community 19 - "TaskRole / TaskCoordinator.TransitionAsync()"
+### Community 16 - "TaskStore / TestDatabase.Create()"
+Cohesion: 0.21
+Nodes (7): ChainVerification, Valid, StartupRecovery, TaskStore, RecoveryTests, TaskStoreTests, TestRows
+
+### Community 17 - "NodeConfig / NodeConfig.cs"
+Cohesion: 0.06
+Nodes (34): McpConfig, Bind, Port, TokenRef, NodeConfig, Accepts, Approvals, Capabilities (+26 more)
+
+### Community 18 - "McpServer / McpServer.HandleAsync()"
+Cohesion: 0.12
+Nodes (11): ApprovalPipeClient, JsonRpc, ErrorCodes, McpEndpoint, McpOptions, MaxBodyBytes, Path, Token (+3 more)
+
+### Community 19 - "FakeOpenCodeClient / OpenCodeExecutor.StreamAsync()"
 Cohesion: 0.13
-Nodes (11): TaskRole, Origin, Target, TaskStateChange, ApprovalCoordinator, TaskEventRecord, TaskSnapshot, TaskCoordinator (+3 more)
+Nodes (13): OpenCodeExecutorTests, EventFactory, FakeOpenCodeClient, BaseAddress, BlockAfterEvents, Events, Info, Interrupts (+5 more)
 
-### Community 20 - "NodeConfig / NodeConfig.cs"
-Cohesion: 0.07
-Nodes (33): McpConfig, Bind, Port, TokenRef, NodeConfig, Accepts, Approvals, Capabilities (+25 more)
+### Community 20 - "NodeHost.StartAsync() / ApprovalService"
+Cohesion: 0.16
+Nodes (7): ApprovalCoordinator, ApprovalDecisionResult, ApprovalRecord, ApprovalService, ApprovalSigner, PeerStore, ApprovalServiceTests
 
-### Community 21 - "CancellationToken / WorkspaceManager.PrepareAsync()"
-Cohesion: 0.15
-Nodes (8): WorkspaceManager, IWorkspacePreparer, WorkspaceException, WorkspaceLease, Branch, Keep, Path, ReadOnly
+### Community 21 - "DateTimeOffset / SqliteConnection"
+Cohesion: 0.19
+Nodes (5): AuditLog, ChainHash, PersistenceJson, Options, RecoveryResult
 
-### Community 22 - "TaskRequest / WorkspaceSpec"
-Cohesion: 0.07
-Nodes (32): ApprovalEvidence, ApprovalId, ApprovedAt, ApprovedBy, Nonce, Signature, TaskHash, ExecutorSpec (+24 more)
+### Community 22 - "NodeHostOptions / Accepts"
+Cohesion: 0.06
+Nodes (32): NodeHostOptions, Accepts, AllowLoopbackPeerBind, ApprovalOptions, ApprovalPipeName, ApprovalPipeSecurityDescriptor, ApprovalSigner, Capabilities (+24 more)
 
-### Community 23 - "Odw.Node.Persistence / Odw.Node.Tests"
-Cohesion: 0.12
-Nodes (7): Odw.Node.Tests, Odw.Node.Persistence.Peers, Odw.Node.Persistence.Outbox, Odw.Node.Persistence, ApprovalStatus, TestModels, FreeOrFallback
-
-### Community 24 - "SqliteTaskQuery / SqliteTaskQuery.GetResultAsync()"
-Cohesion: 0.12
-Nodes (10): TaskOutcome, Cancelled, Failed, ReviewRequired, Succeeded, TaskEventView, TaskResultView, SqliteTaskQuery (+2 more)
-
-### Community 25 - "TaskStore / TestDatabase.Create()"
-Cohesion: 0.24
-Nodes (5): StartupRecovery, TaskStore, RecoveryTests, TaskStoreTests, TestRows
-
-### Community 26 - "NodeHost.cs / system_text_json_nodes"
-Cohesion: 0.12
-Nodes (6): Odw.Node.PeerApi, Odw.Mcp.Tests, Odw.Mcp.Abstractions, Odw.Mcp, Odw.Mcp.Tools, Odw.Node.Persistence.Queries
-
-### Community 27 - "TaskState / TaskStateExtensions"
-Cohesion: 0.10
+### Community 23 - "TaskState / TaskStateExtensions"
+Cohesion: 0.09
 Nodes (21): TaskStateExtensions, TaskState, Accepted, Approved, AwaitingLocalApproval, Cancelled, Cancelling, Completed (+13 more)
 
-### Community 28 - "ApprovalService / ApprovalService.DecideAsync()"
-Cohesion: 0.17
-Nodes (5): ApprovalDecisionResult, ApprovalRecord, ApprovalService, ApprovalSigner, ApprovalServiceTests
+### Community 24 - "OpenCodeServer / OpenCodeServer.StartAsync()"
+Cohesion: 0.12
+Nodes (7): OpenCodeConnection, OpenCodeServerInfo, OpenCodeServer, BaseUrl, Connection, Info, ProcessId
 
-### Community 29 - "OpenCodeServer / OpenCodeServerOptions"
-Cohesion: 0.10
-Nodes (15): OpenCodeServer, BaseUrl, Connection, Info, ProcessId, OpenCodeServerOptions, AttachProcess, Environment (+7 more)
+### Community 25 - "OpenCodeClient / IOpenCodeClient"
+Cohesion: 0.11
+Nodes (10): IOpenCodeClient, BaseAddress, OpenCodeEvent, OpenCodeClient, BaseAddress, OpenCodeApiException, Body, Method (+2 more)
 
-### Community 31 - "NodeRuntime / PeerEndpoints.CreateAsync()"
-Cohesion: 0.15
-Nodes (13): NodeRuntime, Coordinator, Database, Directory, Options, Outbox, Peers, Policy (+5 more)
+### Community 26 - "NodeHost.cs / system_text_json_nodes"
+Cohesion: 0.13
+Nodes (5): Odw.Node.PeerApi, Odw.Mcp.Tests, Odw.Mcp.Abstractions, Odw.Mcp, Odw.Mcp.Tools
+
+### Community 27 - "CreateTaskRequest / TaskKind"
+Cohesion: 0.07
+Nodes (24): TaskKind, Analysis, CodeChange, TestRun, CreateTaskRequest, CounterpartNode, CreatedAt, ExecutorRef (+16 more)
+
+### Community 28 - "TaskResult / TaskResult.cs"
+Cohesion: 0.08
+Nodes (25): TestStatus, Failed, Passed, Skipped, ArtifactRef, TaskError, TaskResult, Artifacts (+17 more)
+
+### Community 29 - "OutboxStore / NewPendingAction"
+Cohesion: 0.18
+Nodes (10): NewPendingAction, PendingAction, OutboxSql, OutboxFailOutcome, DeadLettered, NotFound, RetryScheduled, OutboxStore (+2 more)
+
+### Community 31 - "Odw.Core.Contracts / NodeBootstrap.cs"
+Cohesion: 0.13
+Nodes (7): Odw.Core.Contracts, Odw.Sandbox.Workspaces, Odw.Sandbox.Tests, Odw.Sandbox.Windows, Odw.Executors.OpenCode, Odw.Policy.Tests, Odw.Sandbox.Network
 
 ### Community 32 - "JobObject / JobLimits"
 Cohesion: 0.11
 Nodes (10): JobLimits, ActiveProcessLimit, CpuTime, JobMemoryBytes, ProcessMemoryBytes, JobObject, IoCounters, JobObjectBasicLimitInformation (+2 more)
 
-### Community 33 - "OutboxStore / NewPendingAction"
-Cohesion: 0.18
-Nodes (11): NewPendingAction, OutboxActions, OutboxStatus, PendingAction, OutboxFailOutcome, DeadLettered, NotFound, RetryScheduled (+3 more)
+### Community 33 - "OpenCodeIntegrationTests.Real_server_completes_a_read_only_p"
+Cohesion: 0.11
+Nodes (15): ExecutorLimits, ExecutorSession, ExecutorSnapshot, ExecutorStartRequest, IExecutor, ToolEffect, Allow, Ask (+7 more)
 
 ### Community 34 - "DatabaseMigrator.Migrate() / MigrationTests.Failed_migration"
 Cohesion: 0.13
 Nodes (8): DatabaseMigrator, Migration, MigrationOutcome, SchemaVersion, MigrationTests, SqliteWriterTests, TestTime, Now
 
-### Community 35 - "IReadOnlyList / OpenCodeTaskRunner"
-Cohesion: 0.15
-Nodes (5): OpenCodeJson, OpenCodeMessage, Text, OpenCodePermissionRequest, OpenCodeTaskRunner
+### Community 35 - "NodeBootstrap.StartAsync() / NodeConfigLoader.Load()"
+Cohesion: 0.21
+Nodes (5): NodeConfigLoader, NodeSettings, TelegramSettings, NodeBootstrap, NodeConfigurationException
 
-### Community 36 - "PolicyEngine.FromJson() / PolicyEngine.Evaluate()"
-Cohesion: 0.27
-Nodes (4): PolicyRequest, Actions, PolicyEngineTests, PolicyFixtures
+### Community 36 - "TaskRequest / TaskValidator"
+Cohesion: 0.13
+Nodes (17): TaskRequest, Approval, CreatedAt, Executor, ExpiresAt, Instructions, Kind, Limits (+9 more)
 
-### Community 37 - "TaskTrigger / TaskTrigger.cs"
+### Community 37 - "PolicyWhen / PolicyModels.cs"
+Cohesion: 0.08
+Nodes (22): LimitsWhen, MaxCostUsd, MaxMemoryGb, MaxMinutes, Network, PolicyDocument, PolicyRule, PolicyWhen (+14 more)
+
+### Community 38 - "TaskTrigger / TaskTrigger.cs"
 Cohesion: 0.07
 Nodes (26): TaskTrigger, ApprovalDenied, ApprovalExpired, ApprovalGranted, CancelTimeout, LeaseExpired, OperatorDiscard, OperatorInspect (+18 more)
 
-### Community 38 - "List / TaskValidator"
-Cohesion: 0.19
-Nodes (3): ContractFormat, TaskValidator, ValidationIssue
-
-### Community 39 - "McpServer / McpServer.HandleAsync()"
-Cohesion: 0.16
-Nodes (6): JsonRpc, ErrorCodes, McpEndpoint, McpServer, Tools, OriginToolTests
-
-### Community 40 - "TaskResult / TaskResult.cs"
-Cohesion: 0.09
-Nodes (21): ArtifactRef, TaskError, TaskResult, Artifacts, Branch, ChangedPaths, Commit, DiffSha256 (+13 more)
-
-### Community 41 - "OriginProposalService / OriginProposalService.ProposeAsync()"
-Cohesion: 0.16
-Nodes (10): ITaskProposalService, ProposalInput, ProposalOutcome, IsError, ApprovalOptions, Ttl, OriginProposalService, FakeProposals (+2 more)
-
-### Community 42 - "SandboxConfig / SandboxGuard.Validate()"
+### Community 39 - "SandboxConfig / SandboxGuard.Validate()"
 Cohesion: 0.12
 Nodes (21): SandboxConfig, AgentAccount, AgentConfigPath, AgentSecretPath, ApplyAcls, NetworkAllowedHosts, NetworkIsolation, NetworkProxyPort (+13 more)
 
-### Community 43 - "WorkspaceOptions / WorkspaceRequest"
-Cohesion: 0.21
-Nodes (11): WorkspaceOptions, AgentAccount, ApplyAcls, GitExecutable, GitTimeout, KeepWorkspaces, Repos, ServiceAccount (+3 more)
+### Community 40 - "NodeHost / NodeHost.BuildPeer()"
+Cohesion: 0.10
+Nodes (12): NodeHost, ApprovalCoordinator, Approvals, Coordinator, McpBaseAddress, Options, PeerBaseAddress, Peers (+4 more)
 
-### Community 44 - "PolicyWhen / PolicyModels.cs"
-Cohesion: 0.09
-Nodes (20): LimitsWhen, MaxCostUsd, MaxMemoryGb, MaxMinutes, Network, PolicyWhen, AnyAction, CapabilitiesAll (+12 more)
+### Community 41 - "SqliteTaskQuery / SqliteTaskQuery.GetResultAsync()"
+Cohesion: 0.15
+Nodes (8): TaskOutcome, Cancelled, Failed, ReviewRequired, Succeeded, SqliteTaskQuery, ResultDetails, SqliteFacadeTests
 
-### Community 45 - "xunit / Odw.Sandbox.Windows"
-Cohesion: 0.19
-Nodes (4): Odw.Sandbox.Workspaces, Odw.Sandbox.Tests, Odw.Sandbox.Windows, Odw.Sandbox.Network
-
-### Community 46 - "TransitionContext / TaskStateMachine.TryTransition()"
+### Community 42 - "OpenCodeDtos.cs / OpenCodeSession"
 Cohesion: 0.13
-Nodes (11): TaskStateMachine, Rule, TransitionContext, ApprovalExpired, ApprovalMatches, Default, LeaseExpired, ResourcesAvailable (+3 more)
+Nodes (10): OpenCodePermissionEffect, Allow, Ask, Deny, OpenCodePermissionRule, EffectValue, OpenCodeProtocolException, OpenCodeSession (+2 more)
+
+### Community 43 - "OpenCodeServerOptions / SandboxAgentTests.OpenCode_reaches_t"
+Cohesion: 0.14
+Nodes (14): OpenCodeServerOptions, AttachProcess, Environment, Executable, Log, PinnedVersion, RunAs, RuntimeRoot (+6 more)
+
+### Community 44 - "List / Func"
+Cohesion: 0.27
+Nodes (4): PolicyDocumentLoader, PolicyIssue, PolicyValidationException, Issues
+
+### Community 45 - "JsonElement / TaskContractReader"
+Cohesion: 0.33
+Nodes (3): TaskContractException, Field, TaskContractReader
+
+### Community 46 - "OpenCodeTaskRunner.RunAsync() / TaskLimits"
+Cohesion: 0.15
+Nodes (10): ExecutorEvent, TaskLimits, MaxCostUsd, MaxMemoryGb, MaxMinutes, MaxProcesses, Network, ExecutionRequest (+2 more)
 
 ### Community 47 - "OpenCodeTaskRunnerOptions / ToolPermissionHandler"
-Cohesion: 0.09
-Nodes (21): ToolPermissionHandler, OpenCodeTaskRunnerOptions, AgentAccount, AgentConfigTemplate, AgentRuntimeRoot, Executable, ExecutionTimeout, ModelProxyUrl (+13 more)
+Cohesion: 0.08
+Nodes (23): ToolPermissionHandler, OpenCodeTaskRunnerOptions, AgentAccount, AgentConfigTemplate, AgentRuntimeRoot, DefaultModelProfile, Executable, ExecutionTimeout (+15 more)
 
-### Community 48 - "ModelProxyOptions / ModelProxyTests"
-Cohesion: 0.18
-Nodes (11): ModelProxyOptions, AddressFilter, AllowedHosts, AllowedPorts, AuthToken, ConnectTimeout, Log, MaxRequestBytes (+3 more)
+### Community 49 - "AgentRuntime / AgentRuntimeOptions"
+Cohesion: 0.13
+Nodes (9): AgentRuntime, Path, AgentRuntimeOptions, AgentAccount, ApplyAcls, ConfigTemplate, Root, ServiceAccount (+1 more)
 
-### Community 49 - "McpServerTests / McpServerTests.CreateServer()"
-Cohesion: 0.24
-Nodes (6): McpServerTests, FakePeers, Peers, FakeTasks, Results, Statuses
+### Community 51 - "PeerApiClient / PeerApiClient.PostTaskAsync()"
+Cohesion: 0.14
+Nodes (6): PeerApiClient, BaseAddress, PeerPostResult, Accepted, PeerResultView, PeerTaskView
 
-### Community 50 - "WorkspaceGuard.EnsureNoReparsePoints() / WorkspaceGuardTests"
+### Community 52 - "OriginProposalService / OriginProposalService.ProposeAsync()"
+Cohesion: 0.19
+Nodes (8): ITaskProposalService, ProposalInput, ProposalOutcome, IsError, OriginProposalService, FakeProposals, Last, Outcome
+
+### Community 53 - "WorkspaceGuard.EnsureNoReparsePoints() / WorkspaceGuardTests"
 Cohesion: 0.18
 Nodes (4): WorkspaceGuard, ByHandleFileInformation, WorkspaceGuardException, WorkspaceGuardTests
 
-### Community 51 - "Lineage / LineageGuard.Evaluate()"
+### Community 54 - "IReadOnlyList / OpenCodeClient.GetMessagesAsync()"
+Cohesion: 0.21
+Nodes (4): OpenCodeJson, OpenCodeMessage, Text, OpenCodePermissionRequest
+
+### Community 55 - "Lineage / LineageGuard.Evaluate()"
 Cohesion: 0.18
 Nodes (11): LineageCheck, DepthExceeded, Invalid, Loop, Ok, SelfDelegation, LineageGuard, Lineage (+3 more)
 
-### Community 52 - "ModelProxy / ModelProxy.HandleAsync()"
-Cohesion: 0.19
-Nodes (4): ModelProxy, Port, Token, Url
-
-### Community 53 - "NodeConfigLoader.Load() / NodeConfigurationException"
-Cohesion: 0.33
-Nodes (3): NodeConfigLoader, TelegramSettings, NodeConfigurationException
-
-### Community 54 - "NodeDoctor / DoctorCheck"
-Cohesion: 0.20
-Nodes (3): BindPolicy, DoctorCheck, NodeDoctor
-
-### Community 55 - "NodeHost / NodeHost.BuildMcp()"
-Cohesion: 0.14
-Nodes (12): NodeHost, ApprovalCoordinator, Approvals, Coordinator, McpBaseAddress, Options, PeerBaseAddress, Peers (+4 more)
-
-### Community 56 - "OpenCodeClient / IOpenCodeClient"
-Cohesion: 0.18
-Nodes (6): IOpenCodeClient, BaseAddress, OpenCodeClient, BaseAddress, OpenCodeConnection, OpenCodeServerInfo
-
-### Community 57 - "TaskLimits / OpenCodeTaskRunnerGuardTests.CreateAsync()"
-Cohesion: 0.22
-Nodes (9): TaskLimits, MaxCostUsd, MaxMemoryGb, MaxMinutes, MaxProcesses, Network, ExecutionRequest, ContractJson (+1 more)
-
-### Community 58 - "Odw.Core.Contracts / NodeBootstrap.cs"
-Cohesion: 0.17
-Nodes (5): Odw.Core.Contracts, Odw.Executors.OpenCode, Odw.Policy.Tests, Odw.Policy, Odw.Executors.OpenCode.Tests
-
-### Community 59 - "ApprovalPipeServer / ApprovalPipeServer.DispatchAsync()"
-Cohesion: 0.22
-Nodes (5): ApprovalPipeOptions, Name, SecurityDescriptor, ApprovalPipeServer, PipeName
-
-### Community 60 - "TimeSpan / ExecutorOutcomeKind"
+### Community 56 - "TransitionContext / TaskStateMachine.TryTransition()"
 Cohesion: 0.15
-Nodes (8): ApprovalPipeClient, ExecutorOutcome, ExecutorOutcomeKind, Cancelled, Failed, Interrupted, ReviewRequired, Succeeded
+Nodes (9): TransitionContext, ApprovalExpired, ApprovalMatches, Default, LeaseExpired, ResourcesAvailable, Satisfied, ValidationViolated (+1 more)
 
-### Community 61 - "WorkspaceChanges.CaptureAsync() / WorkspaceChanges"
-Cohesion: 0.26
-Nodes (3): WorkspaceChanges, WorkspaceChangeSet, WorkspaceChangesTests
+### Community 57 - "McpHttpTests / McpHttpFixture"
+Cohesion: 0.18
+Nodes (3): McpHttpFixture, Client, McpHttpTests
 
-### Community 62 - "Odw.Node.Hosting / CliApplication.cs"
+### Community 58 - "TaskAggregate / TaskStateMachine"
+Cohesion: 0.13
+Nodes (10): TaskAggregate, Changes, CreatedAt, Role, State, StateSeq, TaskHash, TaskId (+2 more)
+
+### Community 59 - "WorkspaceSpec / WorkspaceMode"
+Cohesion: 0.12
+Nodes (14): WorkspaceMode, ReadOnly, ReadWriteWorktree, WorkspaceStrategy, Clone, Snapshot, Worktree, WorkspaceSpec (+6 more)
+
+### Community 60 - "ModelProfile / ModelProfileResolver.TryResolve()"
+Cohesion: 0.18
+Nodes (7): ModelCatalog, DefaultProfiles, Free, ModelProfile, QualifiedName, ModelProfileResolver, ModelProfileResolverTests
+
+### Community 62 - "TelegramClient / StubHandler"
+Cohesion: 0.29
+Nodes (4): TelegramClient, TelegramClientTests, StubHandler, Calls
+
+### Community 63 - "Odw.Node.Hosting / CliApplication.cs"
 Cohesion: 0.20
 Nodes (3): Odw.Cli, Odw.Node.Hosting, Odw.Node.Configuration
 
-### Community 63 - "McpHttpFixture.InitializeAsync() / TaskStatusView"
-Cohesion: 0.15
-Nodes (6): TaskStatusView, McpOptions, MaxBodyBytes, Path, Token, McpTestData
-
-### Community 64 - "WhenDto / LimitsDto"
+### Community 65 - "WhenDto / LimitsDto"
 Cohesion: 0.13
 Nodes (13): WhenDto, AnyAction, CapabilitiesAll, CapabilitiesNone, Direction, Kind, Limits, Mode (+5 more)
 
-### Community 65 - "TaskAggregate / TaskAggregate.Create()"
-Cohesion: 0.15
-Nodes (8): TaskAggregate, Changes, CreatedAt, Role, State, StateSeq, TaskHash, TaskId
+### Community 66 - "OpenCodeExecutor / IOpenCodeClient.ReplyPermissionAsync()"
+Cohesion: 0.17
+Nodes (8): OpenCodePermissionReply, Always, Once, Reject, OpenCodeExecutor, ToolPermissionDecision, AllowOnce, Reject
 
-### Community 66 - "TransitionTaskRequest / CancelRequested"
+### Community 67 - "PolicyEngine / PolicyRequest"
+Cohesion: 0.19
+Nodes (5): IPolicyEngine, PolicyRequest, Actions, PolicyEngine, Document
+
+### Community 68 - "TransitionTaskRequest / CancelRequested"
 Cohesion: 0.13
 Nodes (15): TransitionTaskRequest, CancelRequested, EventPayloadJson, EventType, ExecutorRef, ExpectedSeq, ExpectedState, FinishedAt (+7 more)
 
-### Community 67 - "TaskRequest contract / Approval binding to task_id, task_has"
+### Community 70 - "TaskRequest contract / Approval binding to task_id, task_has"
 Cohesion: 0.19
 Nodes (11): Approval Gateway (out-of-band), Policy Engine (AUTO / ASK / DENY), Identifier formats (node_id, ULID task_id), task_hash canonical projection (RFC 8785 JCS), TaskRequest contract, ApprovalService, pipe server and signer, odw_* MCP tool catalogue, Policy Engine semantics (first match, fail-closed) (+3 more)
 
-### Community 68 - "NodeHost.StartAsync() / TelegramApprovalService"
-Cohesion: 0.23
-Nodes (3): TelegramApprovalService, PeerApiClientFactory, PeerStore
-
-### Community 69 - "IAsyncDisposable / TestDatabase"
-Cohesion: 0.15
-Nodes (8): Fixture, Folder, Host, TestDatabase, Database, Folder, Path, Time
-
-### Community 71 - "Enums.cs / NetworkAccess"
-Cohesion: 0.14
-Nodes (11): NetworkAccess, Allow, None, TestStatus, Failed, Passed, Skipped, WorkspaceStrategy (+3 more)
-
-### Community 72 - "Threat model T1-T10 / Dedicated identities odw-svc and odw-a"
+### Community 74 - "Threat model T1-T10 / Dedicated identities odw-svc and odw-a"
 Cohesion: 0.27
 Nodes (11): Sandbox module, Isolated workspace per task, H3 — Isolation and policies (done), Dedicated identities odw-svc and odw-agent, Job Object resource limits, Network isolation: WFP by SID plus CONNECT proxy, Reparse point and hardlink guard, Threat model T1-T10 (+3 more)
 
-### Community 73 - "OriginPoller / OriginPoller.RefreshOnceAsync()"
+### Community 76 - "OriginPoller / OriginPoller.RefreshOnceAsync()"
 Cohesion: 0.29
 Nodes (3): OriginPoller, OriginPollerOptions, PollInterval
 
-### Community 75 - "ApprovalsConfig / TelegramConfig"
+### Community 78 - "TimeSpan / ExecutorOutcomeKind"
+Cohesion: 0.19
+Nodes (7): ExecutorOutcome, ExecutorOutcomeKind, Cancelled, Failed, Interrupted, ReviewRequired, Succeeded
+
+### Community 79 - "ApprovalsConfig / TelegramConfig"
 Cohesion: 0.15
 Nodes (13): ApprovalsConfig, Enabled, HmacKeyRef, PipeName, SecurityDescriptor, Telegram, TtlMinutes, TelegramConfig (+5 more)
 
-### Community 76 - "Peer protocol v1 / ODW — OpenCode Distributed Worker Network"
+### Community 80 - "Peer protocol v1 / ODW — OpenCode Distributed Worker Network"
 Cohesion: 0.17
 Nodes (9): Two interfaces: local MCP facade and peer API, Local MCP facade, ODW — OpenCode Distributed Worker Network, Peer API (node to node), OpenCode SSE: data-only lines, no Last-Event-ID, NodeHost with two listeners, RFC 7807 error catalogue, Peer protocol v1 (+1 more)
 
-### Community 77 - "Origin state machine / SQLite schema (tasks, peers, events, "
+### Community 81 - "Origin state machine / SQLite schema (tasks, peers, events, "
 Cohesion: 0.20
 Nodes (10): Origin state machine, Target state machine, TaskState enum (single enum, per-role subsets), OriginProposalService and OriginPoller, Embedded versioned migrations, Outbox (pending_actions) with backoff and dead-letter, SQLite schema (tasks, peers, events, approvals), SqliteWriter single-writer actor (+2 more)
 
-### Community 78 - "Func / PolicyDocumentLoader.Load()"
-Cohesion: 0.26
-Nodes (3): PolicyDocument, PolicyValidationException, Issues
+### Community 82 - "IApprovalChannel.cs / ApprovalDecisionKind"
+Cohesion: 0.20
+Nodes (9): ApprovalDecisionKind, Approved, Denied, Expired, ApprovalOutcome, ApprovalScope, Task, ToolUse (+1 more)
 
-### Community 81 - "PolicyEngine / PolicyEngine.Matches()"
-Cohesion: 0.24
-Nodes (3): IPolicyEngine, PolicyEngine, Document
-
-### Community 82 - "IOpenCodeClient.ReplyPermissionAsync() / OpenCodePermissionR"
-Cohesion: 0.21
-Nodes (7): OpenCodePermissionReply, Always, Once, Reject, ToolPermissionDecision, AllowOnce, Reject
-
-### Community 84 - "DoctorOptions / DatabasePath"
+### Community 83 - "ApprovalEvidence / ExecutorSpec"
 Cohesion: 0.17
-Nodes (12): DoctorOptions, DatabasePath, ExpectedSpecSha256, McpBind, McpPort, McpToken, OpenCodeExecutable, PeerBind (+4 more)
+Nodes (11): ApprovalEvidence, ApprovalId, ApprovedAt, ApprovedBy, Nonce, Signature, TaskHash, ExecutorSpec (+3 more)
 
-### Community 85 - "Milestone plan D0 through H6 / Lineage and anti-cycle guard"
+### Community 84 - "Milestone plan D0 through H6 / Lineage and anti-cycle guard"
 Cohesion: 0.22
 Nodes (11): Planner (delegation scoring), Lineage and anti-cycle guard, Task divisibility via declared split_units, Deterministic planner scoring formula, Leases and heartbeats, D0 — Detailed design (done), H0 — OpenCode verification (partial, H0-6 open), H4 — Full bidirectionality (+3 more)
 
-### Community 87 - "ExecutorEventKind / Completed"
+### Community 85 - "ExecutorEventKind / Completed"
 Cohesion: 0.18
 Nodes (11): ExecutorEventKind, Completed, Failed, Heartbeat, Interrupted, PermissionAsked, Started, TextDelta (+3 more)
 
-### Community 88 - "OpenCode v2.3.2 V2 surface under /api (143 routes) / OpenCod"
+### Community 86 - "NodeRuntime / Coordinator"
+Cohesion: 0.18
+Nodes (11): NodeRuntime, Coordinator, Database, Directory, Options, Outbox, Peers, Policy (+3 more)
+
+### Community 87 - "OpenCode v2.3.2 V2 surface under /api (143 routes) / OpenCod"
 Cohesion: 0.27
 Nodes (8): OpenAPI spec served at GET /openapi.json, pinned by SHA-256, Port 0 plus /api/info pid and urls discovery, Prompt endpoint POST /api/session/{id}/prompt, OpenCode v2.3.2 V2 surface under /api (143 routes), odw doctor diagnostics, OpenCodeClient typed V2 HTTP client, OpenCodeServer launcher (loopback, port 0), odw CLI (serve, doctor, approvals, service)
 
-### Community 89 - "PeerRegistry / PeerIdentity"
+### Community 88 - "PeerRegistry / PeerIdentity"
 Cohesion: 0.31
 Nodes (4): PeerIdentity, PeerRegistry, Entry, KnownNodes
 
-### Community 90 - "InvalidStateTransitionException / TaskAggregate.Apply()"
+### Community 89 - "InvalidStateTransitionException / TaskAggregate.Apply()"
 Cohesion: 0.24
 Nodes (6): InvalidStateTransitionException, Failure, From, Role, TaskId, Trigger
 
-### Community 91 - "PeerApiConfig / PeerTlsConfig"
+### Community 90 - "Enums.cs / OpenCodeExecutor.SendAsync()"
+Cohesion: 0.22
+Nodes (6): MessageDelivery, Queue, Steer, NetworkAccess, Allow, None
+
+### Community 91 - "PeerStatusSnapshot / IPeerDirectory"
+Cohesion: 0.31
+Nodes (3): IPeerDirectory, PeerStatusSnapshot, IsOnline
+
+### Community 92 - "PeerApiConfig / PeerTlsConfig"
 Cohesion: 0.20
 Nodes (10): PeerApiConfig, Address, AllowLoopback, Bind, Port, Tls, PeerTlsConfig, CertificatePath (+2 more)
 
@@ -511,25 +501,29 @@ Nodes (10): PeerApiConfig, Address, AllowLoopback, Bind, Port, Tls, PeerTlsConfi
 Cohesion: 0.27
 Nodes (5): SandboxInspector, SandboxReport, FullyEnforced, NetworkEnforced, SandboxInspectorTests
 
-### Community 95 - "ODW Node service (one per PC) / Task Manager (state machine,"
+### Community 94 - "ODW Node service (one per PC) / Task Manager (state machine,"
 Cohesion: 0.22
 Nodes (8): Audit Log (append-only), Identity and Trust module, ODW Node service (one per PC), Resource Monitor (CPU, RAM, GPU, tools), Task Manager (state machine, leases, recovery), Odw.slnx solution and project layout, IExecutor executor port, Hash-chained append-only audit log
 
-### Community 96 - "NodeHostedService / ServeHost.RunAsync()"
-Cohesion: 0.28
-Nodes (3): NodeHostedService, ServeHost, ServeOptions
+### Community 95 - "ModelsConfig / Dictionary"
+Cohesion: 0.22
+Nodes (8): ModelProfileConfig, MaxCostUsd, Model, Provider, ModelsConfig, Allowed, Default, Profiles
 
-### Community 97 - "IApprovalChannel.cs / ApprovalDecisionKind"
-Cohesion: 0.28
-Nodes (6): ApprovalDecisionKind, Approved, Denied, Expired, ApprovalOutcome, IApprovalChannel
+### Community 96 - "Fixture / HttpClient"
+Cohesion: 0.25
+Nodes (4): PeerApiClientFactory, Fixture, Folder, Host
 
-### Community 99 - "NetworkIsolationWatchdog / NetworkIsolationWatchdogTests.Sto"
-Cohesion: 0.33
-Nodes (3): NetworkIsolationWatchdog, Lost, NetworkIsolationWatchdogTests
-
-### Community 101 - "h0-probe.ps1 / Assert-True()"
+### Community 99 - "h0-probe.ps1 / Assert-True()"
 Cohesion: 0.28
 Nodes (3): Assert-True(), Write-Fail(), Write-Pass()
+
+### Community 100 - "Exception / PeerApiClientFactory.Create()"
+Cohesion: 0.32
+Nodes (3): OriginException, PeerConnection, PeerProtocolException
+
+### Community 102 - "PolicyEffect / PolicyDecision"
+Cohesion: 0.25
+Nodes (7): PolicyDecision, IsAllowed, RequiresHuman, PolicyEffect, Ask, Auto, Deny
 
 ### Community 103 - "ValidationResult / ValidationResult.cs"
 Cohesion: 0.25
@@ -539,97 +533,85 @@ Nodes (6): ValidationCodes, ValidationResult, Codes, Issues, IsValid, Valid
 Cohesion: 0.25
 Nodes (8): ConfiguredPeer, Address, Capabilities, NodeId, TokenRef, Trust, PeerFile, Peers
 
-### Community 106 - "Secret references and DPAPI storage / Stateless Streamable H"
+### Community 107 - "Secret references and DPAPI storage / Stateless Streamable H"
 Cohesion: 0.33
 Nodes (6): MCP server config under mcp.servers with oauth false, node.json configuration and secret references, Stateless Streamable HTTP MCP transport, policy.json document and condition set, Peer auth: Bearer token plus X-Odw-Node, Secret references and DPAPI storage
 
-### Community 107 - "ExecutionScheduler / H1 — Minimal node and basic delegation"
+### Community 108 - "ExecutionScheduler / H1 — Minimal node and basic delegation"
 Cohesion: 0.38
 Nodes (6): ExecutionScheduler, H1 — Minimal node and basic delegation, Architecture invariant tests, Testing strategy and golden rules, TwoNodeHarness end-to-end tests, E2E loopback harness (tools/e2e-loopback.ps1)
 
-### Community 108 - "ApprovalDecisionStatus / AlreadyDecided"
+### Community 109 - "StubHandler / StubHandler.SendAsync()"
+Cohesion: 0.38
+Nodes (3): RecordedCall, StubHandler, Calls
+
+### Community 110 - "ApprovalDecisionStatus / AlreadyDecided"
 Cohesion: 0.29
 Nodes (7): ApprovalDecisionStatus, AlreadyDecided, Approved, Denied, Expired, HashMismatch, NotFound
 
-### Community 109 - "Goal / Accepted"
+### Community 111 - "Goal / Accepted"
 Cohesion: 0.29
 Nodes (7): Goal, Accepted, Cancelled, Done, Failed, Rejected, Running
 
-### Community 110 - "TaskModels.cs / TransitionResult"
-Cohesion: 0.33
-Nodes (5): TransitionResult, TransitionStatus, Applied, Conflict, NotFound
-
-### Community 111 - "RuleDto / WhenDto"
+### Community 112 - "RuleDto / WhenDto"
 Cohesion: 0.29
 Nodes (6): RuleDto, Effect, Id, Priority, Reason, When
 
-### Community 113 - "permission.asked event blocks the prompt indefinitely / Fina"
+### Community 115 - "permission.asked event blocks the prompt indefinitely / Fina"
 Cohesion: 0.40
 Nodes (4): TaskResult contract, permission.asked event blocks the prompt indefinitely, Final verification and evidence-based outcome, Permission broker (once or reject, never always)
 
-### Community 114 - "LimitsDto / RangeDto"
+### Community 116 - "LimitsDto / RangeDto"
 Cohesion: 0.33
 Nodes (5): LimitsDto, MaxCostUsd, MaxMemoryGb, MaxMinutes, Network
 
-### Community 115 - "DocumentDto / RuleDto"
+### Community 117 - "DocumentDto / RuleDto"
 Cohesion: 0.33
 Nodes (5): DocumentDto, Default, Rules, Schema, Version
 
-### Community 116 - "PolicyEffect / PolicyRule"
+### Community 118 - "TelegramApprovalOptions / AllowedChatIds"
 Cohesion: 0.33
-Nodes (5): PolicyEffect, Ask, Auto, Deny, PolicyRule
+Nodes (6): TelegramApprovalOptions, AllowedChatIds, AllowedUserIds, BotToken, NotifyInterval, PollTimeoutSeconds
 
-### Community 117 - "origin-node.ps1 / Get-OriginProcesses()"
+### Community 120 - "TransitionResult / TransitionStatus"
+Cohesion: 0.33
+Nodes (5): TransitionResult, TransitionStatus, Applied, Conflict, NotFound
+
+### Community 121 - "origin-node.ps1 / Get-OriginProcesses()"
 Cohesion: 0.47
 Nodes (4): Get-OriginProcesses(), Stop-Origin(), Test-OriginHealth(), Wait-Health()
 
-### Community 118 - "policy.example.json / default"
+### Community 122 - "policy.example.json / default"
 Cohesion: 0.40
 Nodes (4): default, rules, $schema, version
 
-### Community 120 - "ApprovalRequest / ApprovalScope"
-Cohesion: 0.40
-Nodes (4): ApprovalRequest, ApprovalScope, Task, ToolUse
-
-### Community 121 - "DoctorReport / DoctorReport.DoctorReport()"
-Cohesion: 0.40
-Nodes (4): DoctorReport, Failures, Ok, Warnings
-
-### Community 122 - "TimeWindowDto / Days"
+### Community 123 - "TimeWindowDto / Days"
 Cohesion: 0.40
 Nodes (5): TimeWindowDto, Days, From, TimeZone, To
-
-### Community 125 - "PolicyDecision / IsAllowed"
-Cohesion: 0.50
-Nodes (3): PolicyDecision, IsAllowed, RequiresHuman
-
-### Community 126 - "DoctorStatus / Fail"
-Cohesion: 0.50
-Nodes (4): DoctorStatus, Fail, Pass, Warn
 
 ### Community 128 - "RangeDto / Gte"
 Cohesion: 0.67
 Nodes (3): RangeDto, Gte, Lte
 
 ## Knowledge Gaps
-- **630 isolated node(s):** `Microsoft.NET.Sdk`, `Microsoft.Extensions.Hosting`, `Microsoft.Extensions.Hosting.WindowsServices`, `Microsoft.NET.Sdk`, `Task` (+625 more)
-  These have ≤1 connection - possible missing edges. (Counts symbols only; 808 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **645 isolated node(s):** `Microsoft.NET.Sdk`, `Microsoft.Extensions.Hosting`, `Microsoft.Extensions.Hosting.WindowsServices`, `Microsoft.NET.Sdk`, `Task` (+640 more)
+  These have ≤1 connection - possible missing edges. (Counts symbols only; 824 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **25 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Odw.Core.Model` connect `Odw.Core.Model / Odw.Node.Persistence.Tasks` to `IApprovalChannel.cs / ApprovalDecisionKind`, `OutboxStore / NewPendingAction`, `NodeHost.cs / system_text_json_nodes`, `TaskTrigger / TaskTrigger.cs`, `Enums.cs / NetworkAccess`, `TaskResult / TaskResult.cs`, `OriginProposalService / OriginProposalService.ProposeAsync()`, `OpenCodeTaskRunner.RunAsync() / OpenCodeExecutor`, `system_text / Odw.Core.Primitives`, `TaskModels.cs / TransitionResult`, `Odw.Node.Persistence / Odw.Node.Tests`, `TaskRequest / WorkspaceSpec`, `ApprovalPipeServer.cs / Odw.Node.Approvals`, `Odw.Core.Contracts / NodeBootstrap.cs`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+- **Why does `Odw.Core.Model` connect `Odw.Core.Model / Odw.Node.Persistence.Tasks` to `OpenCodeIntegrationTests.Real_server_completes_a_read_only_p`, `NodeHost.cs / system_text_json_nodes`, `system_text / system_text_json`, `TaskTrigger / TaskTrigger.cs`, `xunit / Odw.Core.Tests`, `Odw.Node.Persistence / Odw.Node.Tests`, `TaskResult / TaskResult.cs`, `NodeConfig / NodeConfig.cs`, `IApprovalChannel.cs / ApprovalDecisionKind`, `ApprovalEvidence / ExecutorSpec`, `OriginProposalService / OriginProposalService.ProposeAsync()`, `Enums.cs / OpenCodeExecutor.SendAsync()`, `ModelProfile / ModelProfileResolver.TryResolve()`, `Odw.Core.Contracts / NodeBootstrap.cs`?**
+  _High betweenness centrality (0.064) - this node is a cross-community bridge._
 - **What connects `Microsoft.NET.Sdk`, `Microsoft.Extensions.Hosting`, `Microsoft.Extensions.Hosting.WindowsServices` to the rest of the system?**
-  _630 weakly-connected nodes found - possible missing edges._
-- **Should `Task / ExecutionScheduler` be split into smaller, more focused modules?**
-  _Cohesion score 0.06428571428571428 - nodes in this community are weakly interconnected._
-- **Why does `PolicyDocumentLoader` connect `PolicyDocumentLoader / PolicyDocumentLoader.MapWhen()` to `RangeDto / Gte`, `WhenDto / LimitsDto`, `List / TaskValidator`, `JsonSerializerOptions / StringOrArrayConverter`, `system_text / Odw.Core.Primitives`, `Func / PolicyDocumentLoader.Load()`, `RuleDto / WhenDto`, `LimitsDto / RangeDto`, `DocumentDto / RuleDto`, `TimeWindowDto / Days`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
-- **Should `OpenCodeClientTests.Create() / PeerApiClient` be split into smaller, more focused modules?**
-  _Cohesion score 0.05711849957374254 - nodes in this community are weakly interconnected._
-- **Why does `NodeHostOptions` connect `NodeHostOptions / TelegramApprovalOptions` to `Task / ExecutionScheduler`, `NodeBootstrap.StartAsync() / NodeSettings`, `IReadOnlyList / OpenCodeTaskRunner`, `NodeHost.StartAsync() / TelegramApprovalService`, `Odw.Core.Model / Odw.Node.Persistence.Tasks`, `Theory / InlineData`, `OriginProposalService / OriginProposalService.ProposeAsync()`, `OriginPoller / OriginPoller.RefreshOnceAsync()`, `PolicyEngine / PolicyEngine.Matches()`, `TaskRole / TaskCoordinator.TransitionAsync()`, `ModelProxy / ModelProxy.HandleAsync()`, `NodeConfigLoader.Load() / NodeConfigurationException`, `CancellationToken / WorkspaceManager.PrepareAsync()`, `NodeHost / NodeHost.BuildMcp()`, `ApprovalService / ApprovalService.DecideAsync()`, `NodeRuntime / PeerEndpoints.CreateAsync()`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
-- **Should `Odw.slnx / Odw.Node.csproj` be split into smaller, more focused modules?**
-  _Cohesion score 0.055218855218855216 - nodes in this community are weakly interconnected._
+  _645 weakly-connected nodes found - possible missing edges._
+- **Should `CancellationToken / ExecutionScheduler` be split into smaller, more focused modules?**
+  _Cohesion score 0.06098901098901099 - nodes in this community are weakly interconnected._
+- **Why does `NodeConfig` connect `NodeConfig / NodeConfig.cs` to `NodeBootstrap.StartAsync() / NodeConfigLoader.Load()`, `SandboxConfig / SandboxGuard.Validate()`, `ConfiguredPeer / PeerFile`, `List / Func`, `ApprovalsConfig / TelegramConfig`, `PeerApiConfig / PeerTlsConfig`, `ModelsConfig / Dictionary`?**
+  _High betweenness centrality (0.034) - this node is a cross-community bridge._
+- **Should `ApprovalPipeServer / ValueTask` be split into smaller, more focused modules?**
+  _Cohesion score 0.05081967213114754 - nodes in this community are weakly interconnected._
+- **Why does `PolicyDocumentLoader` connect `List / Func` to `ContractFormat / Regex`, `RangeDto / Gte`, `WhenDto / LimitsDto`, `JsonSerializerOptions / StringOrArrayConverter`, `Odw.Core.Model / Odw.Node.Persistence.Tasks`, `RuleDto / WhenDto`, `LimitsDto / RangeDto`, `DocumentDto / RuleDto`, `TimeWindowDto / Days`?**
+  _High betweenness centrality (0.032) - this node is a cross-community bridge._
+- **Should `DoctorOptions / NodeDoctor.RunAsync()` be split into smaller, more focused modules?**
+  _Cohesion score 0.06271186440677966 - nodes in this community are weakly interconnected._

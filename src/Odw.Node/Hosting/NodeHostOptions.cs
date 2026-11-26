@@ -1,3 +1,4 @@
+using Odw.Core.Model;
 using Odw.Core.Primitives;
 using Odw.Node.Approvals;
 using Odw.Node.Diagnostics;
@@ -36,6 +37,11 @@ public sealed record NodeHostOptions
     public IReadOnlyList<string> Capabilities { get; init; } = ["opencode"];
 
     public IReadOnlyList<string> Accepts { get; init; } = ["analysis", "test_run"];
+
+    /// <summary>Solo los perfiles permitidos por este nodo; el resto no se expone al runner.</summary>
+    public IReadOnlyDictionary<string, ModelProfile> ModelProfiles { get; init; } = ModelCatalog.DefaultProfiles;
+
+    public string DefaultModelProfile { get; init; } = ModelCatalog.DefaultProfileName;
 
     public PolicyEngine? Policy { get; init; }
 
@@ -120,6 +126,12 @@ public sealed record NodeHostOptions
         if (PeerPort is < 0 or > 65535 || McpPort is < 0 or > 65535)
         {
             throw new NodeConfigurationException("Puerto fuera de rango.");
+        }
+
+        if (ModelProfiles is null || !ModelProfiles.ContainsKey(DefaultModelProfile))
+        {
+            throw new NodeConfigurationException(
+                $"No hay perfil de modelo por defecto '{DefaultModelProfile}' en models.allowed.");
         }
 
         if (EnableScheduler && (ExecutionRunner is null || WorkspacePreparer is null))

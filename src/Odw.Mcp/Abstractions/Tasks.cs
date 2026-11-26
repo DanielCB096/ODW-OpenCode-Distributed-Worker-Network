@@ -35,7 +35,11 @@ public sealed record TaskResultView(
     bool ResultAvailable,
     string? Diff,
     bool DiffTruncated,
-    IReadOnlyList<TaskEventView> Events);
+    IReadOnlyList<TaskEventView> Events,
+    string? ModelProfile,
+    string? ModelProvider,
+    string? ModelId,
+    decimal? CostUsd);
 
 public interface ITaskQuery
 {

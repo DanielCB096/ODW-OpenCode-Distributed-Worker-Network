@@ -1,3 +1,4 @@
+using System.Globalization;
 using Odw.Core.Contracts;
 using Odw.Core.Model;
 using Odw.Executors.OpenCode;
@@ -20,6 +21,11 @@ public sealed record OpenCodeTaskRunnerOptions
     public TimeSpan ExecutionTimeout { get; init; } = TimeSpan.FromMinutes(45);
 
     public ToolPermissionHandler? PermissionHandler { get; init; }
+
+    /// <summary>Perfiles de modelo permitidos por este nodo.</summary>
+    public IReadOnlyDictionary<string, ModelProfile> ModelProfiles { get; init; } = ModelCatalog.DefaultProfiles;
+
+    public string DefaultModelProfile { get; init; } = ModelCatalog.DefaultProfileName;
 
     /// <summary>Credenciales del agente restringido para lanzar `opencode serve`.</summary>
     public RunAsCredentials? RunAs { get; init; }
@@ -78,6 +84,27 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
+
+        if (!ModelProfileResolver.TryResolve(
+                request.Contract.Executor.ModelProfile,
+                request.Contract.Executor.ModelHint,
+                _options.DefaultModelProfile,
+                _options.ModelProfiles,
+                out var selectedModel,
+                out var modelCode,
+                out var modelDetail))
+        {
+            return new ExecutionResult(
+                ExecutorOutcomeKind.Failed,
+                ResultJson(
+                    "failed",
+                    $"{modelCode ?? "MODEL_NOT_ALLOWED"}: {modelDetail ?? "modelo no permitido."}",
+                    request.WorkspaceBranch,
+                    review: false));
+        }
+
+        var model = selectedModel
+                    ?? throw new InvalidOperationException("El resolvedor de modelo no devolvió un perfil.");
 
         if (_options.RequireNetworkIsolation)
         {
@@ -187,7 +214,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 request.Snapshot.TaskId,
                 request.WorkspacePath,
                 request.Contract.Instructions,
-                request.Contract.Executor.ModelHint,
+                model.QualifiedName,
                 new ExecutorLimits(
                     request.Contract.Limits.MaxMinutes,
                     request.Contract.Limits.MaxMemoryGb,
@@ -318,6 +345,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
             }
 
             var review = failedTools || reviewReason is not null;
+            var costUsd = LastCost(events);
 
             return terminal?.Kind switch
             {
@@ -332,14 +360,20 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                         commit,
                         diff,
                         diffTruncated,
-                        reviewReason),
+                        reviewReason,
+                        model,
+                        costUsd),
                     review),
                 ExecutorEventKind.Interrupted => new ExecutionResult(
                     ExecutorOutcomeKind.Interrupted,
-                    ResultJson("cancelled", summary, request.WorkspaceBranch, review: false)),
+                    ResultJson(
+                        "cancelled", summary, request.WorkspaceBranch, review: false,
+                        model: model, costUsd: costUsd)),
                 _ => new ExecutionResult(
                     ExecutorOutcomeKind.Failed,
-                    ResultJson("failed", terminal?.Detail ?? summary, request.WorkspaceBranch, review: false)),
+                    ResultJson(
+                        "failed", terminal?.Detail ?? summary, request.WorkspaceBranch, review: false,
+                        model: model, costUsd: costUsd)),
             };
         }
         finally
@@ -433,6 +467,26 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
         }
     }
 
+    private static decimal? LastCost(IReadOnlyList<ExecutorEvent> events)
+    {
+        var detail = events.LastOrDefault(item => item.Kind == ExecutorEventKind.UsageUpdated)?.Detail;
+        const string marker = "cost_usd=";
+        if (detail is null)
+        {
+            return null;
+        }
+
+        var index = detail.IndexOf(marker, StringComparison.Ordinal);
+        return index >= 0
+               && decimal.TryParse(
+                   detail[(index + marker.Length)..],
+                   NumberStyles.Number,
+                   CultureInfo.InvariantCulture,
+                   out var value)
+            ? value
+            : null;
+    }
+
     private static string ResultJson(
         string outcome,
         string summary,
@@ -442,7 +496,9 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
         string? commit = null,
         string? diff = null,
         bool diffTruncated = false,
-        string? reviewReason = null)
+        string? reviewReason = null,
+        ModelProfile? model = null,
+        decimal? costUsd = null)
         => PersistenceJson.Serialize(new
         {
             outcome,
@@ -455,5 +511,9 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
             review_reason = reviewReason,
             artifacts = Array.Empty<string>(),
             requires_review = review,
+            model_profile = model?.Name,
+            model_provider = model?.Provider,
+            model_id = model?.Model,
+            cost_usd = costUsd,
         });
 }

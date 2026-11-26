@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Odw.Core.Model;
 using Odw.Core.Primitives;
 using Odw.Node.Hosting;
 using Odw.Node.Peers;
@@ -23,6 +24,8 @@ public sealed record NodeSettings(
     string? TlsCertificatePath,
     string? TlsCertificatePassword,
     byte[]? ApprovalHmacKey,
+    IReadOnlyDictionary<string, ModelProfile> ModelProfiles,
+    string DefaultModelProfile,
     TelegramSettings? Telegram);
 
 public sealed record TelegramSettings(
@@ -94,6 +97,8 @@ public static class NodeConfigLoader
         var repos = LoadRepos(config, directory);
         var workspaceRoot = Expand(config.Workspaces.Root, directory);
         var policyPath = config.PolicyPath is null ? null : Expand(config.PolicyPath, directory);
+        var (modelProfiles, defaultModelProfile) =
+            LoadModels(config.Models ?? new ModelsConfig());
 
         if (policyPath is not null && !File.Exists(policyPath))
         {
@@ -184,7 +189,74 @@ public static class NodeConfigLoader
             tlsCertificate,
             tlsPassword,
             approvalHmacKey,
+            modelProfiles,
+            defaultModelProfile,
             telegram);
+    }
+
+    private static (IReadOnlyDictionary<string, ModelProfile> Profiles, string Default) LoadModels(
+        ModelsConfig config)
+    {
+        var profiles = new Dictionary<string, ModelProfile>(StringComparer.Ordinal);
+
+        if (config.Profiles is null || config.Profiles.Count == 0)
+        {
+            throw new NodeConfigurationException("models.profiles no puede estar vacío.");
+        }
+
+        foreach (var (name, profile) in config.Profiles)
+        {
+            if (string.IsNullOrWhiteSpace(name)
+                || name.Length > 64
+                || !name.All(character => char.IsAsciiLetterOrDigit(character)
+                                          || character is '-' or '_' or '.'))
+            {
+                throw new NodeConfigurationException($"Nombre de perfil de modelo inválido: '{name}'.");
+            }
+
+            if (string.IsNullOrWhiteSpace(profile.Provider) || string.IsNullOrWhiteSpace(profile.Model))
+            {
+                throw new NodeConfigurationException(
+                    $"El perfil de modelo '{name}' requiere provider y model.");
+            }
+
+            if (profile.MaxCostUsd < 0)
+            {
+                throw new NodeConfigurationException(
+                    $"El perfil de modelo '{name}' tiene max_cost_usd negativo.");
+            }
+
+            profiles[name] = new ModelProfile(name, profile.Provider, profile.Model, profile.MaxCostUsd);
+        }
+
+        if (string.IsNullOrWhiteSpace(config.Default) || !profiles.ContainsKey(config.Default))
+        {
+            throw new NodeConfigurationException($"models.default no existe: '{config.Default}'.");
+        }
+
+        if (config.Allowed is null || config.Allowed.Count == 0)
+        {
+            throw new NodeConfigurationException("models.allowed no puede estar vacío.");
+        }
+
+        if (!config.Allowed.Contains(config.Default, StringComparer.Ordinal))
+        {
+            throw new NodeConfigurationException("models.allowed debe incluir models.default.");
+        }
+
+        var allowed = new Dictionary<string, ModelProfile>(StringComparer.Ordinal);
+        foreach (var name in config.Allowed.Distinct(StringComparer.Ordinal))
+        {
+            if (!profiles.TryGetValue(name, out var profile))
+            {
+                throw new NodeConfigurationException(
+                    $"models.allowed contiene un perfil desconocido: '{name}'.");
+            }
+
+            allowed[name] = profile;
+        }
+
+        return (allowed, config.Default);
     }
 
     private static IReadOnlyList<PeerRegistration> LoadPeers(NodeConfig config, string directory)

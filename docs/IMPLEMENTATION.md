@@ -60,7 +60,7 @@ Dependencias: `Core` no referencia nada; `Policy`/`Trust`/`Sandbox`/`Executors.O
 ### 2.1 Invariantes ya cubiertos por pruebas
 
 - Vectores de hash V1/V2/V4; orden y duplicados de rutas; normalización de CRLF y espacios.
-- Campos excluidos: `approval`, fechas, `hops`, `model_hint`, `strategy`, `protocol_version`.
+- Campos excluidos: `approval`, fechas, `hops`, `model_hint`, `strategy`, `protocol_version`; `model_profile` se incluye si existe.
 - Campos incluidos: nodos, padre, `kind`, límites, rutas, repo, `max_depth`.
 - Matriz completa role×estado×trigger sin excepciones; estados terminales sin salida.
 - `state_seq` monótono; transición inválida lanza y no muta el agregado.
@@ -227,6 +227,13 @@ Límites que siguen abiertos y se declaran:
   proxy CONNECT con allowlist (`opencode.ai`). Una tarea real completó a través del proxy.
   `models.dev` no es necesario en ejecución (el modelo se fija en el contrato/config); si se
   necesita refrescar el catálogo, puede añadirse a `network_allowed_hosts`.
+- Perfiles de modelo (`models`): `default`, `allowed` y `profiles`. Solo los perfiles
+  de `allowed` se exponen al runner; `paid-deepseek` puede estar definido pero
+  deshabilitado. `odw_propose_task` acepta `model_profile`; el destino valida contra
+  la allowlist y el resultado incluye `model_profile`, `model_provider`, `model_id` y
+  `cost_usd`. `model_hint` queda como compatibilidad y solo se acepta si coincide con
+  un perfil permitido. Las credenciales de un modelo de pago no se copian al agente;
+  requieren gateway o credencial del servicio.
 - Perfil desechable por tarea (`AgentRuntime`): configuración, datos, caché y temporales propios;
   el perfil real del agente queda sin escritura. `sandbox.run_as_agent` exige
   `scheduler.max_concurrent=1` y `workspaces.keep=false` (`SandboxGuard`).
@@ -446,7 +453,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **328/328 pruebas** (96 Core + 117 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
+Estado actual: build 0 warnings, **340/340 pruebas** (104 Core + 121 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
 
 ---
@@ -489,4 +496,3 @@ La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no 
 3. Empaquetar artefactos descargables (el diff ya viaja inline, truncado a 256 KiB).
 4. H4: leases, mensajes, cancelación remota y reconciliación tras reinicio.
 5. Cerrar H0-6 (aislamiento por directorio) con instancias ya separadas.
-

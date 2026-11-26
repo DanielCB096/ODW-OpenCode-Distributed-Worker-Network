@@ -260,6 +260,11 @@ public sealed class OriginProposalService : ITaskProposalService
             Network = input.Network,
             MaxCostUsd = input.MaxCostUsd,
         },
+        Executor = new ExecutorSpec
+        {
+            Type = "opencode",
+            ModelProfile = input.ModelProfile,
+        },
         CreatedAt = now,
         ExpiresAt = now.AddMinutes(input.ExpiresInMinutes),
     };

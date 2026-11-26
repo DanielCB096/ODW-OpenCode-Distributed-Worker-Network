@@ -143,6 +143,11 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
   dejada por el instalador (como `odw-svc`, que no puede consultar WFP), arranca el proxy y el
   runner inyecta `HTTPS_PROXY`/`HTTP_PROXY` y `NO_PROXY=127.0.0.1,localhost`. Si falta el
   aislamiento o el proxy, la tarea con `network=none` **no se ejecuta** (`NETWORK_UNENFORCED`).
+- **Selección de modelo:** el origen solo envía `executor.model_profile`; el destino
+  valida contra `models.allowed` (y `models.default` si falta). `model_hint` legado
+  solo se acepta si coincide con un perfil permitido. Las credenciales del
+  proveedor no se copian al perfil del agente; un perfil de pago requiere un gateway
+  local o una credencial del servicio.
 - Un watchdog (`NetworkIsolationWatchdog`) revisa el aislamiento durante la tarea; si desaparece,
   cancela la ejecución y la marca como fallida.
 - La instalación de los filtros se hace en el aprovisionamiento elevado, no en el servicio:

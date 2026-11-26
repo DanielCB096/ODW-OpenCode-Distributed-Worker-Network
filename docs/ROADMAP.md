@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (328 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; quedan doctor en dos PCs, reinicio a mitad y cobertura |
+| H1 - Nodo mínimo y delegación | 🟡 | Funcional con `odw serve`, TLS opt-in y servicio Windows (340 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; quedan doctor en dos PCs, reinicio a mitad y cobertura |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -108,7 +108,9 @@ OpenCode completados (2026-11-24). Resto pendiente.
   `src/remoto.txt`, commit `48d36b9…`). Quedan los criterios 1, 4 y 7 para cerrar H1. El token del
   kit sigue vivo y se mantiene para pruebas; al terminar, borrar el repo puente
   (`docs/RUNBOOK-DOS-PCS.md`).
-- ✅ 328 pruebas verdes, build sin advertencias.
+- ✅ Perfiles de modelo (`models.allowed`): `model_profile` por tarea, `free` por defecto y
+  `paid-deepseek` definido pero deshabilitado.
+- ✅ 340 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 
 **Entregables**

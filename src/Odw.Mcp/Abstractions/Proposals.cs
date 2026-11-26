@@ -17,7 +17,8 @@ public sealed record ProposalInput(
     NetworkAccess Network,
     decimal MaxCostUsd,
     int ExpiresInMinutes = 60,
-    string? TaskId = null);
+    string? TaskId = null,
+    string? ModelProfile = null);
 
 public sealed record ProposalOutcome(
     string TaskId,

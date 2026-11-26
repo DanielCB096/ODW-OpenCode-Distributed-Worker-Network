@@ -111,6 +111,7 @@ public static class TaskContractReader
         return new ExecutorSpec
         {
             Type = OptionalString(executor, "type", "$.executor") ?? "opencode",
+            ModelProfile = OptionalString(executor, "model_profile", "$.executor"),
             ModelHint = OptionalString(executor, "model_hint", "$.executor"),
         };
     }
