@@ -2,9 +2,9 @@
 
 > **Último commit:** el último de `main` (`git log -1`) · **Rama:** `main` · **Fecha:** 2026-11-26
 >
-> **Estado:** H0, H1, H2 (pipe/CLI/HMAC) y H3 cerrados. Quedan artefactos descargables,
-> Telegram real y H4.
-> **421/421 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
+> **Estado:** H0, H1, H2 (pipe/CLI/HMAC) y H3 cerrados. Quedan Telegram real y H4;
+> los artefactos descargables están implementados.
+> **438/438 pruebas**, build sin advertencias. El token del kit se mantiene para la campaña de
 > pruebas; el repo sigue privado y se rotará al terminar.
 
 Este documento es el punto de entrada para retomar el proyecto en otro equipo sin depender de
@@ -232,7 +232,7 @@ Verificado el 2026-11-26: OpenCode llamó a `odw_propose_task`, se aprobó la ta
 ## 7. Evidencia actual
 
 ```text
-421/421 pruebas · build 0 warnings
+438/438 pruebas · build 0 warnings
 commit actual en `main`
 ```
 
@@ -252,7 +252,7 @@ commit actual en `main`
 - Perfiles de modelo (2026-11-26): tarea `01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`,
   `MODELPROFILE-FREE`, `model_profile=free`, `model_provider=opencode`,
   `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
-- Revisión 2026-11-26: 9 scripts de `tools/` parsean, build 0 warnings, 421/421 pruebas y grafo
+- Revisión 2026-11-26: 9 scripts de `tools/` parsean, build 0 warnings, 438/438 pruebas y grafo
   regenerado.
 - `odw doctor`: 10/10 PASS en PC-OFICINA (`tools/doctor-node.ps1 -AllowLoopback`) y en PC-CASA
   (`tools/doctor-node.ps1`, 0 advertencias, esquema v3 y auditoría válida).
@@ -260,6 +260,8 @@ commit actual en `main`
   excluye código generado.
 - Reinicio a mitad (2026-11-26): tarea `01M8CMCHY9KER613ERHDEH46TW`; `OdwNode`
   reiniciado durante `RUNNING` → destino `INTERRUPTED` y origen `INTERRUPTED`.
+- Artefactos (2026-11-26): `diff.patch` completo y `summary.md`; `ArtifactStore`,
+  endpoint de pares y `odw_get_task_artifact`; prueba en dos PCs pendiente.
 
 ---
 
@@ -270,7 +272,7 @@ commit actual en `main`
 | Prueba en dos PCs con Tailscale | ✅ delegación real verificada el 2026-11-26 (`read_only` + `read_write_worktree`); quedan criterios de H1 |
 | Reinicio a mitad de tarea | ✅ destino y origen `INTERRUPTED` (2026-11-26) |
 | Repo puente con el kit | ⛔ token verificado vivo; pendiente rotar y borrar el repo |
-| Artefactos descargables | ⬜ el diff va inline (256 KiB); el bundle/artefacto no |
+| Artefactos descargables | ✅ diff.patch/summary.md; endpoint autenticado y MCP (prueba en dos PCs pendiente) |
 | `commit`/`branch` | ✅ se crean, pero el workspace se borra: el diff es la evidencia; el SHA es informativo |
 | `network: "allow"` | ⛔ rechazado (filtro por SID, no por tarea) |
 | WFP en servicio sin admin | ✅ marca `network.state`; un admin puede retirar filtros |
@@ -340,7 +342,7 @@ Preguntas útiles para el grafo:
 ## 11. Próximos pasos recomendados
 
 1. **Al terminar la campaña de pruebas**: rotar el token y borrar el repo puente y el kit.
-2. **Artefactos descargables**: `GET /peer/v1/tasks/{id}/artifacts/{name}` + bundle/parche completo.
+2. **Probar artefactos en dos PCs** con el binario nuevo (endpoint + MCP).
 3. **Telegram** con un bot real.
 4. **H4**: mensajes, cancelación remota, leases y reconciliación tras reinicio.
 5. **H0-6**: aislamiento por directorio con instancias de OpenCode ya separadas.

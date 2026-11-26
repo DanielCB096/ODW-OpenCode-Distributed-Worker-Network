@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using Odw.Core.Model;
 using Odw.Core.Primitives;
+using Odw.Node.Artifacts;
 using Odw.Node.Hosting;
 using Odw.Node.Peers;
 using Odw.Node.Persistence.Tasks;
@@ -453,5 +454,65 @@ public class NodeHostTests
         };
 
         await Assert.ThrowsAsync<NodeConfigurationException>(() => NodeHost.StartAsync(options));
+    }
+
+    [Fact]
+    public async Task Serves_artifacts_listed_in_the_result()
+    {
+        await using var fixture = await Fixture.StartAsync(configure: options => options with
+        {
+            ArtifactsRoot = Path.Combine(Path.GetDirectoryName(options.DatabasePath)!, "artifacts"),
+        });
+
+        var taskId = Ulid.New().ToString();
+        var created = await fixture.Host.Tasks.CreateAsync(new CreateTaskRequest
+        {
+            TaskId = taskId,
+            Role = TaskRole.Target,
+            CounterpartNode = "PC-A",
+            Kind = TaskKind.Analysis,
+            Mode = WorkspaceMode.ReadOnly,
+            State = TaskState.Received,
+            TaskHash = "sha256:" + new string('a', 64),
+            RequestJson = "{}",
+            OriginNode = "PC-A",
+            TargetNode = "PC-B",
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiresAt = DateTimeOffset.UtcNow.AddHours(1),
+        });
+
+        var resultJson =
+            """{"outcome":"succeeded","summary_md":"ok","artifacts":["diff.patch"],"requires_review":false}""";
+        var transition = await fixture.Host.Tasks.TransitionAsync(new TransitionTaskRequest
+        {
+            TaskId = taskId,
+            Role = TaskRole.Target,
+            ExpectedState = TaskState.Received,
+            ExpectedSeq = created.StateSeq,
+            NextState = TaskState.Completed,
+            EventType = "task.completed",
+            Now = DateTimeOffset.UtcNow,
+            FinishedAt = DateTimeOffset.UtcNow,
+            ResultJson = resultJson,
+        });
+        Assert.Equal(TransitionStatus.Applied, transition.Status);
+
+        var store = new ArtifactStore(fixture.Host.Options.ArtifactsRoot!);
+        await store.SaveAsync(
+            taskId,
+            "diff.patch",
+            Encoding.UTF8.GetBytes("+HOLA"),
+            "text/x-diff",
+            CancellationToken.None);
+
+        using var client = fixture.PeerClient();
+        var response = await client.GetAsync($"/peer/v1/tasks/{taskId}/artifacts/diff.patch");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("+HOLA", await response.Content.ReadAsStringAsync());
+        Assert.Equal("text/x-diff", response.Content.Headers.ContentType?.MediaType);
+
+        var missing = await client.GetAsync($"/peer/v1/tasks/{taskId}/artifacts/missing.md");
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
     }
 }

@@ -25,6 +25,7 @@ public class WorkspaceChangesTests
             Assert.Equal(40, changes.Commit!.Length);
             Assert.Contains("nuevo.txt", changes.Diff, StringComparison.Ordinal);
             Assert.False(changes.DiffTruncated);
+            Assert.Equal(changes.Diff, changes.FullDiff);
 
             var head = Run(repo, "rev-parse", "HEAD");
             Assert.Equal(changes.Commit, head.Trim());
@@ -50,6 +51,7 @@ public class WorkspaceChangesTests
             Assert.Contains("src/a.txt", changes.Paths);
             Assert.Null(changes.Commit);
             Assert.Contains("src/a.txt", changes.Diff, StringComparison.Ordinal);
+            Assert.Contains("src/a.txt", changes.FullDiff, StringComparison.Ordinal);
         }
         finally
         {
@@ -70,6 +72,7 @@ public class WorkspaceChangesTests
             Assert.Empty(changes.Paths);
             Assert.Null(changes.Commit);
             Assert.Null(changes.Diff);
+            Assert.Null(changes.FullDiff);
         }
         finally
         {

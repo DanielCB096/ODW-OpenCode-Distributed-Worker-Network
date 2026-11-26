@@ -148,6 +148,9 @@ Cada tarea tiene un Job Object nombrado (`odw-<task_id>`) con:
   solo se acepta si coincide con un perfil permitido. Las credenciales del
   proveedor no se copian al perfil del agente; un perfil de pago requiere un gateway
   local o una credencial del servicio.
+- **Artefactos:** viven en `%PROGRAMDATA%\ODW\artifacts\<task_id>` bajo la ACL
+  del dato (el agente no los lee); nombre validado, 2 MiB por archivo y solo se
+  sirven si est?n listados en el resultado de la tarea.
 - Un watchdog (`NetworkIsolationWatchdog`) revisa el aislamiento durante la tarea; si desaparece,
   cancela la ejecución y la marca como fallida.
 - La instalación de los filtros se hace en el aprovisionamiento elevado, no en el servicio:

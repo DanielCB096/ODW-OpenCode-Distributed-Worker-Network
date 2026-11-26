@@ -7,7 +7,7 @@ contratos verificables contra la versión real de OpenCode.
 **Estado:** diseño cerrado (D0), OpenCode verificado (H0 🟡, solo H0-6). H1 funcional de punta a
 punta en loopback y arrancable con `odw serve` + `node.json`: delegación A→B, scheduler con Job
 Objects, resultado con `changed_paths`/commit/diff y aprobaciones por named pipe/CLI. H3 cerrado
-(`odw-agent`, `odw-svc`, ACLs, WFP + proxy, perfiles por tarea, reparse). **421/421 pruebas**.
+(`odw-agent`, `odw-svc`, ACLs, WFP + proxy, perfiles por tarea, reparse). **438/438 pruebas**.
 Quedan la prueba real en dos PCs/Tailscale, artefactos descargables, Telegram real y H4.
 Ver `IMPLEMENTATION.md` y `HANDOFF.md`.
 

@@ -7,7 +7,7 @@
 |---|---|---|
 | D0 — Diseño detallado | ✅ | Este paquete de documentos (2026-11-24) |
 | H0 — Verificación de OpenCode | 🟡 | Solo queda H0-6 (aislamiento por directorio) |
-| H1 - Nodo mínimo y delegación | ✅ | Funcional con `odw serve`, TLS opt-in y servicio Windows (421 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PASS en ambos PCs y cobertura Core 97,8 %; criterios 1-7 cumplidos; monitor/MCP de escritura pasan a H4 |
+| H1 - Nodo mínimo y delegación | ✅ | Funcional con `odw serve`, TLS opt-in y servicio Windows (438 pruebas); E2E A→B en loopback y **delegación real PC-OFICINA → PC-CASA por Tailscale verificada (2026-11-26, read_only + write)**; doctor PASS en ambos PCs y cobertura Core 97,8 %; criterios 1-7 cumplidos; monitor/MCP de escritura pasan a H4 |
 | H2 — Aprobación desde el celular | 🟡 | Pipe + CLI + HMAC + Telegram implementados; falta probar con un bot real |
 | H3 — Aislamiento y políticas | ✅ | Usuario y servicio dedicados, ACLs, red WFP + proxy, perfiles por tarea, reparse y pruebas hostiles |
 | H4 — Bidireccionalidad completa | ⬜ | Depende de H2/H3 |
@@ -115,7 +115,7 @@ OpenCode completados (2026-11-24). Resto pendiente.
   generados). `odw doctor` 10/10 PASS en PC-OFICINA y PC-CASA; reinicio a mitad verificado.
 - ✅ Reinicio a mitad (2026-11-26): tarea `01M8CMCHY9KER613ERHDEH46TW`; `OdwNode`
   reiniciado durante `RUNNING` → destino `INTERRUPTED` y origen `INTERRUPTED`.
-- ✅ 421 pruebas verdes, build sin advertencias.
+- ✅ 438 pruebas verdes, build sin advertencias.
 - ⬜ Monitor de recursos y herramientas MCP de escritura (H4); los listeners del host ya existen.
 
 **Entregables**
@@ -181,7 +181,7 @@ OpenCode completados (2026-11-24). Resto pendiente.
 modelo gratuito propio, red con WFP + proxy, cuenta `odw-svc` sin administrador, perfiles por tarea,
 escaneo de reparse points, pruebas hostiles, `changed_paths`/`commit`/diff y E2E loopback
 implementados y verificados. La delegación real en dos PCs ya está verificada (H1); quedan los
-criterios restantes de H1 y el empaquetado de artefactos.
+Telegram real y H4; los artefactos descargables están implementados.
 
 - ✅ Job Objects (memoria, procesos, CPU, kill on close).
 - ✅ Workspace por clon y ACLs opcionales (servicio F, agente RX/M).
@@ -196,6 +196,8 @@ criterios restantes de H1 y el empaquetado de artefactos.
 - ✅ Aislamiento de red: WFP por SID (bloqueo salvo `127.0.0.1:7423`) + proxy CONNECT con allowlist;
   Internet, LAN, metadata y DNS directo bloqueados al agente. Tarea real a través del proxy.
 - ✅ `changed_paths`, `commit` y `diff` inline; validación contra `allowed_paths`/`denied_paths`
+- ✅ Artefactos descargables: `diff.patch` completo y `summary.md` por tarea,
+  endpoint autenticado y MCP `odw_get_task_artifact` (2 MiB/512 KiB).
   (`E2E-WRITE`).
 - ✅ Perfil/config/datos desechables por tarea; guardas `max_concurrent=1` y `keep=false`.
 - ✅ Reparse points y hard links detectados antes/después; watchdog de red durante la tarea.
@@ -291,4 +293,4 @@ criterios restantes de H1 y el empaquetado de artefactos.
 9. ✅ Lado origen, `odw_propose_task`, poller y recuperación del resultado (A→B→resultado).
 10. ✅ Aprobaciones por pipe + CLI y `odw serve` con `node.json`/`policy.json`.
 11. Al terminar la campaña de pruebas: rotar el token y borrar el repo puente y el kit.
-12. H1 cerrado; Telegram/HMAC y artefactos descargables.
+12. H1 cerrado; Telegram/HMAC y H4 (artefactos implementados).

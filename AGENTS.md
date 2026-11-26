@@ -12,7 +12,7 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
 
 ## Estado actual (2026-11-26)
 
-- **421/421 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
+- **438/438 pruebas**, build sin advertencias; commit de referencia: el último de `main`.
 - H0, H1, H2 (pipe/CLI/HMAC) y H3 cerrados. H1: delegación real, doctor, cobertura y
   reinicio a mitad verificados.
 - Nodo destino `PC-CASA` preparado y verificado: servicio `OdwNode` como `.\odw-svc`, listener
@@ -33,7 +33,10 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
   `OdwNode` en `PC-CASA` durante `RUNNING` → destino `INTERRUPTED` y origen `INTERRUPTED`.
 - Decisión 2026-11-26: el token y el repo puente se mantienen para la campaña de pruebas; el repo
   debe seguir privado. Al terminar: rotar el token, borrar el repo y el kit.
-- Pendiente: artefactos descargables, Telegram real y H4.
+- **Artefactos descargables (2026-11-26):** `diff.patch` completo y `summary.md` en
+  `%PROGRAMDATA%\ODW\artifacts\<task_id>`; endpoint de pares autenticado y MCP
+  `odw_get_task_artifact` (2 MiB por artefacto, 512 KiB por respuesta MCP).
+- Pendiente: Telegram real, H4 y H0-6.
 - **Repo puente del kit:** su `peer.token` se verificó **vivo** y se usa para pruebas. No lo
   publiques ni compartas el kit; al terminar la campaña, bórralo y rota el token.
 

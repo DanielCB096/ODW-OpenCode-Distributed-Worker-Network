@@ -288,12 +288,15 @@ Límites que siguen abiertos y se declaran:
   H1 cerrado con el reinicio a mitad verificado (tarea `01M8CMCHY9KER613ERHDEH46TW`,
   destino y origen `INTERRUPTED`). Cobertura `Odw.Core` 97,8 %. El resultado ya
   calcula `changed_paths`, `commit` y un `diff` inline (256 KiB) para tareas de escritura;
-  el empaquetado de artefactos queda pendiente.
+  los artefactos descargables están implementados (`diff.patch`/`summary.md`).
+- Artefactos: `WorkspaceChanges.FullDiff` + `ArtifactStore` en
+  `%PROGRAMDATA%\ODW\artifacts\<task_id>`; se publican `diff.patch` (2 MiB) y
+  `summary.md`; endpoint autenticado y MCP `odw_get_task_artifact` (512 KiB).
 - No hay renovación de lease durante la ejecución: se usa `max_minutes`.
 - El runner captura los cambios antes de borrar el workspace: en `read_write_worktree` hace
   `git add`, guarda el diff, crea el commit y valida las rutas contra `allowed_paths`/`denied_paths`.
   El workspace temporal se borra después: el `diff` inline es la evidencia persistente; el SHA es
-  informativo y un commit/artefacto descargable queda pendiente.
+  informativo; el diff inline y `diff.patch` descargable son la evidencia.
 - El runner usa `ToolPolicy.AskAll`; sin un `ToolPermissionHandler`, toda herramienta se rechaza.
 
 ---
@@ -463,7 +466,7 @@ odw approvals list --pipe odw-approvals
 odw approvals approve <approval_id> --by cli:tu-usuario
 ```
 
-Estado actual: build 0 warnings, **421/421 pruebas** (184 Core + 122 Node + 26 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
+Estado actual: build 0 warnings, **438/438 pruebas** (184 Core + 135 Node + 30 MCP + 23 OpenCode + 28 Policy + 38 Sandbox).
 Cobertura `Odw.Core`: 97,8 % líneas / 95 % ramas (1013/1036) con `coverlet.runsettings`,
 que excluye código generado. Comando: `dotnet test tests/Odw.Core.Tests/Odw.Core.Tests.csproj --collect:"XPlat Code Coverage" --settings coverlet.runsettings`.
 La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no corre sin `ODW_OPENCODE_EXE`.
@@ -505,6 +508,6 @@ La integración con OpenCode se ejecutó contra v2.3.2 con modelo gratuito y no 
 1. Prueba real en dos PCs (H1): delegación A→B con el servicio `odw-svc`. El nodo casa está
    preparado y el kit de origen está en `C:\ODW\kit-origen.zip`; pasos en `docs/RUNBOOK-DOS-PCS.md`.
 2. Probar Telegram con un bot real (H2); la firma HMAC ya está implementada.
-3. Empaquetar artefactos descargables (el diff ya viaja inline, truncado a 256 KiB).
+3. Probar artefactos descargables en dos PCs con el binario nuevo (endpoint + MCP).
 4. H4: leases, mensajes, cancelación remota y reconciliación tras reinicio.
 5. Cerrar H0-6 (aislamiento por directorio) con instancias ya separadas.

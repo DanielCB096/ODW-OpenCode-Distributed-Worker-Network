@@ -11,6 +11,7 @@ using Odw.Mcp.Abstractions;
 using Odw.Mcp.Tools;
 using Odw.Approvals;
 using Odw.Node.Approvals;
+using Odw.Node.Artifacts;
 using Odw.Node.Origins;
 using Odw.Node.PeerApi;
 using Odw.Node.Peers;
@@ -184,6 +185,7 @@ public sealed class NodeHost : IAsyncDisposable
                 Queries = new SqliteTaskQuery(tasks),
                 Directory = new SqlitePeerDirectory(database, options.TimeProvider),
                 Proposals = proposals,
+                Artifacts = new PeerArtifactFetcher(tasks, registry, clients),
             };
 
             mcp = BuildMcp(runtime);
@@ -317,7 +319,7 @@ public sealed class NodeHost : IAsyncDisposable
         var app = builder.Build();
         var server = new McpServer(
             PeerTools.Create(runtime.Directory)
-                .Concat(TaskTools.Create(runtime.Queries))
+                .Concat(TaskTools.Create(runtime.Queries, runtime.Artifacts))
                 .Concat(OriginTools.Create(runtime.Proposals)));
 
         app.MapOdwMcp(server, new McpOptions { Token = runtime.Options.McpToken });
@@ -468,4 +470,6 @@ internal sealed class NodeRuntime
     public required SqlitePeerDirectory Directory { get; init; }
 
     public required ITaskProposalService Proposals { get; init; }
+
+    public required IArtifactFetcher Artifacts { get; init; }
 }

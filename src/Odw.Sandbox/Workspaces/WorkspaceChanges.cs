@@ -6,7 +6,11 @@ public sealed record WorkspaceChangeSet(
     IReadOnlyList<string> Paths,
     string? Commit,
     string? Diff,
-    bool DiffTruncated);
+    bool DiffTruncated)
+{
+    /// <summary>Parche completo para el artefacto descargable; <see cref="Diff"/> va truncado.</summary>
+    public string? FullDiff { get; init; }
+}
 
 /// <summary>
 /// Calcula los cambios de una tarea antes de borrar el workspace: rutas, commit en la rama de
@@ -81,7 +85,10 @@ public static class WorkspaceChanges
                 }
             }
 
-            return new WorkspaceChangeSet(paths, commit, text, truncated);
+            return new WorkspaceChangeSet(paths, commit, text, truncated)
+            {
+                FullDiff = string.IsNullOrEmpty(diff.Output) ? null : diff.Output,
+            };
         }
         else
         {
@@ -106,7 +113,12 @@ public static class WorkspaceChanges
                 ? Limit(diff.Output)
                 : ((string?)null, false);
 
-            return new WorkspaceChangeSet(paths, null, text, truncated);
+            return new WorkspaceChangeSet(paths, null, text, truncated)
+            {
+                FullDiff = diff.ExitCode == 0 && !string.IsNullOrEmpty(diff.Output)
+                    ? diff.Output
+                    : null,
+            };
         }
     }
 

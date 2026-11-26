@@ -38,6 +38,9 @@ public sealed record NodeHostOptions
 
     public IReadOnlyList<string> Accepts { get; init; } = ["analysis", "test_run"];
 
+    /// <summary>Raíz de artefactos descargables; null deshabilita la descarga.</summary>
+    public string? ArtifactsRoot { get; init; }
+
     /// <summary>Solo los perfiles permitidos por este nodo; el resto no se expone al runner.</summary>
     public IReadOnlyDictionary<string, ModelProfile> ModelProfiles { get; init; } = ModelCatalog.DefaultProfiles;
 

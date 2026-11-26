@@ -254,9 +254,10 @@ data: {"task_id":"01JAZ...","seq":9,"percent":42,"phase":"tests","detail":"dotne
 
 ### 4.9 `GET /peer/v1/tasks/{task_id}/artifacts/{name}`
 
-- `200` binario con `Content-Type` declarado, `Content-Length`, `ETag` (sha256).
-- `404` si no existe; `410` si el artefacto fue purgado (retención 7 días).
-- Se sirve solo si el solicitante es el origen de la tarea.
+- `200` binario con `Content-Type`, `Content-Length` y el nombre como descarga.
+- `404` si el nombre no es seguro, no está listado en el `result_json` o no existe en disco.
+- Se sirve solo al par que envió la tarea; `name` cumple `^[A-Za-z0-9._-]{1,64}$` y no admite rutas.
+- Cada artefacto se limita a **2 MiB**; la retenci?n/purga todav?a no est? implementada.
 
 ### 4.10 `GET /peer/v1/health`
 

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json.Nodes;
 using Odw.Core.Model;
 using Odw.Core.Primitives;
@@ -8,7 +10,7 @@ namespace Odw.Mcp.Tools;
 /// <summary>Herramientas de solo lectura sobre tareas locales.</summary>
 public static class TaskTools
 {
-    public static IEnumerable<McpTool> Create(ITaskQuery query)
+    public static IEnumerable<McpTool> Create(ITaskQuery query, IArtifactFetcher? artifacts = null)
     {
         ArgumentNullException.ThrowIfNull(query);
 
@@ -45,7 +47,98 @@ public static class TaskTools
                 }
                 """),
             (arguments, cancellationToken) => ResultAsync(query, arguments, cancellationToken));
+
+        if (artifacts is not null)
+        {
+            yield return new McpTool(
+                "odw_get_task_artifact",
+                "Descarga un artefacto de una tarea (diff.patch, summary.md) desde el nodo que la ejecutó.",
+                JsonTools.Schema(
+                    """
+                    {
+                      "type": "object",
+                      "properties": {
+                        "task_id": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
+                        "name": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,64}$" }
+                      },
+                      "required": ["task_id", "name"],
+                      "additionalProperties": false
+                    }
+                    """),
+                (arguments, cancellationToken) => ArtifactAsync(artifacts, arguments, cancellationToken));
+        }
     }
+
+    private static async Task<McpToolResult> ArtifactAsync(
+        IArtifactFetcher fetcher,
+        JsonObject arguments,
+        CancellationToken cancellationToken)
+    {
+        var taskId = JsonTools.GetString(arguments, "task_id");
+        if (!Ulid.TryParse(taskId, out _))
+        {
+            return McpToolResult.Error("CONTRACT_INVALID", "task_id no es un ULID válido.");
+        }
+
+        var name = JsonTools.GetString(arguments, "name");
+        if (!IsSafeArtifactName(name))
+        {
+            return McpToolResult.Error("CONTRACT_INVALID", "Nombre de artefacto inválido.");
+        }
+
+        var artifact = await fetcher.FetchAsync(taskId!, name!, cancellationToken).ConfigureAwait(false);
+        if (artifact is null)
+        {
+            return McpToolResult.Error("ARTIFACT_NOT_FOUND", $"No existe el artefacto {name} para {taskId}.");
+        }
+
+        const int maxToolBytes = 512 * 1024;
+        if (artifact.Bytes.Length > maxToolBytes)
+        {
+            return McpToolResult.Error(
+                "ARTIFACT_TOO_LARGE",
+                $"El artefacto ocupa {artifact.Bytes.Length} bytes; usa GET /peer/v1/tasks/{{id}}/artifacts/{{name}}.",
+                extra: new JsonObject
+                {
+                    ["bytes"] = artifact.Bytes.Length,
+                    ["max_bytes"] = maxToolBytes,
+                });
+        }
+
+        var isText = artifact.ContentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase)
+                     || name!.EndsWith(".md", StringComparison.OrdinalIgnoreCase)
+                     || name.EndsWith(".patch", StringComparison.OrdinalIgnoreCase)
+                     || name.EndsWith(".diff", StringComparison.OrdinalIgnoreCase)
+                     || name.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+                     || name.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)
+                     || name.EndsWith(".log", StringComparison.OrdinalIgnoreCase);
+
+        var encoding = isText ? "utf8" : "base64";
+        var content = isText
+            ? Encoding.UTF8.GetString(artifact.Bytes)
+            : Convert.ToBase64String(artifact.Bytes);
+        var sha256 = Convert.ToHexStringLower(SHA256.HashData(artifact.Bytes));
+
+        var structured = new JsonObject
+        {
+            ["task_id"] = taskId,
+            ["name"] = name,
+            ["content_type"] = artifact.ContentType,
+            ["bytes"] = artifact.Bytes.Length,
+            ["sha256"] = sha256,
+            ["encoding"] = encoding,
+            ["content"] = content,
+        };
+
+        return McpToolResult.Ok(content, structured);
+    }
+
+    private static bool IsSafeArtifactName(string? name)
+        => !string.IsNullOrWhiteSpace(name)
+           && name.Length <= 64
+           && name is not ("." or "..")
+           && name.All(character => char.IsAsciiLetterOrDigit(character)
+                                    || character is '.' or '_' or '-');
 
     private static async Task<McpToolResult> StatusAsync(
         ITaskQuery query,

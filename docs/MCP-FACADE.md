@@ -206,7 +206,7 @@ Error si el par no existe (`PEER_UNKNOWN`) o está offline (`PEER_OFFLINE`, sin 
   "summary_md": "...", "changed_paths": ["src/Pagos.cs"],
   "branch": "odw/01JAZ...", "commit": "9f1c2ab",
   "tests": [{ "name": "dotnet test", "status": "passed" }],
-  "artifacts": [{ "name": "report.md", "bytes": 8123 }],
+  "artifacts": ["diff.patch", "summary.md"],
   "diff": "diff --git ...",           // truncado a 256 KiB; el resto queda pendiente
   "model_profile": "free", "model_provider": "opencode",
   "model_id": "deepseek-v4.1-flash-free", "cost_usd": 0.0,
@@ -236,6 +236,20 @@ Error si el par no existe (`PEER_UNKNOWN`) o está offline (`PEER_OFFLINE`, sin 
 // output
 { "task_id": "01JAZ...", "state": "Cancelling", "accepted_at": "..." }
 ```
+
+### 2.9 `odw_get_task_artifact`
+
+```json
+// input
+{ "task_id": "01JAZ...", "name": "diff.patch" }
+// output
+{ "task_id": "01JAZ...", "name": "diff.patch", "content_type": "text/x-diff",
+  "bytes": 8123, "sha256": "...", "encoding": "utf8", "content": "diff --git ..." }
+```
+
+- Límite de 512 KiB por respuesta MCP; para artefactos mayores usa
+  `GET /peer/v1/tasks/{id}/artifacts/{name}` con el token de par.
+- `encoding` es `utf8` para texto y `base64` para binario.
 
 ---
 

@@ -1,7 +1,9 @@
 using System.Globalization;
+using System.Text;
 using Odw.Core.Contracts;
 using Odw.Core.Model;
 using Odw.Executors.OpenCode;
+using Odw.Node.Artifacts;
 using Odw.Node.Persistence;
 using Odw.Sandbox.Windows;
 using Odw.Sandbox.Workspaces;
@@ -51,6 +53,9 @@ public sealed record OpenCodeTaskRunnerOptions
     public string AgentAccount { get; init; } = "odw-agent";
 
     public string? ServiceAccount { get; init; }
+
+    /// <summary>Raíz de artefactos descargables; null no guarda artefactos.</summary>
+    public string? ArtifactsRoot { get; init; }
 
     /// <summary>Recibe stderr de OpenCode para diagnóstico.</summary>
     public Action<string>? ServerLog { get; init; }
@@ -307,6 +312,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
             var changedPaths = Array.Empty<string>();
             string? commit = null;
             string? diff = null;
+            string? fullDiff = null;
             var diffTruncated = false;
             string? reviewReason = null;
 
@@ -323,6 +329,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                     changedPaths = changes.Paths.ToArray();
                     commit = changes.Commit;
                     diff = changes.Diff;
+                    fullDiff = changes.FullDiff;
                     diffTruncated = changes.DiffTruncated;
 
                     var violations = FindPathViolations(request.Contract, changedPaths);
@@ -338,6 +345,45 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                 catch (Exception exception) when (exception is WorkspaceException or IOException)
                 {
                     reviewReason = $"CAPTURE_FAILED: {exception.Message}";
+                    summary = string.IsNullOrWhiteSpace(summary)
+                        ? reviewReason
+                        : summary + "\n\n" + reviewReason;
+                }
+            }
+
+            var artifacts = new List<string>();
+            if (terminal?.Kind == ExecutorEventKind.Completed && _options.ArtifactsRoot is not null)
+            {
+                try
+                {
+                    var store = new ArtifactStore(_options.ArtifactsRoot);
+
+                    if (!string.IsNullOrWhiteSpace(summary))
+                    {
+                        var saved = await store.SaveAsync(
+                            request.Snapshot.TaskId,
+                            "summary.md",
+                            Encoding.UTF8.GetBytes(summary),
+                            "text/markdown",
+                            CancellationToken.None).ConfigureAwait(false);
+                        artifacts.Add(saved.Name);
+                    }
+
+                    var patch = fullDiff ?? diff;
+                    if (!string.IsNullOrWhiteSpace(patch))
+                    {
+                        var saved = await store.SaveAsync(
+                            request.Snapshot.TaskId,
+                            "diff.patch",
+                            Encoding.UTF8.GetBytes(patch),
+                            "text/x-diff",
+                            CancellationToken.None).ConfigureAwait(false);
+                        artifacts.Add(saved.Name);
+                    }
+                }
+                catch (Exception exception) when (exception is ArtifactException or IOException or UnauthorizedAccessException)
+                {
+                    reviewReason = $"ARTIFACT_FAILED: {exception.Message}";
                     summary = string.IsNullOrWhiteSpace(summary)
                         ? reviewReason
                         : summary + "\n\n" + reviewReason;
@@ -362,7 +408,8 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
                         diffTruncated,
                         reviewReason,
                         model,
-                        costUsd),
+                        costUsd,
+                        artifacts),
                     review),
                 ExecutorEventKind.Interrupted => new ExecutionResult(
                     ExecutorOutcomeKind.Interrupted,
@@ -498,7 +545,8 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
         bool diffTruncated = false,
         string? reviewReason = null,
         ModelProfile? model = null,
-        decimal? costUsd = null)
+        decimal? costUsd = null,
+        IReadOnlyList<string>? artifacts = null)
         => PersistenceJson.Serialize(new
         {
             outcome,
@@ -509,7 +557,7 @@ public sealed class OpenCodeTaskRunner : ITaskExecutionRunner
             diff,
             diff_truncated = diffTruncated,
             review_reason = reviewReason,
-            artifacts = Array.Empty<string>(),
+            artifacts = artifacts ?? Array.Empty<string>(),
             requires_review = review,
             model_profile = model?.Name,
             model_provider = model?.Provider,

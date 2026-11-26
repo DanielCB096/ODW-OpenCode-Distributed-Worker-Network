@@ -29,6 +29,8 @@ public sealed record PeerPostResult(
 
 public sealed record PeerResultView(string TaskId, bool Available, string? ResultJson);
 
+public sealed record PeerArtifactView(string Name, string ContentType, byte[] Bytes);
+
 /// <summary>Cliente de la API de pares v1 (lado origen).</summary>
 public sealed class PeerApiClient : IDisposable
 {
@@ -112,6 +114,33 @@ public sealed class PeerApiClient : IDisposable
             : null;
 
         return new PeerResultView(id, available, resultJson);
+    }
+
+    public async Task<PeerArtifactView?> GetArtifactAsync(
+        string taskId,
+        string name,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(taskId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+        using var request = Create(
+            HttpMethod.Get,
+            $"/peer/v1/tasks/{Uri.EscapeDataString(taskId)}/artifacts/{Uri.EscapeDataString(name)}");
+        using var response = await _http
+            .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (response.StatusCode is HttpStatusCode.Conflict or HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        response.EnsureSuccessStatusCode();
+        var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+
+        return new PeerArtifactView(name, contentType, bytes);
     }
 
     public async Task<bool> PingAsync(CancellationToken cancellationToken)

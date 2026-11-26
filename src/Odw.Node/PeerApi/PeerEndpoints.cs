@@ -9,6 +9,7 @@ using Odw.Core.Hashing;
 using Odw.Core.Model;
 using Odw.Core.Primitives;
 using Odw.Core.Validation;
+using Odw.Node.Artifacts;
 using Odw.Node.Contracts;
 using Odw.Node.Hosting;
 using Odw.Node.Peers;
@@ -36,6 +37,9 @@ internal static class PeerEndpoints
         app.MapPost("/peer/v1/tasks", (Delegate)((HttpContext context) => CreateAsync(context, runtime)));
         app.MapGet("/peer/v1/tasks/{taskId}", (HttpContext context, string taskId) => Get(context, runtime, taskId));
         app.MapGet("/peer/v1/tasks/{taskId}/result", (HttpContext context, string taskId) => GetResult(context, runtime, taskId));
+        app.MapGet(
+            "/peer/v1/tasks/{taskId}/artifacts/{name}",
+            (HttpContext context, string taskId, string name) => GetArtifact(context, runtime, taskId, name));
     }
 
     private static JsonObject Hello(NodeRuntime runtime)
@@ -293,6 +297,83 @@ internal static class PeerEndpoints
             ["result"] = result,
         }, statusCode: 200);
     }
+
+    private static IResult GetArtifact(HttpContext context, NodeRuntime runtime, string taskId, string name)
+    {
+        var peer = Peer(context);
+
+        if (!Ulid.TryParse(taskId, out _) || !ArtifactStore.IsSafeName(name))
+        {
+            return Problem(404, "ARTIFACT_NOT_FOUND", "Artefacto desconocido.");
+        }
+
+        var snapshot = runtime.Tasks.Get(taskId, TaskRole.Target);
+        if (snapshot is null
+            || !string.Equals(snapshot.CounterpartNode, peer.NodeId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(snapshot.ResultJson)
+            || !ArtifactListed(snapshot.ResultJson, name))
+        {
+            return Problem(404, "ARTIFACT_NOT_FOUND", "Artefacto desconocido.");
+        }
+
+        if (string.IsNullOrWhiteSpace(runtime.Options.ArtifactsRoot))
+        {
+            return Problem(404, "ARTIFACT_NOT_FOUND", "Este nodo no publica artefactos.");
+        }
+
+        var store = new ArtifactStore(runtime.Options.ArtifactsRoot);
+        if (!store.TryGetPath(taskId, name, out var path))
+        {
+            return Problem(404, "ARTIFACT_NOT_FOUND", "El artefacto no existe en disco.");
+        }
+
+        return Results.File(path, ContentTypeFor(name), name, enableRangeProcessing: true);
+    }
+
+    private static bool ArtifactListed(string resultJson, string name)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(resultJson);
+            if (!document.RootElement.TryGetProperty("artifacts", out var artifacts)
+                || artifacts.ValueKind != JsonValueKind.Array)
+            {
+                return false;
+            }
+
+            foreach (var item in artifacts.EnumerateArray())
+            {
+                if (item.ValueKind == JsonValueKind.String
+                    && string.Equals(item.GetString(), name, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+
+                if (item.ValueKind == JsonValueKind.Object
+                    && item.TryGetProperty("name", out var artifactName)
+                    && artifactName.ValueKind == JsonValueKind.String
+                    && string.Equals(artifactName.GetString(), name, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+        }
+        catch (JsonException)
+        {
+        }
+
+        return false;
+    }
+
+    private static string ContentTypeFor(string name) => Path.GetExtension(name).ToLowerInvariant() switch
+    {
+        ".md" => "text/markdown; charset=utf-8",
+        ".patch" or ".diff" => "text/x-diff; charset=utf-8",
+        ".json" => "application/json; charset=utf-8",
+        ".txt" or ".log" => "text/plain; charset=utf-8",
+        ".zip" => "application/zip",
+        _ => "application/octet-stream",
+    };
 
     private static IResult ReplayOrConflict(TaskSnapshot existing, string hash)
     {

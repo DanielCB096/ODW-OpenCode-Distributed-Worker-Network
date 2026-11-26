@@ -128,9 +128,7 @@
   "commit": "9f1c2ab",
   "diff_sha256": "sha256:...",          // del diff unificado adjunto
   "tests": [{ "name": "dotnet test", "status": "passed", "duration_ms": 41230 }],
-  "artifacts": [
-    { "name": "report.md", "bytes": 8123, "sha256": "sha256:...", "content_type": "text/markdown" }
-  ],
+  "artifacts": ["diff.patch", "summary.md"],
   "cost_usd": 0.0,
   "model_profile": "free",
   "model_provider": "opencode",
@@ -144,10 +142,10 @@
 - `changed_paths` se calcula con `git status --porcelain` dentro del workspace y se **valida**
   contra `allowed_paths`/`denied_paths`. Si hay violación ⇒ `state=REVIEW_REQUIRED`,
   `outcome=review_required`, y el resultado **no** se marca como entregable.
-- Artefactos: máximo 20, 2 MiB cada uno, 20 MiB totales; `name` es un nombre simple
-  (`^[A-Za-z0-9._-]{1,64}$`), nunca una ruta. Contenido por `GET /tasks/{id}/artifacts/{name}`.
-- El diff se adjunta inline hasta 256 KiB y se marca `diff_truncated`; el artefacto descargable
-  `diff.patch` queda pendiente (no implementado todavía).
+- Artefactos: 2 MiB por archivo; `name` cumple `^[A-Za-z0-9._-]{1,64}$`, nunca una ruta.
+  Contenido por `GET /tasks/{id}/artifacts/{name}`; la retención/purga queda pendiente.
+- El diff se adjunta inline hasta 256 KiB y se marca `diff_truncated`; el artefacto
+  `diff.patch` contiene el parche completo (hasta 2 MiB) y `summary.md` el informe.
 
 ---
 

@@ -318,10 +318,10 @@
     "semantic_hash": "4f46b14be8fe1d6c65c0cf44f0881969"
   },
   "src/Odw.Mcp/Tools/TaskTools.cs": {
-    "mtime": 1795712151.4876878,
-    "seen": 1795712569.7701654,
-    "ast_hash": "7e19f8db9c27c12443b816f4851f276b",
-    "semantic_hash": "7e19f8db9c27c12443b816f4851f276b"
+    "mtime": 1795721509.6830256,
+    "seen": 1795722011.5435348,
+    "ast_hash": "9762fae8c2a03a56f059587b9026a79e",
+    "semantic_hash": "9762fae8c2a03a56f059587b9026a79e"
   },
   "src/Odw.Node/Approvals/ApprovalCoordinator.cs": {
     "mtime": 1795563666.1055155,
@@ -366,10 +366,10 @@
     "semantic_hash": "54963eb444bcf8fba53b49eef2f5d90a"
   },
   "src/Odw.Node/Configuration/NodeConfigLoader.cs": {
-    "mtime": 1795712489.8997064,
-    "seen": 1795712569.7701824,
-    "ast_hash": "245151fe074fe09e43a26ec4b2863cee",
-    "semantic_hash": "245151fe074fe09e43a26ec4b2863cee"
+    "mtime": 1795721443.4627602,
+    "seen": 1795722011.543559,
+    "ast_hash": "9c9c62994e0f282bc54aacb1af86d7cb",
+    "semantic_hash": "9c9c62994e0f282bc54aacb1af86d7cb"
   },
   "src/Odw.Node/Contracts/TaskContractReader.cs": {
     "mtime": 1795712082.0254302,
@@ -402,22 +402,22 @@
     "semantic_hash": "9f878a6d591eeb474846c8ac65950490"
   },
   "src/Odw.Node/Hosting/NodeBootstrap.cs": {
-    "mtime": 1795712112.5989158,
-    "seen": 1795712569.7701952,
-    "ast_hash": "3af78db605a38835afdd775f8ee3e22c",
-    "semantic_hash": "3af78db605a38835afdd775f8ee3e22c"
+    "mtime": 1795721443.4627602,
+    "seen": 1795722011.5435767,
+    "ast_hash": "9460c2ee7fb7f24c12f937a25a97fc33",
+    "semantic_hash": "9460c2ee7fb7f24c12f937a25a97fc33"
   },
   "src/Odw.Node/Hosting/NodeHost.cs": {
-    "mtime": 1795628679.762016,
-    "seen": 1795649036.9674885,
-    "ast_hash": "84a9dd4464d6fbdab7a2274d48506ded",
-    "semantic_hash": "84a9dd4464d6fbdab7a2274d48506ded"
+    "mtime": 1795721493.4192617,
+    "seen": 1795722011.5435798,
+    "ast_hash": "173b0668bbb74592012827301abb8b39",
+    "semantic_hash": "173b0668bbb74592012827301abb8b39"
   },
   "src/Odw.Node/Hosting/NodeHostOptions.cs": {
-    "mtime": 1795712108.3921635,
-    "seen": 1795712569.7701998,
-    "ast_hash": "a53eee5e86f55855b715c8dbdd0e93ab",
-    "semantic_hash": "a53eee5e86f55855b715c8dbdd0e93ab"
+    "mtime": 1795721443.3839903,
+    "seen": 1795722011.5435824,
+    "ast_hash": "03458d1aa1782c28e95871bc996f6c0f",
+    "semantic_hash": "03458d1aa1782c28e95871bc996f6c0f"
   },
   "src/Odw.Node/Hosting/SandboxGuard.cs": {
     "mtime": 1795631764.767413,
@@ -450,10 +450,10 @@
     "semantic_hash": "da56b882778bf370b24e7e4fca75a0b6"
   },
   "src/Odw.Node/PeerApi/PeerEndpoints.cs": {
-    "mtime": 1795712139.750007,
-    "seen": 1795712569.7702138,
-    "ast_hash": "43d518afef98f6b8660edf121c735166",
-    "semantic_hash": "43d518afef98f6b8660edf121c735166"
+    "mtime": 1795721467.210781,
+    "seen": 1795722011.5435991,
+    "ast_hash": "eafa2df6ac1d9ae998610af30dee6408",
+    "semantic_hash": "eafa2df6ac1d9ae998610af30dee6408"
   },
   "src/Odw.Node/Peers/PeerRegistry.cs": {
     "mtime": 1795559648.0339925,
@@ -594,10 +594,10 @@
     "semantic_hash": "597344efad4de094e6467e510498e380"
   },
   "src/Odw.Node/Scheduling/OpenCodeTaskRunner.cs": {
-    "mtime": 1795712133.09186,
-    "seen": 1795712569.770269,
-    "ast_hash": "fba16ef90a35986fb0b12296a8601d5e",
-    "semantic_hash": "fba16ef90a35986fb0b12296a8601d5e"
+    "mtime": 1795721456.140671,
+    "seen": 1795722011.5436635,
+    "ast_hash": "d70bf1433a4622f71590d6aa0b9466ed",
+    "semantic_hash": "d70bf1433a4622f71590d6aa0b9466ed"
   },
   "src/Odw.Node/Tasks/TaskCoordinator.cs": {
     "mtime": 1795558605.4961035,
@@ -612,10 +612,10 @@
     "semantic_hash": "6f225cc9db94ccd7feb61ea34a5d1362"
   },
   "src/Odw.PeerApi/PeerApiClient.cs": {
-    "mtime": 1795559682.051823,
-    "seen": 1795649036.9676278,
-    "ast_hash": "7c407598e616a4d975e11b782c33065a",
-    "semantic_hash": "7c407598e616a4d975e11b782c33065a"
+    "mtime": 1795721473.4782667,
+    "seen": 1795722011.5436714,
+    "ast_hash": "15f1eee83e48a023045c6523e855cdd1",
+    "semantic_hash": "15f1eee83e48a023045c6523e855cdd1"
   },
   "src/Odw.Policy/Odw.Policy.csproj": {
     "mtime": 1795545274.4306111,
@@ -690,10 +690,10 @@
     "semantic_hash": "9a1ec9a234bb91982ea2e754e69f60ce"
   },
   "src/Odw.Sandbox/Workspaces/WorkspaceChanges.cs": {
-    "mtime": 1795647877.4922192,
-    "seen": 1795649036.9676754,
-    "ast_hash": "97865bcb862fe69860b0500ef92018f4",
-    "semantic_hash": "97865bcb862fe69860b0500ef92018f4"
+    "mtime": 1795721656.7651918,
+    "seen": 1795722011.5437067,
+    "ast_hash": "c25c4eac83d800ee19da53025cfa165c",
+    "semantic_hash": "c25c4eac83d800ee19da53025cfa165c"
   },
   "src/Odw.Sandbox/Workspaces/WorkspaceGuard.cs": {
     "mtime": 1795632528.3471093,
@@ -882,10 +882,10 @@
     "semantic_hash": "dc03089ba0a529eafe892f0df79e9953"
   },
   "tests/Odw.Node.Tests/NodeHostTests.cs": {
-    "mtime": 1795560874.3538866,
-    "seen": 1795649036.9678013,
-    "ast_hash": "d722310d703556c1a4b7a1e905f3da4d",
-    "semantic_hash": "d722310d703556c1a4b7a1e905f3da4d"
+    "mtime": 1795721751.5990262,
+    "seen": 1795722011.5438883,
+    "ast_hash": "c7aaee5f2e4cadd70acd13ba4294dad6",
+    "semantic_hash": "c7aaee5f2e4cadd70acd13ba4294dad6"
   },
   "tests/Odw.Node.Tests/Odw.Node.Tests.csproj": {
     "mtime": 1795546458.7342236,
@@ -1038,10 +1038,10 @@
     "semantic_hash": "76a96abac13e336a57b0633b86163312"
   },
   "tests/Odw.Sandbox.Tests/WorkspaceChangesTests.cs": {
-    "mtime": 1795647840.7909155,
-    "seen": 1795649036.9679034,
-    "ast_hash": "f1899364c916cf1ef4fa9f6e26716cbd",
-    "semantic_hash": "f1899364c916cf1ef4fa9f6e26716cbd"
+    "mtime": 1795721591.5175364,
+    "seen": 1795722011.544002,
+    "ast_hash": "a11dde887351da40a525543957e2169b",
+    "semantic_hash": "a11dde887351da40a525543957e2169b"
   },
   "tests/Odw.Sandbox.Tests/WorkspaceGuardTests.cs": {
     "mtime": 1795632472.2797494,
@@ -1086,10 +1086,10 @@
     "semantic_hash": "104a996dbeca7ef2d6d07020835c2152"
   },
   "README.md": {
-    "mtime": 1795720717.1290429,
-    "seen": 1795720765.376104,
-    "ast_hash": "10cb244f34680e08a3ca2fb5d9d3ee24",
-    "semantic_hash": "10cb244f34680e08a3ca2fb5d9d3ee24"
+    "mtime": 1795721929.9775357,
+    "seen": 1795722011.5440707,
+    "ast_hash": "4db6d6cc15277f250c08993e1c7a739e",
+    "semantic_hash": "4db6d6cc15277f250c08993e1c7a739e"
   },
   "docs/DECISIONS.md": {
     "mtime": 1795542734.5070035,
@@ -1098,10 +1098,10 @@
     "semantic_hash": "dfd93561eb3c931b72f3baae84ddd736"
   },
   "docs/DOMAIN-MODEL.md": {
-    "mtime": 1795719663.6017888,
-    "seen": 1795719767.9181163,
-    "ast_hash": "0273155e16ab5160ce4d8fe681f0b529",
-    "semantic_hash": "0273155e16ab5160ce4d8fe681f0b529"
+    "mtime": 1795721953.2705233,
+    "seen": 1795722011.5440807,
+    "ast_hash": "349df6909d429231e40bac34e45d5d1c",
+    "semantic_hash": "349df6909d429231e40bac34e45d5d1c"
   },
   "docs/H0-FINDINGS.md": {
     "mtime": 1795556849.81788,
@@ -1110,16 +1110,16 @@
     "semantic_hash": "9eb58846b2505492f8a42ed21176d932"
   },
   "docs/IMPLEMENTATION.md": {
-    "mtime": 1795720706.0391083,
-    "seen": 1795720765.3761263,
-    "ast_hash": "64d201ade732043c5f2423b96f29315b",
-    "semantic_hash": "64d201ade732043c5f2423b96f29315b"
+    "mtime": 1795721953.2693923,
+    "seen": 1795722011.5440931,
+    "ast_hash": "6d7648f13f3ab22c434c6d99fc162188",
+    "semantic_hash": "6d7648f13f3ab22c434c6d99fc162188"
   },
   "docs/MCP-FACADE.md": {
-    "mtime": 1795712591.5154498,
-    "seen": 1795716469.2242136,
-    "ast_hash": "aded83e322349b88e4a5f16098cba5de",
-    "semantic_hash": "aded83e322349b88e4a5f16098cba5de"
+    "mtime": 1795721850.511557,
+    "seen": 1795722011.5440974,
+    "ast_hash": "bd651d8cc8654607662b7fc35376a6b9",
+    "semantic_hash": "bd651d8cc8654607662b7fc35376a6b9"
   },
   "docs/OPENCODE-ADAPTER.md": {
     "mtime": 1795649537.4851048,
@@ -1140,28 +1140,28 @@
     "semantic_hash": "2312769c3d518a70fca5d8c326b0da6c"
   },
   "docs/PROTOCOL.md": {
-    "mtime": 1795712591.5154498,
-    "seen": 1795716469.2242224,
-    "ast_hash": "59efce7a42c8b2a70df42d533793b8bc",
-    "semantic_hash": "59efce7a42c8b2a70df42d533793b8bc"
+    "mtime": 1795721850.511557,
+    "seen": 1795722011.5441146,
+    "ast_hash": "1fb5b51b8bbd125bc6ec56570730e204",
+    "semantic_hash": "1fb5b51b8bbd125bc6ec56570730e204"
   },
   "docs/README.md": {
-    "mtime": 1795719744.2766783,
-    "seen": 1795719767.918141,
-    "ast_hash": "f4907508ae046f5e2e28fa13fd8ef1f7",
-    "semantic_hash": "f4907508ae046f5e2e28fa13fd8ef1f7"
+    "mtime": 1795721804.9486592,
+    "seen": 1795722011.544119,
+    "ast_hash": "6f711a1a00dfe5937ba6f9361c74ad1e",
+    "semantic_hash": "6f711a1a00dfe5937ba6f9361c74ad1e"
   },
   "docs/ROADMAP.md": {
-    "mtime": 1795720624.4846652,
-    "seen": 1795720765.376154,
-    "ast_hash": "bd0198a5ceb0986a28f23d6ffc3e68a2",
-    "semantic_hash": "bd0198a5ceb0986a28f23d6ffc3e68a2"
+    "mtime": 1795721953.2674034,
+    "seen": 1795722011.544123,
+    "ast_hash": "40156e9086a9c0f667720c45d2bfc58b",
+    "semantic_hash": "40156e9086a9c0f667720c45d2bfc58b"
   },
   "docs/SECURITY.md": {
-    "mtime": 1795712591.5258582,
-    "seen": 1795716469.2242312,
-    "ast_hash": "49318a7d3a7da4a33e829dde4831fed0",
-    "semantic_hash": "49318a7d3a7da4a33e829dde4831fed0"
+    "mtime": 1795721929.981552,
+    "seen": 1795722011.544131,
+    "ast_hash": "e7d90e63eef64cdb262c9d904924fdc7",
+    "semantic_hash": "e7d90e63eef64cdb262c9d904924fdc7"
   },
   "docs/TESTING.md": {
     "mtime": 1795717615.4220972,
@@ -1170,16 +1170,16 @@
     "semantic_hash": "d3b974573ba6f10ca9d3350ed751da59"
   },
   "AGENTS.md": {
-    "mtime": 1795720537.2987487,
-    "seen": 1795720765.3760893,
-    "ast_hash": "b079b15fe51c8ad5c1df51674a993714",
-    "semantic_hash": "b079b15fe51c8ad5c1df51674a993714"
+    "mtime": 1795721894.6835244,
+    "seen": 1795722011.544058,
+    "ast_hash": "67e739a017ee9bdd1d3ad08ba7a03033",
+    "semantic_hash": "67e739a017ee9bdd1d3ad08ba7a03033"
   },
   "docs/HANDOFF.md": {
-    "mtime": 1795720726.1105976,
-    "seen": 1795720765.3761218,
-    "ast_hash": "bc33da1185174991a086f186dc04ef51",
-    "semantic_hash": "bc33da1185174991a086f186dc04ef51"
+    "mtime": 1795721929.9785511,
+    "seen": 1795722011.544089,
+    "ast_hash": "4e9ff93f0e40bea35ad11a6931d63406",
+    "semantic_hash": "4e9ff93f0e40bea35ad11a6931d63406"
   },
   "tools/h1-remote-test.ps1": {
     "mtime": 1795707387.452509,
@@ -1270,5 +1270,23 @@
     "seen": 1795717630.227067,
     "ast_hash": "60d67c204d6c9ae7a12bc8b0e3eceb0a",
     "semantic_hash": "60d67c204d6c9ae7a12bc8b0e3eceb0a"
+  },
+  "src/Odw.Mcp/Abstractions/Artifacts.cs": {
+    "mtime": 1795721486.8127527,
+    "seen": 1795722011.5434973,
+    "ast_hash": "bec949e94a5a8bcde93ca897dd782dd1",
+    "semantic_hash": "bec949e94a5a8bcde93ca897dd782dd1"
+  },
+  "tests/Odw.Mcp.Tests/ArtifactToolTests.cs": {
+    "mtime": 1795721601.4722664,
+    "seen": 1795722011.5438178,
+    "ast_hash": "1b50dd5904ad1172349d0385b960de77",
+    "semantic_hash": "1b50dd5904ad1172349d0385b960de77"
+  },
+  "tests/Odw.Node.Tests/ArtifactStoreTests.cs": {
+    "mtime": 1795721586.3528717,
+    "seen": 1795722011.5438526,
+    "ast_hash": "d8e8b16360f35b4c62b494c073183b53",
+    "semantic_hash": "d8e8b16360f35b4c62b494c073183b53"
   }
 }
