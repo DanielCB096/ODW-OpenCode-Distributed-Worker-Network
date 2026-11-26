@@ -1,7 +1,7 @@
 # Graph Report - ODW — OpenCode Distributed Worker Network  (2026-11-26)
 
 ## Corpus Check
-- 206 files · ~170,897 words
+- 206 files · ~170,970 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 4 file(s) not represented in the graph (top: (none) 2, .props 2)
 

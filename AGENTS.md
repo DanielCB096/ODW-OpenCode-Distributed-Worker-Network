@@ -21,6 +21,10 @@ El resultado incluye resumen, `changed_paths`, commit y diff.
   `read_only` (`E2E-REMOTE`, tarea `01M8C901HCSFCE93QJH1P3YRYD`) y `read_write_worktree`
   (`E2E-REMOTE-WRITE`, tarea `01M8C90GX6903D3VZBMEGXKAD9`, `changed_paths=["src/remoto.txt"]`,
   commit `48d36b9…` y diff inline).
+- **Perfiles de modelo verificados (2026-11-26):** tarea `01M8CGJSEFCR29SPN1SSJ4M7C7` con
+  `model_profile="free"` → `DONE`/`MODELPROFILE-FREE`; resultado `model_profile=free`,
+  `model_provider=opencode`, `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`.
+  `PC-CASA` actualizado a `87855c7`; `paid-deepseek` sigue deshabilitado.
 - Decisión 2026-11-26: el token y el repo puente se mantienen para la campaña de pruebas; el repo
   debe seguir privado. Al terminar: rotar el token, borrar el repo y el kit.
 - Pendiente: artefactos descargables, Telegram real y H4.

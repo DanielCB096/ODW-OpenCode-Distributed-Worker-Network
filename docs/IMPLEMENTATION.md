@@ -234,6 +234,9 @@ Límites que siguen abiertos y se declaran:
   `cost_usd`. `model_hint` queda como compatibilidad y solo se acepta si coincide con
   un perfil permitido. Las credenciales de un modelo de pago no se copian al agente;
   requieren gateway o credencial del servicio.
+  Verificado en dos PCs el 2026-11-26: tarea `01M8CGJSEFCR29SPN1SSJ4M7C7` con
+  `model_profile=free` → `DONE`, `MODELPROFILE-FREE`, `model_provider=opencode`,
+  `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
 - Perfil desechable por tarea (`AgentRuntime`): configuración, datos, caché y temporales propios;
   el perfil real del agente queda sin escritura. `sandbox.run_as_agent` exige
   `scheduler.max_concurrent=1` y `workspaces.keep=false` (`SandboxGuard`).

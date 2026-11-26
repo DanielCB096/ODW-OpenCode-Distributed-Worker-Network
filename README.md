@@ -24,7 +24,8 @@ Repositorio: <https://github.com/DanielCB096/ODW-OpenCode-Distributed-Worker-Net
 - TLS opt-in en la API de pares y servicio Windows instalable con `odw service`.
 - ACLs de workspace, `odw-agent` con DPAPI, `opencode serve` como agente, modelo gratuito propio,
   red aislada con WFP + proxy, `odw-svc` sin admin y perfiles por tarea.
-- Perfiles de modelo con allowlist; `model_profile` por tarea y `free` por defecto.
+- Perfiles de modelo con allowlist; `model_profile` por tarea y `free` por defecto, verificado
+  en dos PCs.
 
 Detalle: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) · Hoja de ruta:
 [`docs/ROADMAP.md`](docs/ROADMAP.md).

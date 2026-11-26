@@ -1086,10 +1086,10 @@
     "semantic_hash": "104a996dbeca7ef2d6d07020835c2152"
   },
   "README.md": {
-    "mtime": 1795712471.6957946,
-    "seen": 1795712569.770462,
-    "ast_hash": "432f82b45d37c3ac8b369cbbba485015",
-    "semantic_hash": "432f82b45d37c3ac8b369cbbba485015"
+    "mtime": 1795716448.3174763,
+    "seen": 1795716469.2242002,
+    "ast_hash": "e0b637460a6662a6eb8cd097e915547f",
+    "semantic_hash": "e0b637460a6662a6eb8cd097e915547f"
   },
   "docs/DECISIONS.md": {
     "mtime": 1795542734.5070035,
@@ -1098,10 +1098,10 @@
     "semantic_hash": "dfd93561eb3c931b72f3baae84ddd736"
   },
   "docs/DOMAIN-MODEL.md": {
-    "mtime": 1795712505.842733,
-    "seen": 1795712569.770466,
-    "ast_hash": "5984277b6a358b2b3de7768ba0b6cedf",
-    "semantic_hash": "5984277b6a358b2b3de7768ba0b6cedf"
+    "mtime": 1795712591.5144517,
+    "seen": 1795716469.2242048,
+    "ast_hash": "bc96177d87cd85554780b5420e0dee44",
+    "semantic_hash": "bc96177d87cd85554780b5420e0dee44"
   },
   "docs/H0-FINDINGS.md": {
     "mtime": 1795556849.81788,
@@ -1110,16 +1110,16 @@
     "semantic_hash": "9eb58846b2505492f8a42ed21176d932"
   },
   "docs/IMPLEMENTATION.md": {
-    "mtime": 1795712424.219608,
-    "seen": 1795712569.7704728,
-    "ast_hash": "a640140a72bd4434a9f63b3411ac03c9",
-    "semantic_hash": "a640140a72bd4434a9f63b3411ac03c9"
+    "mtime": 1795716448.3174763,
+    "seen": 1795716469.2242115,
+    "ast_hash": "f0de730c769bf2d953da20d7139992db",
+    "semantic_hash": "f0de730c769bf2d953da20d7139992db"
   },
   "docs/MCP-FACADE.md": {
-    "mtime": 1795712453.3061945,
-    "seen": 1795712569.7704747,
-    "ast_hash": "8844c09e706f2c91b346a0e6af48d440",
-    "semantic_hash": "8844c09e706f2c91b346a0e6af48d440"
+    "mtime": 1795712591.5154498,
+    "seen": 1795716469.2242136,
+    "ast_hash": "aded83e322349b88e4a5f16098cba5de",
+    "semantic_hash": "aded83e322349b88e4a5f16098cba5de"
   },
   "docs/OPENCODE-ADAPTER.md": {
     "mtime": 1795649537.4851048,
@@ -1140,10 +1140,10 @@
     "semantic_hash": "2312769c3d518a70fca5d8c326b0da6c"
   },
   "docs/PROTOCOL.md": {
-    "mtime": 1795712373.205046,
-    "seen": 1795712569.7704833,
-    "ast_hash": "931c809334830b4b3e44ca20259138db",
-    "semantic_hash": "931c809334830b4b3e44ca20259138db"
+    "mtime": 1795712591.5154498,
+    "seen": 1795716469.2242224,
+    "ast_hash": "59efce7a42c8b2a70df42d533793b8bc",
+    "semantic_hash": "59efce7a42c8b2a70df42d533793b8bc"
   },
   "docs/README.md": {
     "mtime": 1795712424.204981,
@@ -1152,16 +1152,16 @@
     "semantic_hash": "c76016dc47ee91eb7e0c66f59d30d538"
   },
   "docs/ROADMAP.md": {
-    "mtime": 1795712471.692389,
-    "seen": 1795712569.7704868,
-    "ast_hash": "5589e46985a110431713ce6854c03ebb",
-    "semantic_hash": "5589e46985a110431713ce6854c03ebb"
+    "mtime": 1795716448.3174763,
+    "seen": 1795716469.2242267,
+    "ast_hash": "85a1336f4d50613b678eb18be8e6055d",
+    "semantic_hash": "85a1336f4d50613b678eb18be8e6055d"
   },
   "docs/SECURITY.md": {
-    "mtime": 1795712472.0504956,
-    "seen": 1795712569.7704906,
-    "ast_hash": "7998167d399a5ae607c3bc848e79b7fd",
-    "semantic_hash": "7998167d399a5ae607c3bc848e79b7fd"
+    "mtime": 1795712591.5258582,
+    "seen": 1795716469.2242312,
+    "ast_hash": "49318a7d3a7da4a33e829dde4831fed0",
+    "semantic_hash": "49318a7d3a7da4a33e829dde4831fed0"
   },
   "docs/TESTING.md": {
     "mtime": 1795648189.8514702,
@@ -1170,16 +1170,16 @@
     "semantic_hash": "b57830f10998bbc4f768be3312989fa7"
   },
   "AGENTS.md": {
-    "mtime": 1795712471.692389,
-    "seen": 1795712569.7704558,
-    "ast_hash": "75efca150659c4b58d82ffed5fb6dc79",
-    "semantic_hash": "75efca150659c4b58d82ffed5fb6dc79"
+    "mtime": 1795716448.3174763,
+    "seen": 1795716469.2241926,
+    "ast_hash": "b5d2866d97100c42f39fd520e9ec7950",
+    "semantic_hash": "b5d2866d97100c42f39fd520e9ec7950"
   },
   "docs/HANDOFF.md": {
-    "mtime": 1795712463.393079,
-    "seen": 1795712569.7704704,
-    "ast_hash": "67f565147634665cd5128eea410568da",
-    "semantic_hash": "67f565147634665cd5128eea410568da"
+    "mtime": 1795716448.3174763,
+    "seen": 1795716469.224209,
+    "ast_hash": "77298c1ba5da77894560e3522e6444e6",
+    "semantic_hash": "77298c1ba5da77894560e3522e6444e6"
   },
   "tools/h1-remote-test.ps1": {
     "mtime": 1795707387.452509,

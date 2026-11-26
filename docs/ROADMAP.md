@@ -109,7 +109,8 @@ OpenCode completados (2026-11-24). Resto pendiente.
   kit sigue vivo y se mantiene para pruebas; al terminar, borrar el repo puente
   (`docs/RUNBOOK-DOS-PCS.md`).
 - ✅ Perfiles de modelo (`models.allowed`): `model_profile` por tarea, `free` por defecto y
-  `paid-deepseek` definido pero deshabilitado.
+  `paid-deepseek` definido pero deshabilitado. Verificado en dos PCs el 2026-11-26
+  (`01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`, `model_profile=free`, `cost_usd=0`).
 - ✅ 340 pruebas verdes, build sin advertencias.
 - ⬜ Listeners del host, monitor y herramientas MCP de escritura.
 

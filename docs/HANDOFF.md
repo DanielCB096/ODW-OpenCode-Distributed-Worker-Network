@@ -247,6 +247,9 @@ commit actual en `main`
     y diff inline (`+HOLA`).
 - Demo MCP desde OpenCode (2026-11-26): tarea `01M8CA57XKBFBGGTWPMQQVASVD`, `DONE`,
   `HOLA DESDE PC-CASA`; origen persistente en `127.0.0.1:7422`.
+- Perfiles de modelo (2026-11-26): tarea `01M8CGJSEFCR29SPN1SSJ4M7C7`, `DONE`,
+  `MODELPROFILE-FREE`, `model_profile=free`, `model_provider=opencode`,
+  `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`; `PC-CASA` en `87855c7`.
 - Revisión 2026-11-26: 7 scripts de `tools/` parsean, build 0 warnings, 340/340 pruebas y grafo
   regenerado.
 
