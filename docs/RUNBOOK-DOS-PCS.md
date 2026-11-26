@@ -13,13 +13,13 @@ resultado**, con las dos máquinas en la misma tailnet.
 
 ---
 
-## 0. Estado verificado la noche anterior (2026-11-25)
+## 0. Estado (preparación 2026-11-25 y salto real 2026-11-26)
 
 - Servicio `OdwNode` como `.\odw-svc`, dependiente de `Tailscale`, con reinicio automático.
 - Listener en `<IP-TAILNET-CASA>:7421`. Se usa `peer_api.address` con la IPv4 explícita porque
   `bind: "tailscale"` resolvía la IPv6 (`fd7a:…`) y Kestrel escuchaba solo ahí.
 - `/peer/v1/status` autenticado como `PC-OFICINA` → `status: online`.
-- Ensayo A→B con el origen en el mismo equipo, contra la IP tailnet:
+- Ensayo previo A→B (2026-11-25, origen en el mismo equipo, contra la IP tailnet):
   - `read_only` → `WAITING_APPROVAL → ACCEPTED → RUNNING → DONE`, resumen `E2E-REMOTE`.
   - `read_write_worktree` → `DONE`, `E2E-REMOTE-WRITE`, `changed_paths = ["src/remoto.txt"]`,
     commit `7050f45…` y diff con el archivo.
@@ -28,13 +28,15 @@ resultado**, con las dos máquinas en la misma tailnet.
   `SeIncreaseQuotaPrivilege` para `odw-svc`; `SeDenyNetworkLogonRight` y
   `SeDenyRemoteInteractiveLogonRight` para `odw-agent`.
 - BitLocker desactivado en `C:` (un reinicio no pedirá clave).
-- El ensayo **no** sustituye el salto entre dos máquinas; eso es lo que se hace mañana.
-- **Cierre 2026-11-26 (PC-OFICINA):** `PC-CASA` estaba online y el puerto 7421 respondía. La
-  prueba real pasó con el token del kit:
+- **Salto real 2026-11-26 (PC-OFICINA → PC-CASA):** `PC-CASA` estaba online y el puerto 7421
+  respondía. La prueba real pasó con el token del kit:
   - `read_only` → `E2E-REMOTE`, tarea `01M8C901HCSFCE93QJH1P3YRYD`.
   - `read_write_worktree` → `E2E-REMOTE-WRITE`, tarea `01M8C90GX6903D3VZBMEGXKAD9`,
     `changed_paths=["src/remoto.txt"]`, commit `48d36b9…` y diff `+HOLA`.
-  El token usado **sigue vivo** (la rotación no se aplicó): ejecuta la sección 8 ahora.
+  - `model_profile="free"` → `DONE`/`MODELPROFILE-FREE`, tarea `01M8CGJSEFCR29SPN1SSJ4M7C7`,
+    `model_provider=opencode`, `model_id=deepseek-v4.1-flash-free`, `cost_usd=0`.
+  El token usado **sigue vivo** (la rotación no se aplicó): ejecuta la sección 8 cuando termine
+  la campaña de pruebas.
 
 ---
 
@@ -44,7 +46,7 @@ resultado**, con las dos máquinas en la misma tailnet.
 - [ ] `Get-Service OdwNode` → `Running`; el servicio depende de `Tailscale`.
 - [ ] `Get-NetTCPConnection -LocalPort 7421 -State Listen` → `<IP-TAILNET-CASA>:7421`.
   (`/peer/v1/health` es solo loopback y con el bind a la IP tailnet no es alcanzable; la
-  verificación autenticada se hace mañana desde el trabajo con `/peer/v1/status`.)
+  verificación autenticada se hace desde el otro nodo con `/peer/v1/status`.)
 - [ ] La PC **no se suspende**: `powercfg /change standby-timeout-ac 0` ya aplicado.
 - [ ] Windows Update no reinicia solo (horas activas 07:00–01:00, sin reinicio automático).
 - [ ] BitLocker: si tiene PIN, ten la clave a mano por si hay un reinicio.
@@ -167,10 +169,11 @@ Evidencia para el HANDOFF: guarda la salida de consola, `result.json` y las últ
 - ✅ Dos máquinas reales, dos SAM distintos, dos aprovisionamientos independientes.
 - ✅ Autenticación de pares por token compartido sobre la tailnet, no por LAN.
 - ✅ WFP, ACLs, `odw-agent`, proxy y servicio Windows reales en el destino.
-- ⚠️ El ensayo de esta noche se hizo con el origen en **el mismo host**, contra la IP tailnet:
-  valida config, firewall, token, sandbox, modelo y protocolo, pero **no** la red entre dos PCs.
-  La prueba de mañana sí añade el salto entre máquinas.
-- ⚠️ No valida hardware distinto ni latencia WAN real; queda como evidencia parcial de H1.
+- ✅ Salto real verificado el **2026-11-26** con PC-OFICINA como origen y PC-CASA como destino
+  por Tailscale: `E2E-REMOTE`, `E2E-REMOTE-WRITE` y `MODELPROFILE-FREE` (`model_profile=free`,
+  `cost_usd=0`).
+- ⚠️ Ambas máquinas están en la misma tailnet: no mide hardware distinto ni latencia WAN real.
+  H1 sigue 🟡 por `odw doctor` en dos PCs, reinicio a mitad de tarea y cobertura.
 
 ---
 

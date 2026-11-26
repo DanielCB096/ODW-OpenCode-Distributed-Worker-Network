@@ -410,9 +410,9 @@ $env:ODW_PEER_TOKEN_LAPTOP = '<token-compartido>'
 odw serve --config config\node.example.json
 ```
 
-Límites: el servicio se instala con `sc.exe` pero aún no se configura la cuenta `odw-svc` ni se
-prueba en dos PCs reales. El modo desarrollo puede usar loopback con
-`peer_api.allow_loopback: true`.
+El servicio se instala con `sc.exe` y corre como `.\odw-svc` con derechos de logon dedicados; el
+salto real entre PC-OFICINA y PC-CASA está verificado (2026-11-26). El modo desarrollo puede usar
+loopback con `peer_api.allow_loopback: true`.
 
 ---
 
